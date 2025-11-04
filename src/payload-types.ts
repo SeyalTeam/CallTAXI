@@ -69,6 +69,10 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
+    drivers: Driver;
+    tariffs: Tariff;
+    vehicles: Vehicle;
+    bookings: Booking;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -77,6 +81,10 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    drivers: DriversSelect<false> | DriversSelect<true>;
+    tariffs: TariffsSelect<false> | TariffsSelect<true>;
+    vehicles: VehiclesSelect<false> | VehiclesSelect<true>;
+    bookings: BookingsSelect<false> | BookingsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -119,6 +127,8 @@ export interface UserAuthOperations {
  */
 export interface User {
   id: string;
+  role: 'superadmin' | 'admin' | 'accounts' | 'driver';
+  driverProfile?: (string | null) | Driver;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -136,6 +146,25 @@ export interface User {
       }[]
     | null;
   password?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "drivers".
+ */
+export interface Driver {
+  id: string;
+  name: string;
+  phone: string;
+  address: string;
+  /**
+   * Years of driving experience
+   */
+  experience: number;
+  aadharNo?: string | null;
+  panNo?: string | null;
+  license?: string | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -158,6 +187,87 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tariffs".
+ */
+export interface Tariff {
+  id: string;
+  vehicle: string | Vehicle;
+  oneway: {
+    /**
+     * Rate per kilometer for One Way
+     */
+    perKmRate: number;
+    /**
+     * Bata amount for One Way
+     */
+    bata: number;
+    /**
+     * Additional notes like "Toll Parking hills Extra" for One Way
+     */
+    extras?: string | null;
+  };
+  roundtrip: {
+    /**
+     * Rate per kilometer for Round Trip
+     */
+    perKmRate: number;
+    /**
+     * Bata amount for Round Trip
+     */
+    bata: number;
+    /**
+     * Additional notes like "Toll Parking hills Extra" for Round Trip
+     */
+    extras?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "vehicles".
+ */
+export interface Vehicle {
+  id: string;
+  name: string;
+  number: string;
+  ownerName: string;
+  lastFc: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "bookings".
+ */
+export interface Booking {
+  id: string;
+  customerName: string;
+  customerPhone: string;
+  vehicle: string | Vehicle;
+  tripType: 'oneway' | 'roundtrip';
+  /**
+   * @minItems 2
+   * @maxItems 2
+   */
+  pickupLocation: [number, number];
+  pickupLocationName: string;
+  /**
+   * @minItems 2
+   * @maxItems 2
+   */
+  dropoffLocation: [number, number];
+  dropoffLocationName: string;
+  pickupDateTime: string;
+  dropDateTime?: string | null;
+  estimatedFare?: number | null;
+  status?: ('pending' | 'confirmed' | 'cancelled') | null;
+  notes?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -170,6 +280,22 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: string | Media;
+      } | null)
+    | ({
+        relationTo: 'drivers';
+        value: string | Driver;
+      } | null)
+    | ({
+        relationTo: 'tariffs';
+        value: string | Tariff;
+      } | null)
+    | ({
+        relationTo: 'vehicles';
+        value: string | Vehicle;
+      } | null)
+    | ({
+        relationTo: 'bookings';
+        value: string | Booking;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -218,6 +344,8 @@ export interface PayloadMigration {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  role?: T;
+  driverProfile?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -252,6 +380,77 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "drivers_select".
+ */
+export interface DriversSelect<T extends boolean = true> {
+  name?: T;
+  phone?: T;
+  address?: T;
+  experience?: T;
+  aadharNo?: T;
+  panNo?: T;
+  license?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tariffs_select".
+ */
+export interface TariffsSelect<T extends boolean = true> {
+  vehicle?: T;
+  oneway?:
+    | T
+    | {
+        perKmRate?: T;
+        bata?: T;
+        extras?: T;
+      };
+  roundtrip?:
+    | T
+    | {
+        perKmRate?: T;
+        bata?: T;
+        extras?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "vehicles_select".
+ */
+export interface VehiclesSelect<T extends boolean = true> {
+  name?: T;
+  number?: T;
+  ownerName?: T;
+  lastFc?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "bookings_select".
+ */
+export interface BookingsSelect<T extends boolean = true> {
+  customerName?: T;
+  customerPhone?: T;
+  vehicle?: T;
+  tripType?: T;
+  pickupLocation?: T;
+  pickupLocationName?: T;
+  dropoffLocation?: T;
+  dropoffLocationName?: T;
+  pickupDateTime?: T;
+  dropDateTime?: T;
+  estimatedFare?: T;
+  status?: T;
+  notes?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
