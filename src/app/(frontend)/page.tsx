@@ -30,7 +30,16 @@ type FormValues = {
   dropDateTime: Dayjs | null
 }
 
-type Location = { lat: string; lon: string; display_name: string }
+type Location = { lat: string; lon: string; display_name: string; address?: any }
+
+const SOUTH_INDIAN_STATES = [
+  'Andhra Pradesh',
+  'Telangana',
+  'Karnataka',
+  'Kerala',
+  'Tamil Nadu',
+  'Puducherry',
+]
 
 export default function BookingForm() {
   const { handleSubmit, control, watch, setValue, reset } = useForm<FormValues>({
@@ -68,7 +77,7 @@ export default function BookingForm() {
   }, [])
 
   /* ------------------------------------------------------------------ */
-  /*  Nominatim autocomplete – INDIA ONLY + DEBOUNCE                     */
+  /*  Nominatim – SOUTH INDIA + DISTRICT ONLY + DEBOUNCE                 */
   /* ------------------------------------------------------------------ */
   let searchTimeout: NodeJS.Timeout
 
@@ -89,14 +98,39 @@ export default function BookingForm() {
           params: {
             q: query,
             format: 'json',
-            limit: 5,
-            countrycodes: 'in', // ← India only
-            addressdetails: 1, // ← Better labels
-            'accept-language': 'en', // ← English
+            limit: 10,
+            countrycodes: 'in',
+            addressdetails: 1,
+            'accept-language': 'en',
           },
           headers: { 'User-Agent': 'CallTaxiApp/1.0' },
         })
-        setSuggestions(res.data || [])
+
+        const southIndiaResults = res.data
+          .filter(
+            (item: any) =>
+              SOUTH_INDIAN_STATES.includes(item.address?.state) ||
+              item.address?.state === 'Puducherry' ||
+              SOUTH_INDIAN_STATES.some((state) => item.display_name.includes(state)),
+          )
+          .map((item: any) => {
+            // Extract district/city only
+            const district =
+              item.address?.city_district ||
+              item.address?.town ||
+              item.address?.city ||
+              item.address?.village ||
+              item.address?.suburb ||
+              ''
+
+            return {
+              ...item,
+              short_name: district || item.display_name.split(',')[0].trim(),
+            }
+          })
+          .slice(0, 5)
+
+        setSuggestions(southIndiaResults)
       } catch (err) {
         console.error('Nominatim error:', err)
         setSuggestions([])
@@ -244,18 +278,19 @@ export default function BookingForm() {
             />
           )}
         />
-        {pickupSuggestions.map((s, i) => (
+        {pickupSuggestions.map((s: any, i) => (
           <div
             key={i}
             style={{ cursor: 'pointer', color: '#1976d2', padding: '4px 0' }}
             onClick={() => {
-              setValue('pickup', s.display_name)
+              const displayText = s.short_name || s.display_name.split(',')[0].trim()
+              setValue('pickup', displayText)
               setPickupCoords({ lat: s.lat, lon: s.lon })
               setPickupLocationName(s.display_name)
               setPickupSuggestions([])
             }}
           >
-            {s.display_name}
+            {s.short_name || s.display_name.split(',')[0].trim()}
           </div>
         ))}
 
@@ -278,18 +313,19 @@ export default function BookingForm() {
             />
           )}
         />
-        {dropSuggestions.map((s, i) => (
+        {dropSuggestions.map((s: any, i) => (
           <div
             key={i}
             style={{ cursor: 'pointer', color: '#1976d2', padding: '4px 0' }}
             onClick={() => {
-              setValue('drop', s.display_name)
+              const displayText = s.short_name || s.display_name.split(',')[0].trim()
+              setValue('drop', displayText)
               setDropCoords({ lat: s.lat, lon: s.lon })
               setDropoffLocationName(s.display_name)
               setDropSuggestions([])
             }}
           >
-            {s.display_name}
+            {s.short_name || s.display_name.split(',')[0].trim()}
           </div>
         ))}
 
