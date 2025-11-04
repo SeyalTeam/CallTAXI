@@ -13,7 +13,6 @@ import {
   Select,
   MenuItem,
   InputLabel,
-  Grid,
 } from '@mui/material'
 import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
@@ -55,11 +54,8 @@ export default function BookingForm() {
   const [fare, setFare] = useState<string | null>(null)
   const [tariffs, setTariffs] = useState<any>(null)
 
-  // Coordinates
   const [pickupCoords, setPickupCoords] = useState<{ lat: string; lon: string } | null>(null)
   const [dropCoords, setDropCoords] = useState<{ lat: string; lon: string } | null>(null)
-
-  // Human-readable names
   const [pickupLocationName, setPickupLocationName] = useState<string>('')
   const [dropoffLocationName, setDropoffLocationName] = useState<string>('')
 
@@ -72,18 +68,40 @@ export default function BookingForm() {
   }, [])
 
   /* ------------------------------------------------------------------ */
-  /*  Nominatim autocomplete                                            */
+  /*  Nominatim autocomplete – INDIA ONLY + DEBOUNCE                     */
   /* ------------------------------------------------------------------ */
+  let searchTimeout: NodeJS.Timeout
+
   const fetchLocationSuggestions = async (
     query: string,
     setSuggestions: (s: Location[]) => void,
   ) => {
-    if (!query) return setSuggestions([])
-    const res = await axios.get(
-      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=5`,
-      { headers: { 'User-Agent': 'CallTaxiApp/1.0' } },
-    )
-    setSuggestions(res.data || [])
+    if (searchTimeout) clearTimeout(searchTimeout)
+
+    if (!query.trim()) {
+      setSuggestions([])
+      return
+    }
+
+    searchTimeout = setTimeout(async () => {
+      try {
+        const res = await axios.get('https://nominatim.openstreetmap.org/search', {
+          params: {
+            q: query,
+            format: 'json',
+            limit: 5,
+            countrycodes: 'in', // ← India only
+            addressdetails: 1, // ← Better labels
+            'accept-language': 'en', // ← English
+          },
+          headers: { 'User-Agent': 'CallTaxiApp/1.0' },
+        })
+        setSuggestions(res.data || [])
+      } catch (err) {
+        console.error('Nominatim error:', err)
+        setSuggestions([])
+      }
+    }, 300)
   }
 
   /* ------------------------------------------------------------------ */
@@ -125,13 +143,11 @@ export default function BookingForm() {
       vehicle: data.vehicle,
       tripType: data.tripType,
 
-      // Coordinates: [lon, lat]
       pickupLocation: pickupCoords
         ? [Number(pickupCoords.lon), Number(pickupCoords.lat)]
         : undefined,
       dropoffLocation: dropCoords ? [Number(dropCoords.lon), Number(dropCoords.lat)] : undefined,
 
-      // Human-readable names
       pickupLocationName: pickupLocationName || data.pickup,
       dropoffLocationName: dropoffLocationName || data.drop,
 
@@ -149,7 +165,6 @@ export default function BookingForm() {
       console.log('Booking saved →', res.data)
       alert(`Booking created! ID: ${res.data.id}`)
 
-      // CLEAR FORM
       reset()
       setPickupCoords(null)
       setDropCoords(null)
@@ -282,7 +297,8 @@ export default function BookingForm() {
         <Controller
           name="pickupDateTime"
           control={control}
-          render={({ field }) => (
+          rules={{ required: 'Pickup date & time is required' }}
+          render={({ field, fieldState: { error } }) => (
             <DateTimePicker
               label="Pickup Date & Time"
               value={field.value}
@@ -291,6 +307,8 @@ export default function BookingForm() {
                 textField: {
                   fullWidth: true,
                   margin: 'normal',
+                  error: !!error,
+                  helperText: error?.message,
                   InputLabelProps: { style: { color: '#000' } },
                   inputProps: { style: { color: '#000' } },
                 },
@@ -303,7 +321,11 @@ export default function BookingForm() {
         <Controller
           name="dropDateTime"
           control={control}
-          render={({ field }) => (
+          rules={{
+            required:
+              tripType === 'roundtrip' ? 'Drop date & time is required for round trip' : false,
+          }}
+          render={({ field, fieldState: { error } }) => (
             <DateTimePicker
               label="Drop Date & Time"
               value={field.value}
@@ -313,6 +335,8 @@ export default function BookingForm() {
                 textField: {
                   fullWidth: true,
                   margin: 'normal',
+                  error: !!error,
+                  helperText: error?.message,
                   InputLabelProps: { style: { color: '#000' } },
                   inputProps: { style: { color: '#000' } },
                 },
@@ -321,48 +345,46 @@ export default function BookingForm() {
           )}
         />
 
-        {/* ---------- Customer Name + Phone (After Drop Time) ---------- */}
-        <Grid container spacing={2} marginTop={1}>
-          <Grid item xs={6}>
-            <Controller
-              name="customerName"
-              control={control}
-              rules={{ required: 'Name is required' }}
-              render={({ field, fieldState: { error } }) => (
-                <TextField
-                  {...field}
-                  label="Customer Name"
-                  fullWidth
-                  error={!!error}
-                  helperText={error?.message}
-                  InputLabelProps={{ style: { color: '#000' } }}
-                  inputProps={{ style: { color: '#000' } }}
-                />
-              )}
+        {/* ---------- Customer Name (Separate Row) ---------- */}
+        <Controller
+          name="customerName"
+          control={control}
+          rules={{ required: 'Name is required' }}
+          render={({ field, fieldState: { error } }) => (
+            <TextField
+              {...field}
+              label="Customer Name"
+              fullWidth
+              margin="normal"
+              error={!!error}
+              helperText={error?.message}
+              InputLabelProps={{ style: { color: '#000' } }}
+              inputProps={{ style: { color: '#000' } }}
             />
-          </Grid>
-          <Grid item xs={6}>
-            <Controller
-              name="customerPhone"
-              control={control}
-              rules={{
-                required: 'Phone is required',
-                pattern: { value: /^\d{10}$/, message: '10 digits only' },
-              }}
-              render={({ field, fieldState: { error } }) => (
-                <TextField
-                  {...field}
-                  label="Phone Number"
-                  fullWidth
-                  error={!!error}
-                  helperText={error?.message}
-                  InputLabelProps={{ style: { color: '#000' } }}
-                  inputProps={{ style: { color: '#000' } }}
-                />
-              )}
+          )}
+        />
+
+        {/* ---------- Phone Number (Separate Row) ---------- */}
+        <Controller
+          name="customerPhone"
+          control={control}
+          rules={{
+            required: 'Phone is required',
+            pattern: { value: /^\d{10}$/, message: '10 digits only' },
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <TextField
+              {...field}
+              label="Phone Number"
+              fullWidth
+              margin="normal"
+              error={!!error}
+              helperText={error?.message}
+              InputLabelProps={{ style: { color: '#000' } }}
+              inputProps={{ style: { color: '#000' } }}
             />
-          </Grid>
-        </Grid>
+          )}
+        />
 
         {/* ---------- Calculate ---------- */}
         <Button
