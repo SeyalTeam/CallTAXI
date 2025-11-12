@@ -23,6 +23,7 @@ import {
   AppBar,
   Toolbar,
   IconButton,
+  Menu,
 } from '@mui/material'
 import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
@@ -32,6 +33,7 @@ import AirportShuttleOutlinedIcon from '@mui/icons-material/AirportShuttleOutlin
 import PhoneIcon from '@mui/icons-material/Phone'
 import WhatsAppIcon from '@mui/icons-material/WhatsApp'
 import EmailIcon from '@mui/icons-material/Email'
+import MenuIcon from '@mui/icons-material/Menu'
 
 import axios from 'axios'
 import dayjs, { Dayjs } from 'dayjs'
@@ -94,6 +96,21 @@ export default function BookingForm() {
   const [loading, setLoading] = useState(false)
   const [activeStep, setActiveStep] = useState(0)
   const steps = ['Trip Details', 'Customer Info', 'Review & Confirm']
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget)
+  }
+  const handleMenuClose = () => {
+    setAnchorEl(null)
+  }
+
+  const menuItems = [
+    { label: 'Booking', id: 'booking-form' },
+    { label: 'Tariff', id: 'tariff-section' },
+    { label: 'About', id: 'about-section' },
+    { label: 'Contact', id: 'contact-section' },
+  ]
 
   useEffect(() => {
     axios.get('/api/vehicles').then((res) => setVehicles(res.data.docs || []))
@@ -200,11 +217,13 @@ export default function BookingForm() {
   const next = () => setActiveStep((prev) => prev + 1)
   const back = () => setActiveStep((prev) => prev - 1)
 
+  const handleScrollTo = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    handleMenuClose()
+  }
+
   return (
     <>
-      {/* ✅ Compact Common Header */}
-      {/* ✅ Compact Common Header with Menu */}
-      {/* ✅ Modern Chip Menu Header */}
       <AppBar
         position="sticky"
         sx={{
@@ -237,30 +256,21 @@ export default function BookingForm() {
             </Typography>
           </Box>
 
-          {/* 🌈 Chip Menu Navigation */}
+          {/* 🌈 Chip Menu Navigation - Visible on md+ */}
           <Box
             sx={{
-              display: 'flex',
+              display: { xs: 'none', md: 'flex' },
               gap: 1.5,
               alignItems: 'center',
               flexWrap: 'wrap',
               justifyContent: 'center',
             }}
           >
-            {[
-              { label: 'Booking', id: 'booking-form' },
-              { label: 'Tariff', id: 'tariff-section' },
-              { label: 'About', id: 'about-section' },
-              { label: 'Contact', id: 'contact-section' },
-            ].map((menu) => (
+            {menuItems.map((menu) => (
               <Button
                 key={menu.id}
                 variant="outlined"
-                onClick={() =>
-                  document
-                    .getElementById(menu.id)
-                    ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-                }
+                onClick={() => handleScrollTo(menu.id)}
                 sx={{
                   color: '#fff',
                   borderColor: 'rgba(255,255,255,0.4)',
@@ -284,29 +294,55 @@ export default function BookingForm() {
             ))}
           </Box>
 
-          {/* 💛 Book Now CTA */}
-          <Button
-            variant="contained"
-            sx={{
-              backgroundColor: '#ffd54f',
-              color: '#000',
-              fontWeight: 600,
-              borderRadius: 999,
-              px: 3,
-              '&:hover': {
-                backgroundColor: '#ffca28',
-                boxShadow: '0 3px 10px rgba(255,202,40,0.4)',
-              },
-            }}
-            onClick={() => {
-              const formSection = document.getElementById('booking-form')
-              formSection?.scrollIntoView({ behavior: 'smooth' })
-            }}
-          >
-            Book Now
-          </Button>
+          {/* 💛 Book Now CTA & Navigation Icon */}
+          <Box display="flex" alignItems="center" gap={1}>
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: '#ffd54f',
+                color: '#000',
+                fontWeight: 600,
+                borderRadius: 999,
+                px: 3,
+                '&:hover': {
+                  backgroundColor: '#ffca28',
+                  boxShadow: '0 3px 10px rgba(255,202,40,0.4)',
+                },
+              }}
+              onClick={() => handleScrollTo('booking-form')}
+            >
+              Book Now
+            </Button>
+            <IconButton
+              sx={{
+                display: { xs: 'flex', md: 'none' },
+                color: '#fff',
+              }}
+              onClick={handleMenuClick}
+            >
+              <MenuIcon />
+            </IconButton>
+          </Box>
         </Toolbar>
       </AppBar>
+
+      {/* Mobile Menu */}
+      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose} sx={{ mt: 1 }}>
+        {menuItems.map((menu) => (
+          <MenuItem
+            key={menu.id}
+            onClick={() => handleScrollTo(menu.id)}
+            sx={{
+              fontWeight: 500,
+              px: 3,
+              py: 1.5,
+              minWidth: 180,
+            }}
+          >
+            {menu.label}
+          </MenuItem>
+        ))}
+      </Menu>
 
       {/* ---------- Booking Section ---------- */}
       <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -327,7 +363,7 @@ export default function BookingForm() {
               alignItems: 'center',
               justifyContent: 'center',
               backgroundImage:
-                'url(https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=1200&q=80)',
+                'ur[](https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=1200&q=80)',
               backgroundSize: 'cover',
               backgroundPosition: 'center',
               position: 'relative',
