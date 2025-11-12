@@ -369,7 +369,7 @@ export default function BookingForm() {
               alignItems: 'center',
               justifyContent: 'center',
               backgroundImage:
-                'ur[](https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=1200&q=80)',
+                'url(https://asset.chase.com/content/dam/unified-assets/photography/articles/auto/buying/seo-suv-vs-sedan-compressed_10062023.jpg)',
               backgroundSize: 'cover',
               backgroundPosition: 'center',
               position: 'relative',
