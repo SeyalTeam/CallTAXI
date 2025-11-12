@@ -34,15 +34,7 @@ export const Vehicles: CollectionConfig = {
   ],
   access: {
     create: ({ req: { user } }) => user?.role === 'superadmin' || user?.role === 'admin',
-    read: ({ req: { user } }) => {
-      if (user?.role === 'superadmin' || user?.role === 'admin' || user?.role === 'accounts') {
-        return true
-      }
-      if (user?.role === 'driver') {
-        return { id: { equals: user.id } } // Adjust if linking to drivers later
-      }
-      return false
-    },
+    read: () => true, // Public access for read
     update: ({ req: { user } }) => user?.role === 'superadmin' || user?.role === 'admin',
     delete: ({ req: { user } }) => user?.role === 'superadmin',
   },
