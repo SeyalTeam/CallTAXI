@@ -29,6 +29,7 @@ import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar'
 import DirectionsCarFilledOutlinedIcon from '@mui/icons-material/DirectionsCarFilledOutlined'
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 import AirportShuttleOutlinedIcon from '@mui/icons-material/AirportShuttleOutlined'
 import PhoneIcon from '@mui/icons-material/Phone'
 import WhatsAppIcon from '@mui/icons-material/WhatsApp'
@@ -411,13 +412,26 @@ export default function BookingForm() {
               }}
             >
               <Typography variant="h5" align="center" sx={{ fontWeight: 700, mb: 3 }}>
-                🚖 Kani Taxi Elite Booking
+                BOOK HERE !
               </Typography>
 
               <Stepper activeStep={activeStep} alternativeLabel sx={{ mb: 3 }}>
-                {steps.map((label) => (
-                  <Step key={label}>
-                    <StepLabel sx={{ color: '#fff' }}>{label}</StepLabel>
+                {[
+                  { icon: <DirectionsCarIcon sx={{ color: '#004d40' }} />, label: 'Trip Details' },
+                  { icon: <PhoneIcon sx={{ color: '#004d40' }} />, label: 'Customer Info' },
+                  { icon: <CheckCircleOutlineIcon sx={{ color: '#004d40' }} />, label: 'Confirm' },
+                ].map((step, index) => (
+                  <Step key={index}>
+                    <StepLabel
+                      icon={step.icon}
+                      sx={{
+                        '& .MuiStepLabel-label': { display: 'none' }, // hide the text labels
+                        '& .MuiSvgIcon-root': {
+                          fontSize: 28,
+                          color: activeStep >= index ? '#ffd54f' : '#bdbdbd',
+                        },
+                      }}
+                    />
                   </Step>
                 ))}
               </Stepper>
