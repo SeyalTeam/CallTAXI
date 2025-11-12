@@ -96,7 +96,11 @@ export default function BookingForm() {
   const [fare, setFare] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [activeStep, setActiveStep] = useState(0)
-  const steps = ['Trip Details', 'Customer Info', 'Review & Confirm']
+  const steps = [
+    { icon: <DirectionsCarIcon sx={{ color: '#004d40' }} />, label: 'Trip Details' },
+    { icon: <PhoneIcon sx={{ color: '#004d40' }} />, label: 'Customer Info' },
+    { icon: <CheckCircleOutlineIcon sx={{ color: '#004d40' }} />, label: 'Confirm' },
+  ]
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -352,6 +356,7 @@ export default function BookingForm() {
           sx={{
             minHeight: '100vh',
             display: 'flex',
+            flexDirection: { xs: 'column', md: 'row' },
             background: 'linear-gradient(135deg,#004d40 0%,#009688 100%)',
             color: '#fff',
           }}
@@ -364,7 +369,7 @@ export default function BookingForm() {
               alignItems: 'center',
               justifyContent: 'center',
               backgroundImage:
-                'url(https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=1200&q=80)',
+                'ur[](https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=1200&q=80)',
               backgroundSize: 'cover',
               backgroundPosition: 'center',
               position: 'relative',
@@ -403,7 +408,7 @@ export default function BookingForm() {
               sx={{
                 width: '100%',
                 maxWidth: 520,
-                p: 4,
+                p: { xs: 3, md: 4 },
                 borderRadius: 6,
                 background: 'rgba(255,255,255,0.15)',
                 backdropFilter: 'blur(25px)',
@@ -416,22 +421,23 @@ export default function BookingForm() {
               </Typography>
 
               <Stepper activeStep={activeStep} alternativeLabel sx={{ mb: 3 }}>
-                {[
-                  { icon: <DirectionsCarIcon sx={{ color: '#004d40' }} />, label: 'Trip Details' },
-                  { icon: <PhoneIcon sx={{ color: '#004d40' }} />, label: 'Customer Info' },
-                  { icon: <CheckCircleOutlineIcon sx={{ color: '#004d40' }} />, label: 'Confirm' },
-                ].map((step, index) => (
+                {steps.map((step, index) => (
                   <Step key={index}>
                     <StepLabel
                       icon={step.icon}
                       sx={{
-                        '& .MuiStepLabel-label': { display: 'none' }, // hide the text labels
+                        '& .MuiStepLabel-label': {
+                          display: { xs: 'none', md: 'block' },
+                          color: '#fff',
+                        },
                         '& .MuiSvgIcon-root': {
                           fontSize: 28,
                           color: activeStep >= index ? '#ffd54f' : '#bdbdbd',
                         },
                       }}
-                    />
+                    >
+                      {step.label}
+                    </StepLabel>
                   </Step>
                 ))}
               </Stepper>
@@ -445,7 +451,13 @@ export default function BookingForm() {
                       name="tripType"
                       control={control}
                       render={({ field }) => (
-                        <RadioGroup row {...field}>
+                        <RadioGroup
+                          row
+                          {...field}
+                          sx={{
+                            justifyContent: { xs: 'space-between', sm: 'flex-start' },
+                          }}
+                        >
                           <FormControlLabel value="oneway" control={<Radio />} label="One Way" />
                           <FormControlLabel
                             value="roundtrip"
@@ -675,7 +687,7 @@ export default function BookingForm() {
                       <TextField {...field} label="Phone Number" fullWidth margin="normal" />
                     )}
                   />
-                  <Box display="flex" gap={2} mt={3}>
+                  <Box display="flex" gap={2} mt={3} flexDirection={{ xs: 'column', sm: 'row' }}>
                     <Button variant="outlined" fullWidth onClick={back}>
                       ← Back
                     </Button>
@@ -735,7 +747,7 @@ export default function BookingForm() {
                     </>
                   )}
 
-                  <Box display="flex" gap={2} mt={3}>
+                  <Box display="flex" gap={2} mt={3} flexDirection={{ xs: 'column', sm: 'row' }}>
                     <Button variant="outlined" fullWidth onClick={back}>
                       ← Back
                     </Button>
