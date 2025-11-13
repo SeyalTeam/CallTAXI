@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import {
   TextField,
@@ -108,6 +108,9 @@ export default function BookingForm() {
     { label: 'Contact', id: 'contact-section' },
   ]
 
+  const pickupRef = useRef<HTMLDivElement>(null)
+  const dropRef = useRef<HTMLDivElement>(null)
+
   useEffect(() => {
     axios.get('/api/vehicles').then((res) => setVehicles(res.data.docs || []))
     axios.get('/api/tariffs').then((res) => {
@@ -121,16 +124,56 @@ export default function BookingForm() {
       })
   }, [])
 
-  const handleLocationSearch = (text: string, setSuggestions: (s: Location[]) => void) => {
-    if (!text.trim()) return setSuggestions([])
+  const handleLocationSearch = (
+    text: string,
+    setSuggestions: (s: Location[]) => void,
+    fieldName: 'pickup' | 'drop',
+    setCoords: (coords: { lat: string; lon: string }) => void,
+  ) => {
+    if (!text.trim()) {
+      setSuggestions([])
+      return
+    }
 
     const q = text.toLowerCase()
-    const results = tnLocations.filter(
+    let results = tnLocations.filter(
       (p) => p.name.toLowerCase().includes(q) || p.district.toLowerCase().includes(q),
     )
 
+    results.sort((a, b) => {
+      const aa = a.name.toLowerCase().startsWith(q)
+      const bb = b.name.toLowerCase().startsWith(q)
+      if (aa && !bb) return -1
+      if (!aa && bb) return 1
+      return a.name.localeCompare(b.name)
+    })
+
+    if (results.length === 1) {
+      setSuggestions([])
+      const s = results[0]
+      setValue(fieldName, `${s.name}, ${s.district}`)
+      setCoords({ lat: s.lat, lon: s.lon })
+      return
+    }
+
     setSuggestions(results.slice(0, 10))
   }
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        pickupRef.current &&
+        !pickupRef.current.contains(event.target as Node) &&
+        dropRef.current &&
+        !dropRef.current.contains(event.target as Node)
+      ) {
+        setPickupSuggestions([])
+        setDropSuggestions([])
+      }
+    }
+    document.addEventListener('click', handleClickOutside)
+    return () => document.removeEventListener('click', handleClickOutside)
+  }, [])
 
   useEffect(() => {
     if (pickupCoords && dropCoords && tariffs) calculateRouteAndFare()
@@ -517,7 +560,7 @@ export default function BookingForm() {
                   </FormControl>
 
                   {/* ---------- Pickup Field ---------- */}
-                  <Box sx={{ position: 'relative' }}>
+                  <Box sx={{ position: 'relative', overflow: 'visible' }} ref={pickupRef}>
                     <Controller
                       name="pickup"
                       control={control}
@@ -529,7 +572,12 @@ export default function BookingForm() {
                           margin="normal"
                           onChange={(e) => {
                             field.onChange(e)
-                            handleLocationSearch(e.target.value, setPickupSuggestions)
+                            handleLocationSearch(
+                              e.target.value,
+                              setPickupSuggestions,
+                              'pickup',
+                              setPickupCoords,
+                            )
                           }}
                         />
                       )}
@@ -539,7 +587,7 @@ export default function BookingForm() {
                         elevation={6}
                         sx={{
                           position: 'absolute',
-                          top: '100%',
+                          top: 'calc(100% + 4px)',
                           left: 0,
                           right: 0,
                           zIndex: 10,
@@ -551,29 +599,40 @@ export default function BookingForm() {
                           color: '#000',
                         }}
                       >
-                        {pickupSuggestions.map((s, i) => (
-                          <Box
-                            key={i}
-                            sx={{
-                              p: 1,
-                              cursor: 'pointer',
-                              '&:hover': { backgroundColor: '#f1f1f1' },
-                            }}
-                            onClick={() => {
-                              setValue('pickup', `${s.name}, ${s.district}`)
-                              setPickupCoords({ lat: s.lat, lon: s.lon })
-                              setPickupSuggestions([])
-                            }}
-                          >
-                            {s.name}, {s.district}
-                          </Box>
-                        ))}
+                        {pickupSuggestions.map((s, i) => {
+                          const q = pickup.toLowerCase()
+                          return (
+                            <Box
+                              key={i}
+                              sx={{
+                                p: 1,
+                                cursor: 'pointer',
+                                '&:hover': { backgroundColor: '#f1f1f1' },
+                              }}
+                              onClick={() => {
+                                setValue('pickup', `${s.name}, ${s.district}`)
+                                setPickupCoords({ lat: s.lat, lon: s.lon })
+                                setPickupSuggestions([])
+                              }}
+                            >
+                              <span
+                                dangerouslySetInnerHTML={{
+                                  __html: s.name.replace(
+                                    new RegExp(q, 'gi'),
+                                    (m) => `<strong style="color:#004d40">${m}</strong>`,
+                                  ),
+                                }}
+                              />
+                              , {s.district}
+                            </Box>
+                          )
+                        })}
                       </Paper>
                     )}
                   </Box>
 
                   {/* ---------- Drop Field ---------- */}
-                  <Box sx={{ position: 'relative' }}>
+                  <Box sx={{ position: 'relative', overflow: 'visible' }} ref={dropRef}>
                     <Controller
                       name="drop"
                       control={control}
@@ -585,7 +644,12 @@ export default function BookingForm() {
                           margin="normal"
                           onChange={(e) => {
                             field.onChange(e)
-                            handleLocationSearch(e.target.value, setDropSuggestions)
+                            handleLocationSearch(
+                              e.target.value,
+                              setDropSuggestions,
+                              'drop',
+                              setDropCoords,
+                            )
                           }}
                         />
                       )}
@@ -595,7 +659,7 @@ export default function BookingForm() {
                         elevation={6}
                         sx={{
                           position: 'absolute',
-                          top: '100%',
+                          top: 'calc(100% + 4px)',
                           left: 0,
                           right: 0,
                           zIndex: 10,
@@ -607,23 +671,34 @@ export default function BookingForm() {
                           color: '#000',
                         }}
                       >
-                        {dropSuggestions.map((s, i) => (
-                          <Box
-                            key={i}
-                            sx={{
-                              p: 1,
-                              cursor: 'pointer',
-                              '&:hover': { backgroundColor: '#f1f1f1' },
-                            }}
-                            onClick={() => {
-                              setValue('drop', `${s.name}, ${s.district}`)
-                              setDropCoords({ lat: s.lat, lon: s.lon })
-                              setDropSuggestions([])
-                            }}
-                          >
-                            {s.name}, {s.district}
-                          </Box>
-                        ))}
+                        {dropSuggestions.map((s, i) => {
+                          const q = drop.toLowerCase()
+                          return (
+                            <Box
+                              key={i}
+                              sx={{
+                                p: 1,
+                                cursor: 'pointer',
+                                '&:hover': { backgroundColor: '#f1f1f1' },
+                              }}
+                              onClick={() => {
+                                setValue('drop', `${s.name}, ${s.district}`)
+                                setDropCoords({ lat: s.lat, lon: s.lon })
+                                setDropSuggestions([])
+                              }}
+                            >
+                              <span
+                                dangerouslySetInnerHTML={{
+                                  __html: s.name.replace(
+                                    new RegExp(q, 'gi'),
+                                    (m) => `<strong style="color:#004d40">${m}</strong>`,
+                                  ),
+                                }}
+                              />
+                              , {s.district}
+                            </Box>
+                          )
+                        })}
                       </Paper>
                     )}
                   </Box>
