@@ -75,8 +75,9 @@ export default function BookingForm() {
   const pickup = watch('pickup')
   const drop = watch('drop')
 
-  const [vehicles, setVehicles] = useState<Array<{ id: string; name: string }>>([])
+  const [vehicles, setVehicles] = useState<Array<{ id: string; name: string; type?: string }>>([])
   const [selectedVehicleName, setSelectedVehicleName] = useState<string>('')
+  const [selectedVehicleType, setSelectedVehicleType] = useState<string>('')
   const [pickupSuggestions, setPickupSuggestions] = useState<Location[]>([])
   const [dropSuggestions, setDropSuggestions] = useState<Location[]>([])
   const [tnLocations, setTNLocations] = useState<Location[]>([])
@@ -176,11 +177,11 @@ export default function BookingForm() {
   }, [])
 
   useEffect(() => {
-    if (pickupCoords && dropCoords && tariffs) calculateRouteAndFare()
-  }, [pickupCoords, dropCoords, tripType])
+    if (pickupCoords && dropCoords && tariffs && selectedVehicleType) calculateRouteAndFare()
+  }, [pickupCoords, dropCoords, tripType, selectedVehicleType, tariffs])
 
   const calculateRouteAndFare = async () => {
-    if (!pickupCoords || !dropCoords || !tariffs) return
+    if (!pickupCoords || !dropCoords || !tariffs || !selectedVehicleType) return
     setLoading(true)
     try {
       const osrmURL = `https://router.project-osrm.org/route/v1/driving/${pickupCoords.lon},${pickupCoords.lat};${dropCoords.lon},${dropCoords.lat}?overview=false`
@@ -201,14 +202,9 @@ export default function BookingForm() {
         bata = tariffGroup?.bata || tariffs?.bata || 0
       } else {
         // Tariffs are flat fields (Payload schema like sedanOnewayRate, etc.)
-        const isSUV = selectedVehicleName?.toLowerCase().includes('suv')
         const isRound = tripType === 'roundtrip'
-
-        if (isRound) {
-          perKmRate = isSUV ? tariffs.suvRoundtripRate : tariffs.sedanRoundtripRate
-        } else {
-          perKmRate = isSUV ? tariffs.suvOnewayRate : tariffs.sedanOnewayRate
-        }
+        const rateKey = `${selectedVehicleType}${isRound ? 'Roundtrip' : 'Oneway'}Rate`
+        perKmRate = tariffs[rateKey] || 0
         bata = tariffs.bata || 0
       }
 
@@ -547,6 +543,10 @@ export default function BookingForm() {
                             field.onChange(e)
                             const v = vehicles.find((x) => x.id === e.target.value)
                             setSelectedVehicleName(v?.name || '')
+                            setSelectedVehicleType(
+                              v?.type?.toLowerCase() ||
+                                (v?.name.toLowerCase().includes('suv') ? 'suv' : 'sedan'),
+                            )
                           }}
                         >
                           {vehicles.map((v) => (
