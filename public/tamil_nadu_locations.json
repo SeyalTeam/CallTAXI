@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generatedAt": "2025-11-13T12:02:36.306Z"
+    "generatedAt": "2025-11-13T13:58:35.116Z"
   },
   "places": [
     {
@@ -523,14 +523,14 @@
     {
       "district": "Kanyakumari",
       "name": "Kanyakumari",
-      "display_name": "Salem - Kochi - Kanyakumari Road, Agasteeswaram, Agastheeswaram, Panchalingapuram, Agastheeswaram, Kanniyakumari, Tamil Nadu, 629702, India",
-      "lat": "8.1044724",
-      "lon": "77.5377281",
+      "display_name": "Salem - Kochi - Kanyakumari Road, Kundal, Agastheeswaram, Kanyakumari, Agastheeswaram, Kanniyakumari, Tamil Nadu, 629702, India",
+      "lat": "8.0849595",
+      "lon": "77.5391985",
       "raw_addr": {
         "road": "Salem - Kochi - Kanyakumari Road",
-        "hamlet": "Agasteeswaram",
+        "suburb": "Kundal",
         "city_district": "Agastheeswaram",
-        "village": "Panchalingapuram",
+        "town": "Kanyakumari",
         "county": "Agastheeswaram",
         "state_district": "Kanniyakumari",
         "state": "Tamil Nadu",
@@ -543,12 +543,12 @@
     {
       "district": "Kanyakumari",
       "name": "Marthandam",
-      "display_name": "Marthandam - Pechiparai Road, Kiliyoor, Attoor, Kalkulam, Kanniyakumari, Tamil Nadu, 629179, India",
-      "lat": "8.3119398",
-      "lon": "77.2459407",
+      "display_name": "Marthandam - Pechiparai Road, Thiruvattar, Attoor, Kalkulam, Kanniyakumari, Tamil Nadu, 629179, India",
+      "lat": "8.3122492",
+      "lon": "77.2473348",
       "raw_addr": {
         "road": "Marthandam - Pechiparai Road",
-        "city_district": "Kiliyoor",
+        "city_district": "Thiruvattar",
         "village": "Attoor",
         "county": "Kalkulam",
         "state_district": "Kanniyakumari",
@@ -1068,15 +1068,16 @@
     {
       "district": "Sivagangai",
       "name": "Sivagangai",
-      "display_name": "Ramanathapuram - Nainarkoil - Andakudi - Ilayangudi - Sivagangai - Melur Road, Sivaganga, Sivagangai, Tamil Nadu, India",
-      "lat": "9.7887988",
-      "lon": "78.5175356",
+      "display_name": "Ramanathapuram - Nainarkoil - Andakudi - Ilayangudi - Sivagangai - Melur Road, Sivaganga, Sivagangai, Tamil Nadu, 630562, India",
+      "lat": "9.9012518",
+      "lon": "78.4530753",
       "raw_addr": {
         "road": "Ramanathapuram - Nainarkoil - Andakudi - Ilayangudi - Sivagangai - Melur Road",
         "county": "Sivaganga",
         "state_district": "Sivagangai",
         "state": "Tamil Nadu",
         "ISO3166-2-lvl4": "IN-TN",
+        "postcode": "630562",
         "country": "India",
         "country_code": "in"
       }
@@ -1562,6 +1563,130 @@
     },
     {
       "district": "Thoothukudi",
+      "name": "Thoothukudi New Bus Stand",
+      "display_name": "Thoothukudi New Bus Stand, Madurai - Tuticorin Road, Thoothukudi, Thoothukkudi, Thoothukudi, Tamil Nadu, 628001, India",
+      "lat": "8.8105721",
+      "lon": "78.1373609",
+      "raw_addr": {
+        "amenity": "Thoothukudi New Bus Stand",
+        "road": "Madurai - Tuticorin Road",
+        "city": "Thoothukudi",
+        "county": "Thoothukkudi",
+        "state_district": "Thoothukudi",
+        "state": "Tamil Nadu",
+        "ISO3166-2-lvl4": "IN-TN",
+        "postcode": "628001",
+        "country": "India",
+        "country_code": "in"
+      }
+    },
+    {
+      "district": "Thoothukudi",
+      "name": "Thoothukudi Railway Station",
+      "display_name": "State Bank of India, Railway Station Road, Thoothukudi, Thoothukkudi, Thoothukudi, Tamil Nadu, 628001, India",
+      "lat": "8.8059896",
+      "lon": "78.1552055",
+      "raw_addr": {
+        "amenity": "State Bank of India",
+        "road": "Railway Station Road",
+        "city": "Thoothukudi",
+        "county": "Thoothukkudi",
+        "state_district": "Thoothukudi",
+        "state": "Tamil Nadu",
+        "ISO3166-2-lvl4": "IN-TN",
+        "postcode": "628001",
+        "country": "India",
+        "country_code": "in"
+      }
+    },
+    {
+      "district": "Thoothukudi",
+      "name": "Alwarthirunagari",
+      "display_name": "Alwarthirunagari, Tiruchendur, Thoothukudi, Tamil Nadu, 628612, India",
+      "lat": "8.6068681",
+      "lon": "77.9439141",
+      "raw_addr": {
+        "village": "Alwarthirunagari",
+        "county": "Tiruchendur",
+        "state_district": "Thoothukudi",
+        "state": "Tamil Nadu",
+        "ISO3166-2-lvl4": "IN-TN",
+        "postcode": "628612",
+        "country": "India",
+        "country_code": "in"
+      }
+    },
+    {
+      "district": "Thoothukudi",
+      "name": "Vallanadu",
+      "display_name": "Vallanadu Blackbuck WLS, Srivaikuntam, Thoothukudi, Tamil Nadu, India",
+      "lat": "8.7004143",
+      "lon": "77.8863593",
+      "raw_addr": {
+        "protected_area": "Vallanadu Blackbuck WLS",
+        "county": "Srivaikuntam",
+        "state_district": "Thoothukudi",
+        "state": "Tamil Nadu",
+        "ISO3166-2-lvl4": "IN-TN",
+        "country": "India",
+        "country_code": "in"
+      }
+    },
+    {
+      "district": "Thoothukudi",
+      "name": "Kulasai",
+      "display_name": "Tiruchendur - Kulasai - Udangudi Road, Udangudi, Tiruchendur, Thoothukudi, Tamil Nadu, 628203, India",
+      "lat": "8.4173190",
+      "lon": "78.0405088",
+      "raw_addr": {
+        "road": "Tiruchendur - Kulasai - Udangudi Road",
+        "village": "Udangudi",
+        "county": "Tiruchendur",
+        "state_district": "Thoothukudi",
+        "state": "Tamil Nadu",
+        "ISO3166-2-lvl4": "IN-TN",
+        "postcode": "628203",
+        "country": "India",
+        "country_code": "in"
+      }
+    },
+    {
+      "district": "Thoothukudi",
+      "name": "Kayalpattinam Bypass",
+      "display_name": "Kayalpattinam Bypass Road, Kayalpattinam, Tiruchendur, Thoothukudi, Tamil Nadu, 628204, India",
+      "lat": "8.5762322",
+      "lon": "78.1052800",
+      "raw_addr": {
+        "road": "Kayalpattinam Bypass Road",
+        "town": "Kayalpattinam",
+        "county": "Tiruchendur",
+        "state_district": "Thoothukudi",
+        "state": "Tamil Nadu",
+        "ISO3166-2-lvl4": "IN-TN",
+        "postcode": "628204",
+        "country": "India",
+        "country_code": "in"
+      }
+    },
+    {
+      "district": "Thoothukudi",
+      "name": "Tharuvaikulam",
+      "display_name": "Tharuvaikulam, Ottapidaram, Thoothukudi, Tamil Nadu, 628105, India",
+      "lat": "8.8938845",
+      "lon": "78.1720442",
+      "raw_addr": {
+        "village": "Tharuvaikulam",
+        "county": "Ottapidaram",
+        "state_district": "Thoothukudi",
+        "state": "Tamil Nadu",
+        "ISO3166-2-lvl4": "IN-TN",
+        "postcode": "628105",
+        "country": "India",
+        "country_code": "in"
+      }
+    },
+    {
+      "district": "Thoothukudi",
       "name": "Thoothukudi",
       "display_name": "Thoothukudi, Thoothukkudi, Thoothukudi, Tamil Nadu, 628001, India",
       "lat": "8.8052602",
@@ -1742,6 +1867,23 @@
         "state": "Tamil Nadu",
         "ISO3166-2-lvl4": "IN-TN",
         "postcode": "628252",
+        "country": "India",
+        "country_code": "in"
+      }
+    },
+    {
+      "district": "Thoothukudi",
+      "name": "Eral",
+      "display_name": "Eral, Srivaikuntam, Thoothukudi, Tamil Nadu, 628800, India",
+      "lat": "8.6253791",
+      "lon": "78.0228746",
+      "raw_addr": {
+        "village": "Eral",
+        "county": "Srivaikuntam",
+        "state_district": "Thoothukudi",
+        "state": "Tamil Nadu",
+        "ISO3166-2-lvl4": "IN-TN",
+        "postcode": "628800",
         "country": "India",
         "country_code": "in"
       }

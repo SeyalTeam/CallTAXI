@@ -27,6 +27,102 @@
     {
       "place": {
         "district": "Thoothukudi",
+        "name": "Thoothukudi Old Bus Stand"
+      },
+      "reason": "no-match",
+      "raw": []
+    },
+    {
+      "place": {
+        "district": "Thoothukudi",
+        "name": "Thoothukudi Government Medical College"
+      },
+      "reason": "no-match",
+      "raw": []
+    },
+    {
+      "place": {
+        "district": "Thoothukudi",
+        "name": "Ponnagaram"
+      },
+      "reason": "no-match",
+      "raw": []
+    },
+    {
+      "place": {
+        "district": "Thoothukudi",
+        "name": "Vallioor"
+      },
+      "reason": "no-match",
+      "raw": []
+    },
+    {
+      "place": {
+        "district": "Thoothukudi",
+        "name": "Keela Kulasekarapattinam"
+      },
+      "reason": "no-match",
+      "raw": []
+    },
+    {
+      "place": {
+        "district": "Thoothukudi",
+        "name": "Udangudi Bypass"
+      },
+      "reason": "no-match",
+      "raw": []
+    },
+    {
+      "place": {
+        "district": "Thoothukudi",
+        "name": "SIPCOT Industrial Centre"
+      },
+      "reason": "no-match",
+      "raw": []
+    },
+    {
+      "place": {
+        "district": "Thoothukudi",
+        "name": "Meelavittan"
+      },
+      "reason": "no-match",
+      "raw": []
+    },
+    {
+      "place": {
+        "district": "Thoothukudi",
+        "name": "Bryant Nagar Extension"
+      },
+      "reason": "no-match",
+      "raw": []
+    },
+    {
+      "place": {
+        "district": "Thoothukudi",
+        "name": "3rd Mile"
+      },
+      "reason": "no-match",
+      "raw": []
+    },
+    {
+      "place": {
+        "district": "Thoothukudi",
+        "name": "4th Mile"
+      },
+      "reason": "no-match",
+      "raw": []
+    },
+    {
+      "place": {
+        "district": "Thoothukudi",
+        "name": "Dinasuvadu Media"
+      },
+      "reason": "no-match",
+      "raw": []
+    },
+    {
+      "place": {
+        "district": "Thoothukudi",
         "name": "Silverpuram"
       },
       "reason": "no-match",
@@ -209,5 +305,5 @@
       "raw": []
     }
   ],
-  "timestamp": "2025-11-13T12:02:36.319Z"
+  "timestamp": "2025-11-13T13:58:35.133Z"
 }

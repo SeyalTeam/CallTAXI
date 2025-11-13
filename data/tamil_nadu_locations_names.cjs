@@ -39,7 +39,32 @@ module.exports = [
   {
     district: 'Thoothukudi',
     places: [
-      // Main City Areas
+      // --- Major Transport Hubs ---
+      'Thoothukudi Old Bus Stand',
+      'Thoothukudi New Bus Stand',
+      'Thoothukudi Railway Station',
+
+      // --- Important Newly Added Locations ---
+      'Alwarthirunagari',
+      'Vallanadu',
+      'Thoothukudi Government Medical College',
+      'Ponnagaram',
+
+      // --- Latest 8 Additions (you requested) ---
+      'Vallioor',
+      'Kulasai',
+      'Keela Kulasekarapattinam',
+      'Udangudi Bypass',
+      'Kayalpattinam Bypass',
+      'SIPCOT Industrial Centre',
+      'Tharuvaikulam',
+      'Meelavittan',
+      'Bryant Nagar Extension',
+      '3rd Mile',
+      '4th Mile',
+      'Dinasuvadu Media',
+
+      // --- Main City Areas ---
       'Thoothukudi',
       'Millerpuram',
       'Bryant Nagar',
@@ -52,16 +77,17 @@ module.exports = [
       'Palayamkottai Road',
       'Harbour Estate',
 
-      // Taluks
+      // --- Taluks ---
       'Kovilpatti',
       'Ettayapuram',
       'Vilathikulam',
       'Ottapidaram',
       'Srivaikundam',
       'Sattankulam',
+      'Eral',
       'Kayathar',
 
-      // Popular Town Panchayats
+      // --- Towns / Panchayats ---
       'Tiruchendur',
       'Arumuganeri',
       'Udangudi',
@@ -75,7 +101,7 @@ module.exports = [
       'Sawyerpuram',
       'Thenthiruperai',
 
-      // Industrial / Port / Special Zones
+      // --- Industrial / Port / Important Zones ---
       'VOC Port',
       'Thermal Nagar',
       'SPIC Nagar',
@@ -84,12 +110,12 @@ module.exports = [
       'Sterlite',
       'Harbour Beach',
 
-      // Religious / Tourism / Famous Spots
+      // --- Tourist / Religious Spots ---
       'Thiruchendur Murugan Temple',
       'Manapad Holy Cross Shrine',
       'Kulasai Dasara Grounds',
 
-      // Additional Villages & Travel Points
+      // --- Additional Villages / Travel Points ---
       'Nazerath',
       'Perungulam',
       'Palo Alto Nagar',
