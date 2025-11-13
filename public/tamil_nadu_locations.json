@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generatedAt": "2025-11-13T13:58:35.116Z"
+    "generatedAt": "2025-11-13T14:17:28.280Z"
   },
   "places": [
     {
@@ -503,8 +503,8 @@
       "district": "Kanyakumari",
       "name": "Nagercoil",
       "display_name": "Nagercoil - Kanniyakumari mainline, Salem - Kochi - Kanyakumari Road, Agasteeswaram, Agastheeswaram, Panchalingapuram, Agastheeswaram, Kanniyakumari, Tamil Nadu, 629702, India",
-      "lat": "8.0904320",
-      "lon": "77.5309503",
+      "lat": "8.0904888",
+      "lon": "77.5309071",
       "raw_addr": {
         "railway": "Nagercoil - Kanniyakumari mainline",
         "road": "Salem - Kochi - Kanyakumari Road",
@@ -1563,124 +1563,17 @@
     },
     {
       "district": "Thoothukudi",
-      "name": "Thoothukudi New Bus Stand",
-      "display_name": "Thoothukudi New Bus Stand, Madurai - Tuticorin Road, Thoothukudi, Thoothukkudi, Thoothukudi, Tamil Nadu, 628001, India",
-      "lat": "8.8105721",
-      "lon": "78.1373609",
+      "name": "Tuticorin",
+      "display_name": "Thoothukudi, Thoothukkudi, Thoothukudi, Tamil Nadu, 628001, India",
+      "lat": "8.8052602",
+      "lon": "78.1452745",
       "raw_addr": {
-        "amenity": "Thoothukudi New Bus Stand",
-        "road": "Madurai - Tuticorin Road",
         "city": "Thoothukudi",
         "county": "Thoothukkudi",
         "state_district": "Thoothukudi",
         "state": "Tamil Nadu",
         "ISO3166-2-lvl4": "IN-TN",
         "postcode": "628001",
-        "country": "India",
-        "country_code": "in"
-      }
-    },
-    {
-      "district": "Thoothukudi",
-      "name": "Thoothukudi Railway Station",
-      "display_name": "State Bank of India, Railway Station Road, Thoothukudi, Thoothukkudi, Thoothukudi, Tamil Nadu, 628001, India",
-      "lat": "8.8059896",
-      "lon": "78.1552055",
-      "raw_addr": {
-        "amenity": "State Bank of India",
-        "road": "Railway Station Road",
-        "city": "Thoothukudi",
-        "county": "Thoothukkudi",
-        "state_district": "Thoothukudi",
-        "state": "Tamil Nadu",
-        "ISO3166-2-lvl4": "IN-TN",
-        "postcode": "628001",
-        "country": "India",
-        "country_code": "in"
-      }
-    },
-    {
-      "district": "Thoothukudi",
-      "name": "Alwarthirunagari",
-      "display_name": "Alwarthirunagari, Tiruchendur, Thoothukudi, Tamil Nadu, 628612, India",
-      "lat": "8.6068681",
-      "lon": "77.9439141",
-      "raw_addr": {
-        "village": "Alwarthirunagari",
-        "county": "Tiruchendur",
-        "state_district": "Thoothukudi",
-        "state": "Tamil Nadu",
-        "ISO3166-2-lvl4": "IN-TN",
-        "postcode": "628612",
-        "country": "India",
-        "country_code": "in"
-      }
-    },
-    {
-      "district": "Thoothukudi",
-      "name": "Vallanadu",
-      "display_name": "Vallanadu Blackbuck WLS, Srivaikuntam, Thoothukudi, Tamil Nadu, India",
-      "lat": "8.7004143",
-      "lon": "77.8863593",
-      "raw_addr": {
-        "protected_area": "Vallanadu Blackbuck WLS",
-        "county": "Srivaikuntam",
-        "state_district": "Thoothukudi",
-        "state": "Tamil Nadu",
-        "ISO3166-2-lvl4": "IN-TN",
-        "country": "India",
-        "country_code": "in"
-      }
-    },
-    {
-      "district": "Thoothukudi",
-      "name": "Kulasai",
-      "display_name": "Tiruchendur - Kulasai - Udangudi Road, Udangudi, Tiruchendur, Thoothukudi, Tamil Nadu, 628203, India",
-      "lat": "8.4173190",
-      "lon": "78.0405088",
-      "raw_addr": {
-        "road": "Tiruchendur - Kulasai - Udangudi Road",
-        "village": "Udangudi",
-        "county": "Tiruchendur",
-        "state_district": "Thoothukudi",
-        "state": "Tamil Nadu",
-        "ISO3166-2-lvl4": "IN-TN",
-        "postcode": "628203",
-        "country": "India",
-        "country_code": "in"
-      }
-    },
-    {
-      "district": "Thoothukudi",
-      "name": "Kayalpattinam Bypass",
-      "display_name": "Kayalpattinam Bypass Road, Kayalpattinam, Tiruchendur, Thoothukudi, Tamil Nadu, 628204, India",
-      "lat": "8.5762322",
-      "lon": "78.1052800",
-      "raw_addr": {
-        "road": "Kayalpattinam Bypass Road",
-        "town": "Kayalpattinam",
-        "county": "Tiruchendur",
-        "state_district": "Thoothukudi",
-        "state": "Tamil Nadu",
-        "ISO3166-2-lvl4": "IN-TN",
-        "postcode": "628204",
-        "country": "India",
-        "country_code": "in"
-      }
-    },
-    {
-      "district": "Thoothukudi",
-      "name": "Tharuvaikulam",
-      "display_name": "Tharuvaikulam, Ottapidaram, Thoothukudi, Tamil Nadu, 628105, India",
-      "lat": "8.8938845",
-      "lon": "78.1720442",
-      "raw_addr": {
-        "village": "Tharuvaikulam",
-        "county": "Ottapidaram",
-        "state_district": "Thoothukudi",
-        "state": "Tamil Nadu",
-        "ISO3166-2-lvl4": "IN-TN",
-        "postcode": "628105",
         "country": "India",
         "country_code": "in"
       }
@@ -1704,7 +1597,7 @@
     },
     {
       "district": "Thoothukudi",
-      "name": "Millerpuram",
+      "name": "Millerpuram, Tuticorin",
       "display_name": "Millerpuram Main Road, Thoothukudi, Thoothukkudi, Thoothukudi, Tamil Nadu, 628001, India",
       "lat": "8.7970343",
       "lon": "78.1256072",
@@ -1722,7 +1615,7 @@
     },
     {
       "district": "Thoothukudi",
-      "name": "Bryant Nagar",
+      "name": "Bryant Nagar, Tuticorin",
       "display_name": "ground, bryant nagar, Thoothukudi, Thoothukkudi, Thoothukudi, Tamil Nadu, 628008, India",
       "lat": "8.7910705",
       "lon": "78.1276319",
@@ -1741,7 +1634,7 @@
     },
     {
       "district": "Thoothukudi",
-      "name": "New Colony",
+      "name": "New Colony, Tuticorin",
       "display_name": "New Sugam Medicals, Teachers Colony Main Road, Thoothukudi, Thoothukkudi, Thoothukudi, Tamil Nadu, 628001, India",
       "lat": "8.7963942",
       "lon": "78.1198123",
@@ -1760,35 +1653,131 @@
     },
     {
       "district": "Thoothukudi",
-      "name": "Korampallam",
-      "display_name": "Korampallam, Thoothukkudi, Thoothukudi, Tamil Nadu, 628101, India",
-      "lat": "8.7769490",
-      "lon": "78.0913204",
+      "name": "Korampallam, Tuticorin",
+      "display_name": "Korampallam Odai, Pudukottai, Thoothukkudi, Thoothukudi, Tamil Nadu, India",
+      "lat": "8.8396017",
+      "lon": "77.9866046",
       "raw_addr": {
-        "village": "Korampallam",
+        "river": "Korampallam Odai",
+        "village": "Pudukottai",
         "county": "Thoothukkudi",
         "state_district": "Thoothukudi",
         "state": "Tamil Nadu",
         "ISO3166-2-lvl4": "IN-TN",
-        "postcode": "628101",
         "country": "India",
         "country_code": "in"
       }
     },
     {
       "district": "Thoothukudi",
-      "name": "Palayamkottai Road",
-      "display_name": "Tiruchendur - Palayamkottai - Ambasamudram - Tenkasi - Courtalam - Shencottai Road, Seydunganallur, Srivaikuntam, Thoothukudi, Tamil Nadu, 628809, India",
-      "lat": "8.6624311",
-      "lon": "77.8279910",
+      "name": "Old Bus Stand, Tuticorin",
+      "display_name": "Tuticorin Old Bus Stand, Old Tuticorin - Kollam Road, Thoothukudi, Thoothukkudi, Thoothukudi, Tamil Nadu, 628001, India",
+      "lat": "8.8036808",
+      "lon": "78.1407943",
       "raw_addr": {
-        "road": "Tiruchendur - Palayamkottai - Ambasamudram - Tenkasi - Courtalam - Shencottai Road",
-        "village": "Seydunganallur",
-        "county": "Srivaikuntam",
+        "amenity": "Tuticorin Old Bus Stand",
+        "road": "Old Tuticorin - Kollam Road",
+        "city": "Thoothukudi",
+        "county": "Thoothukkudi",
         "state_district": "Thoothukudi",
         "state": "Tamil Nadu",
         "ISO3166-2-lvl4": "IN-TN",
-        "postcode": "628809",
+        "postcode": "628001",
+        "country": "India",
+        "country_code": "in"
+      }
+    },
+    {
+      "district": "Thoothukudi",
+      "name": "Thermal Nagar, Tuticorin",
+      "display_name": "Thermal Nagar - Camp 1, Tuticorin Bypass, Ottavidu, Thoothukudi, Thoothukkudi, Thoothukudi, Tamil Nadu, 628006, India",
+      "lat": "8.7578126",
+      "lon": "78.1450231",
+      "raw_addr": {
+        "tourism": "Thermal Nagar - Camp 1",
+        "road": "Tuticorin Bypass",
+        "suburb": "Ottavidu",
+        "city": "Thoothukudi",
+        "county": "Thoothukkudi",
+        "state_district": "Thoothukudi",
+        "state": "Tamil Nadu",
+        "ISO3166-2-lvl4": "IN-TN",
+        "postcode": "628006",
+        "country": "India",
+        "country_code": "in"
+      }
+    },
+    {
+      "district": "Thoothukudi",
+      "name": "Harbour Beach, Tuticorin",
+      "display_name": "Thoothukudi Harbour Beach, Tuticorin Port, Thoothukudi, Thoothukkudi, Thoothukudi, Tamil Nadu, 628001, India",
+      "lat": "8.7444267",
+      "lon": "78.1706155",
+      "raw_addr": {
+        "beach": "Thoothukudi Harbour Beach",
+        "suburb": "Tuticorin Port",
+        "city": "Thoothukudi",
+        "county": "Thoothukkudi",
+        "state_district": "Thoothukudi",
+        "state": "Tamil Nadu",
+        "ISO3166-2-lvl4": "IN-TN",
+        "postcode": "628001",
+        "country": "India",
+        "country_code": "in"
+      }
+    },
+    {
+      "district": "Thoothukudi",
+      "name": "Tuticorin Port, Tuticorin",
+      "display_name": "Tuticorin Port, Thoothukudi, Thoothukkudi, Thoothukudi, Tamil Nadu, 628001, India",
+      "lat": "8.7557474",
+      "lon": "78.1777553",
+      "raw_addr": {
+        "suburb": "Tuticorin Port",
+        "city": "Thoothukudi",
+        "county": "Thoothukkudi",
+        "state_district": "Thoothukudi",
+        "state": "Tamil Nadu",
+        "ISO3166-2-lvl4": "IN-TN",
+        "postcode": "628001",
+        "country": "India",
+        "country_code": "in"
+      }
+    },
+    {
+      "district": "Thoothukudi",
+      "name": "Tuticorin Airport",
+      "display_name": "Tuticorin Airport, NH138, Pudukottai, Thoothukkudi, Thoothukudi, Tamil Nadu, 628102, India",
+      "lat": "8.7261275",
+      "lon": "78.0186371",
+      "raw_addr": {
+        "aeroway": "Tuticorin Airport",
+        "road": "NH138",
+        "village": "Pudukottai",
+        "county": "Thoothukkudi",
+        "state_district": "Thoothukudi",
+        "state": "Tamil Nadu",
+        "ISO3166-2-lvl4": "IN-TN",
+        "postcode": "628102",
+        "country": "India",
+        "country_code": "in"
+      }
+    },
+    {
+      "district": "Thoothukudi",
+      "name": "Government Medical College Hospital, Tuticorin",
+      "display_name": "Thoothukudi Government Medical College Hospital, Old Tuticorin - Kollam Road, Thoothukudi, Thoothukkudi, Thoothukudi, Tamil Nadu, 628002, India",
+      "lat": "8.7979750",
+      "lon": "78.1360526",
+      "raw_addr": {
+        "amenity": "Thoothukudi Government Medical College Hospital",
+        "road": "Old Tuticorin - Kollam Road",
+        "city": "Thoothukudi",
+        "county": "Thoothukkudi",
+        "state_district": "Thoothukudi",
+        "state": "Tamil Nadu",
+        "ISO3166-2-lvl4": "IN-TN",
+        "postcode": "628002",
         "country": "India",
         "country_code": "in"
       }
@@ -1979,28 +1968,29 @@
     },
     {
       "district": "Thoothukudi",
-      "name": "Athoor",
-      "display_name": "Athoor, Tiruchendur, Thoothukudi, Tamil Nadu, 628207, India",
-      "lat": "8.6217308",
-      "lon": "78.0699679",
+      "name": "Kayalpattinam",
+      "display_name": "Kayalpattinam, Tiruchendur, Thoothukudi, Tamil Nadu, 628204, India",
+      "lat": "8.5635494",
+      "lon": "78.1277841",
       "raw_addr": {
-        "village": "Athoor",
+        "town": "Kayalpattinam",
         "county": "Tiruchendur",
         "state_district": "Thoothukudi",
         "state": "Tamil Nadu",
         "ISO3166-2-lvl4": "IN-TN",
-        "postcode": "628207",
+        "postcode": "628204",
         "country": "India",
         "country_code": "in"
       }
     },
     {
       "district": "Thoothukudi",
-      "name": "Kayalpattinam",
-      "display_name": "Kayalpattinam, Tiruchendur, Thoothukudi, Tamil Nadu, 628204, India",
-      "lat": "8.5635494",
-      "lon": "78.1277841",
+      "name": "Kayalpattinam Bypass",
+      "display_name": "Kayalpattinam Bypass Road, Kayalpattinam, Tiruchendur, Thoothukudi, Tamil Nadu, 628204, India",
+      "lat": "8.5762322",
+      "lon": "78.1052800",
       "raw_addr": {
+        "road": "Kayalpattinam Bypass Road",
         "town": "Kayalpattinam",
         "county": "Tiruchendur",
         "state_district": "Thoothukudi",
@@ -2030,128 +2020,36 @@
     },
     {
       "district": "Thoothukudi",
-      "name": "Pudukottai",
-      "display_name": "Pudukottai, Thoothukkudi, Thoothukudi, Tamil Nadu, India",
-      "lat": "8.7458212",
-      "lon": "78.0531496",
+      "name": "Holy Cross Church Manapad",
+      "display_name": "Holy Cross Catholic Church Manapad, Manapad Beach Road, Manappadu, Tiruchendur, Thoothukudi, Tamil Nadu, 628206, India",
+      "lat": "8.3730059",
+      "lon": "78.0649625",
       "raw_addr": {
-        "village": "Pudukottai",
-        "county": "Thoothukkudi",
-        "state_district": "Thoothukudi",
-        "state": "Tamil Nadu",
-        "ISO3166-2-lvl4": "IN-TN",
-        "country": "India",
-        "country_code": "in"
-      }
-    },
-    {
-      "district": "Thoothukudi",
-      "name": "Sawyerpuram",
-      "display_name": "Sawyerpuram, Srivaikuntam, Thoothukudi, Tamil Nadu, 628251, India",
-      "lat": "8.6816333",
-      "lon": "78.0292809",
-      "raw_addr": {
-        "village": "Sawyerpuram",
-        "county": "Srivaikuntam",
-        "state_district": "Thoothukudi",
-        "state": "Tamil Nadu",
-        "ISO3166-2-lvl4": "IN-TN",
-        "postcode": "628251",
-        "country": "India",
-        "country_code": "in"
-      }
-    },
-    {
-      "district": "Thoothukudi",
-      "name": "Thenthiruperai",
-      "display_name": "Thenthiruperai, Tiruchendur, Thoothukudi, Tamil Nadu, 628623, India",
-      "lat": "8.6030868",
-      "lon": "77.9872441",
-      "raw_addr": {
-        "village": "Thenthiruperai",
+        "amenity": "Holy Cross Catholic Church Manapad",
+        "road": "Manapad Beach Road",
+        "village": "Manappadu",
         "county": "Tiruchendur",
         "state_district": "Thoothukudi",
         "state": "Tamil Nadu",
         "ISO3166-2-lvl4": "IN-TN",
-        "postcode": "628623",
+        "postcode": "628206",
         "country": "India",
         "country_code": "in"
       }
     },
     {
       "district": "Thoothukudi",
-      "name": "VOC Port",
-      "display_name": "VOC Port Parking, Tuticorin Bypass, Mukkudu, Thoothukudi, Thoothukkudi, Thoothukudi, Tamil Nadu, 628001, India",
-      "lat": "8.7792503",
-      "lon": "78.1103870",
+      "name": "Tharuvaikulam",
+      "display_name": "Tharuvaikulam, Ottapidaram, Thoothukudi, Tamil Nadu, 628105, India",
+      "lat": "8.8938845",
+      "lon": "78.1720442",
       "raw_addr": {
-        "amenity": "VOC Port Parking",
-        "road": "Tuticorin Bypass",
-        "suburb": "Mukkudu",
-        "city": "Thoothukudi",
-        "county": "Thoothukkudi",
+        "village": "Tharuvaikulam",
+        "county": "Ottapidaram",
         "state_district": "Thoothukudi",
         "state": "Tamil Nadu",
         "ISO3166-2-lvl4": "IN-TN",
-        "postcode": "628001",
-        "country": "India",
-        "country_code": "in"
-      }
-    },
-    {
-      "district": "Thoothukudi",
-      "name": "Thermal Nagar",
-      "display_name": "Thermal Nagar - Camp 1, Tuticorin Bypass, Ottavidu, Thoothukudi, Thoothukkudi, Thoothukudi, Tamil Nadu, 628006, India",
-      "lat": "8.7578126",
-      "lon": "78.1450231",
-      "raw_addr": {
-        "tourism": "Thermal Nagar - Camp 1",
-        "road": "Tuticorin Bypass",
-        "suburb": "Ottavidu",
-        "city": "Thoothukudi",
-        "county": "Thoothukkudi",
-        "state_district": "Thoothukudi",
-        "state": "Tamil Nadu",
-        "ISO3166-2-lvl4": "IN-TN",
-        "postcode": "628006",
-        "country": "India",
-        "country_code": "in"
-      }
-    },
-    {
-      "district": "Thoothukudi",
-      "name": "Tuticorin Airport",
-      "display_name": "Tuticorin Airport, NH138, Pudukottai, Thoothukkudi, Thoothukudi, Tamil Nadu, 628102, India",
-      "lat": "8.7261275",
-      "lon": "78.0186371",
-      "raw_addr": {
-        "aeroway": "Tuticorin Airport",
-        "road": "NH138",
-        "village": "Pudukottai",
-        "county": "Thoothukkudi",
-        "state_district": "Thoothukudi",
-        "state": "Tamil Nadu",
-        "ISO3166-2-lvl4": "IN-TN",
-        "postcode": "628102",
-        "country": "India",
-        "country_code": "in"
-      }
-    },
-    {
-      "district": "Thoothukudi",
-      "name": "Harbour Beach",
-      "display_name": "Thoothukudi Harbour Beach, Tuticorin Port, Thoothukudi, Thoothukkudi, Thoothukudi, Tamil Nadu, 628001, India",
-      "lat": "8.7444267",
-      "lon": "78.1706155",
-      "raw_addr": {
-        "beach": "Thoothukudi Harbour Beach",
-        "suburb": "Tuticorin Port",
-        "city": "Thoothukudi",
-        "county": "Thoothukkudi",
-        "state_district": "Thoothukudi",
-        "state": "Tamil Nadu",
-        "ISO3166-2-lvl4": "IN-TN",
-        "postcode": "628001",
+        "postcode": "628105",
         "country": "India",
         "country_code": "in"
       }
@@ -2263,17 +2161,33 @@
     },
     {
       "district": "Thoothukudi",
-      "name": "Pudur",
-      "display_name": "Pudur, Vilathikulam, Thoothukudi, Tamil Nadu, 627905, India",
-      "lat": "9.2943506",
-      "lon": "78.1357458",
+      "name": "Alwarthirunagari",
+      "display_name": "Alwarthirunagari, Tiruchendur, Thoothukudi, Tamil Nadu, 628612, India",
+      "lat": "8.6068681",
+      "lon": "77.9439141",
       "raw_addr": {
-        "village": "Pudur",
-        "county": "Vilathikulam",
+        "village": "Alwarthirunagari",
+        "county": "Tiruchendur",
         "state_district": "Thoothukudi",
         "state": "Tamil Nadu",
         "ISO3166-2-lvl4": "IN-TN",
-        "postcode": "627905",
+        "postcode": "628612",
+        "country": "India",
+        "country_code": "in"
+      }
+    },
+    {
+      "district": "Thoothukudi",
+      "name": "Vallanadu",
+      "display_name": "Vallanadu Blackbuck WLS, Srivaikuntam, Thoothukudi, Tamil Nadu, India",
+      "lat": "8.7004143",
+      "lon": "77.8863593",
+      "raw_addr": {
+        "protected_area": "Vallanadu Blackbuck WLS",
+        "county": "Srivaikuntam",
+        "state_district": "Thoothukudi",
+        "state": "Tamil Nadu",
+        "ISO3166-2-lvl4": "IN-TN",
         "country": "India",
         "country_code": "in"
       }

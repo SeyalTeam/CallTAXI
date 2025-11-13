@@ -27,7 +27,7 @@
     {
       "place": {
         "district": "Thoothukudi",
-        "name": "Thoothukudi Old Bus Stand"
+        "name": "Bryant Nagar Extension, Tuticorin"
       },
       "reason": "no-match",
       "raw": []
@@ -35,7 +35,7 @@
     {
       "place": {
         "district": "Thoothukudi",
-        "name": "Thoothukudi Government Medical College"
+        "name": "Silverpuram, Tuticorin"
       },
       "reason": "no-match",
       "raw": []
@@ -43,7 +43,7 @@
     {
       "place": {
         "district": "Thoothukudi",
-        "name": "Ponnagaram"
+        "name": "Jeyaraj Nagar, Tuticorin"
       },
       "reason": "no-match",
       "raw": []
@@ -51,7 +51,7 @@
     {
       "place": {
         "district": "Thoothukudi",
-        "name": "Vallioor"
+        "name": "Mattakadai, Tuticorin"
       },
       "reason": "no-match",
       "raw": []
@@ -59,7 +59,7 @@
     {
       "place": {
         "district": "Thoothukudi",
-        "name": "Keela Kulasekarapattinam"
+        "name": "Indira Nagar, Tuticorin"
       },
       "reason": "no-match",
       "raw": []
@@ -67,7 +67,7 @@
     {
       "place": {
         "district": "Thoothukudi",
-        "name": "Udangudi Bypass"
+        "name": "Harbour Estate, Tuticorin"
       },
       "reason": "no-match",
       "raw": []
@@ -75,7 +75,7 @@
     {
       "place": {
         "district": "Thoothukudi",
-        "name": "SIPCOT Industrial Centre"
+        "name": "SPIC Nagar, Tuticorin"
       },
       "reason": "no-match",
       "raw": []
@@ -83,7 +83,7 @@
     {
       "place": {
         "district": "Thoothukudi",
-        "name": "Meelavittan"
+        "name": "Meelavittan, Tuticorin"
       },
       "reason": "no-match",
       "raw": []
@@ -91,71 +91,7 @@
     {
       "place": {
         "district": "Thoothukudi",
-        "name": "Bryant Nagar Extension"
-      },
-      "reason": "no-match",
-      "raw": []
-    },
-    {
-      "place": {
-        "district": "Thoothukudi",
-        "name": "3rd Mile"
-      },
-      "reason": "no-match",
-      "raw": []
-    },
-    {
-      "place": {
-        "district": "Thoothukudi",
-        "name": "4th Mile"
-      },
-      "reason": "no-match",
-      "raw": []
-    },
-    {
-      "place": {
-        "district": "Thoothukudi",
-        "name": "Dinasuvadu Media"
-      },
-      "reason": "no-match",
-      "raw": []
-    },
-    {
-      "place": {
-        "district": "Thoothukudi",
-        "name": "Silverpuram"
-      },
-      "reason": "no-match",
-      "raw": []
-    },
-    {
-      "place": {
-        "district": "Thoothukudi",
-        "name": "Jeyaraj Nagar"
-      },
-      "reason": "no-match",
-      "raw": []
-    },
-    {
-      "place": {
-        "district": "Thoothukudi",
-        "name": "Mattakadai"
-      },
-      "reason": "no-match",
-      "raw": []
-    },
-    {
-      "place": {
-        "district": "Thoothukudi",
-        "name": "Indira Nagar"
-      },
-      "reason": "no-match",
-      "raw": []
-    },
-    {
-      "place": {
-        "district": "Thoothukudi",
-        "name": "Harbour Estate"
+        "name": "VOC Port Trust, Tuticorin"
       },
       "reason": "no-match",
       "raw": []
@@ -171,7 +107,7 @@
     {
       "place": {
         "district": "Thoothukudi",
-        "name": "Eramangalam"
+        "name": "Udangudi Bypass"
       },
       "reason": "no-match",
       "raw": []
@@ -179,7 +115,7 @@
     {
       "place": {
         "district": "Thoothukudi",
-        "name": "Muthukrishnapuram"
+        "name": "Keela Kulasekarapattinam"
       },
       "reason": "no-match",
       "raw": []
@@ -187,7 +123,7 @@
     {
       "place": {
         "district": "Thoothukudi",
-        "name": "SPIC Nagar"
+        "name": "Ponnagaram, Tiruchendur"
       },
       "reason": "no-match",
       "raw": []
@@ -195,7 +131,7 @@
     {
       "place": {
         "district": "Thoothukudi",
-        "name": "Tuticorin Port Trust"
+        "name": "SPIC Nagar, Tuticorin"
       },
       "reason": "no-match",
       "raw": []
@@ -203,7 +139,7 @@
     {
       "place": {
         "district": "Thoothukudi",
-        "name": "Sterlite"
+        "name": "SIPCOT Industrial Estate, Tuticorin"
       },
       "reason": "no-match",
       "raw": []
@@ -211,7 +147,7 @@
     {
       "place": {
         "district": "Thoothukudi",
-        "name": "Manapad Holy Cross Shrine"
+        "name": "Sterlite Copper, Tuticorin"
       },
       "reason": "no-match",
       "raw": []
@@ -219,7 +155,7 @@
     {
       "place": {
         "district": "Thoothukudi",
-        "name": "Kulasai Dasara Grounds"
+        "name": "Puthukudi Industrial Estate"
       },
       "reason": "no-match",
       "raw": []
@@ -227,7 +163,7 @@
     {
       "place": {
         "district": "Thoothukudi",
-        "name": "Palo Alto Nagar"
+        "name": "Kulasekarapattinam Temple"
       },
       "reason": "no-match",
       "raw": []
@@ -243,7 +179,7 @@
     {
       "place": {
         "district": "Thoothukudi",
-        "name": "Veerapandiyapuram"
+        "name": "Veerapandiapuram, Tuticorin"
       },
       "reason": "no-match",
       "raw": []
@@ -251,7 +187,7 @@
     {
       "place": {
         "district": "Thoothukudi",
-        "name": "Mappillaiurani"
+        "name": "Mappillaiurani, Tuticorin"
       },
       "reason": "no-match",
       "raw": []
@@ -259,7 +195,7 @@
     {
       "place": {
         "district": "Thoothukudi",
-        "name": "Pillaiyarnatham"
+        "name": "Pillaiyarnatham, Tuticorin"
       },
       "reason": "no-match",
       "raw": []
@@ -267,7 +203,7 @@
     {
       "place": {
         "district": "Thoothukudi",
-        "name": "Keela Arasadi"
+        "name": "Keela Arasadi, Tuticorin"
       },
       "reason": "no-match",
       "raw": []
@@ -275,7 +211,7 @@
     {
       "place": {
         "district": "Thoothukudi",
-        "name": "Mela Arasadi"
+        "name": "Mela Arasadi, Tuticorin"
       },
       "reason": "no-match",
       "raw": []
@@ -291,7 +227,7 @@
     {
       "place": {
         "district": "Thoothukudi",
-        "name": "Pillaiyanmanai"
+        "name": "Pillaiyanmanai, Tuticorin"
       },
       "reason": "no-match",
       "raw": []
@@ -299,11 +235,35 @@
     {
       "place": {
         "district": "Thoothukudi",
-        "name": "Threspuram"
+        "name": "Pudur, Tuticorin"
+      },
+      "reason": "no-match",
+      "raw": []
+    },
+    {
+      "place": {
+        "district": "Thoothukudi",
+        "name": "Threspuram, Tuticorin"
+      },
+      "reason": "no-match",
+      "raw": []
+    },
+    {
+      "place": {
+        "district": "Thoothukudi",
+        "name": "Vallioor"
+      },
+      "reason": "no-match",
+      "raw": []
+    },
+    {
+      "place": {
+        "district": "Thoothukudi",
+        "name": "SIPCOT Industrial Centre, Tuticorin"
       },
       "reason": "no-match",
       "raw": []
     }
   ],
-  "timestamp": "2025-11-13T13:58:35.133Z"
+  "timestamp": "2025-11-13T14:17:28.293Z"
 }

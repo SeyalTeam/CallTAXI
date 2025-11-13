@@ -39,43 +39,30 @@ module.exports = [
   {
     district: 'Thoothukudi',
     places: [
-      // --- Major Transport Hubs ---
-      'Thoothukudi Old Bus Stand',
-      'Thoothukudi New Bus Stand',
-      'Thoothukudi Railway Station',
-
-      // --- Important Newly Added Locations ---
-      'Alwarthirunagari',
-      'Vallanadu',
-      'Thoothukudi Government Medical College',
-      'Ponnagaram',
-
-      // --- Latest 8 Additions (you requested) ---
-      'Vallioor',
-      'Kulasai',
-      'Keela Kulasekarapattinam',
-      'Udangudi Bypass',
-      'Kayalpattinam Bypass',
-      'SIPCOT Industrial Centre',
-      'Tharuvaikulam',
-      'Meelavittan',
-      'Bryant Nagar Extension',
-      '3rd Mile',
-      '4th Mile',
-      'Dinasuvadu Media',
-
-      // --- Main City Areas ---
+      // --- Main City ---
+      'Tuticorin',
       'Thoothukudi',
-      'Millerpuram',
-      'Bryant Nagar',
-      'Silverpuram',
-      'Jeyaraj Nagar',
-      'Mattakadai',
-      'New Colony',
-      'Korampallam',
-      'Indira Nagar',
-      'Palayamkottai Road',
-      'Harbour Estate',
+      'Millerpuram, Tuticorin',
+      'Bryant Nagar, Tuticorin',
+      'Bryant Nagar Extension, Tuticorin',
+      'Silverpuram, Tuticorin',
+      'Jeyaraj Nagar, Tuticorin',
+      'Mattakadai, Tuticorin',
+      'New Colony, Tuticorin',
+      'Korampallam, Tuticorin',
+      'Indira Nagar, Tuticorin',
+      'Harbour Estate, Tuticorin',
+      'SPIC Nagar, Tuticorin',
+      'Meelavittan, Tuticorin',
+      'Old Bus Stand, Tuticorin',
+      'Thermal Nagar, Tuticorin',
+      'Harbour Beach, Tuticorin',
+      'VOC Port Trust, Tuticorin',
+      'Tuticorin Port, Tuticorin',
+      'Tuticorin Airport',
+
+      // --- Medical / Institutions ---
+      'Government Medical College Hospital, Tuticorin',
 
       // --- Taluks ---
       'Kovilpatti',
@@ -87,51 +74,52 @@ module.exports = [
       'Eral',
       'Kayathar',
 
-      // --- Towns / Panchayats ---
+      // --- Important Towns ---
       'Tiruchendur',
       'Arumuganeri',
       'Udangudi',
+      'Udangudi Bypass',
       'Kulasekarapattinam',
-      'Eramangalam',
-      'Athoor',
+      'Keela Kulasekarapattinam',
       'Kayalpattinam',
-      'Muthukrishnapuram',
+      'Kayalpattinam Bypass',
+      'Ponnagaram, Tiruchendur',
       'Manapad',
-      'Pudukottai',
-      'Sawyerpuram',
-      'Thenthiruperai',
+      'Holy Cross Church Manapad',
 
-      // --- Industrial / Port / Important Zones ---
-      'VOC Port',
-      'Thermal Nagar',
-      'SPIC Nagar',
-      'Tuticorin Port Trust',
-      'Tuticorin Airport',
-      'Sterlite',
-      'Harbour Beach',
+      // --- Industrial Zones ---
+      'SPIC Nagar, Tuticorin',
+      'SIPCOT Industrial Estate, Tuticorin',
+      'Sterlite Copper, Tuticorin',
+      'Tharuvaikulam',
+      'Puthukudi Industrial Estate',
 
-      // --- Tourist / Religious Spots ---
+      // --- Religious / Tourist Spots ---
       'Thiruchendur Murugan Temple',
-      'Manapad Holy Cross Shrine',
-      'Kulasai Dasara Grounds',
+      'Kulasekarapattinam Temple',
 
-      // --- Additional Villages / Travel Points ---
+      // --- Suburbs & Villages ---
       'Nazerath',
       'Perungulam',
-      'Palo Alto Nagar',
       'Sundankottai',
       'Kurumbur',
-      'Veerapandiyapuram',
-      'Mappillaiurani',
-      'Pillaiyarnatham',
-      'Keela Arasadi',
-      'Mela Arasadi',
+      'Veerapandiapuram, Tuticorin',
+      'Mappillaiurani, Tuticorin',
+      'Pillaiyarnatham, Tuticorin',
+      'Keela Arasadi, Tuticorin',
+      'Mela Arasadi, Tuticorin',
       'Panchalankurichi',
       'Puthiamputhur',
       'Kadambur',
-      'Pillaiyanmanai',
-      'Pudur',
-      'Threspuram',
+      'Pillaiyanmanai, Tuticorin',
+      'Pudur, Tuticorin',
+      'Threspuram, Tuticorin',
+
+      // --- New Additions You Requested ---
+      'Alwarthirunagari',
+      'Vallanadu',
+      'Vallioor',
+      'SIPCOT Industrial Centre, Tuticorin',
     ],
   },
 ]
