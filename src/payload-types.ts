@@ -193,31 +193,13 @@ export interface Tariff {
   id: string;
   vehicle: string | Vehicle;
   oneway: {
-    /**
-     * Rate per kilometer for One Way
-     */
     perKmRate: number;
-    /**
-     * Bata amount for One Way
-     */
     bata: number;
-    /**
-     * Additional notes like "Toll Parking hills Extra" for One Way
-     */
     extras?: string | null;
   };
   roundtrip: {
-    /**
-     * Rate per kilometer for Round Trip
-     */
     perKmRate: number;
-    /**
-     * Bata amount for Round Trip
-     */
     bata: number;
-    /**
-     * Additional notes like "Toll Parking hills Extra" for Round Trip
-     */
     extras?: string | null;
   };
   updatedAt: string;

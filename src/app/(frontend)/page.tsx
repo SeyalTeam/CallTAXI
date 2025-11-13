@@ -119,7 +119,10 @@ export default function BookingForm() {
 
   useEffect(() => {
     axios.get('/api/vehicles').then((res) => setVehicles(res.data.docs || []))
-    axios.get('/api/tariffs').then((res) => setTariffs(res.data.docs?.[0] || null))
+    axios.get('/api/tariffs').then((res) => {
+      console.log('🚕 Tariffs from API:', res.data.docs?.[0])
+      setTariffs(res.data.docs?.[0] || null)
+    })
   }, [])
 
   let searchTimeout: NodeJS.Timeout
@@ -165,18 +168,43 @@ export default function BookingForm() {
       const osrmURL = `https://router.project-osrm.org/route/v1/driving/${pickupCoords.lon},${pickupCoords.lat};${dropCoords.lon},${dropCoords.lat}?overview=false`
       const { data } = await axios.get(osrmURL)
       const route = data.routes[0]
+
       let distanceKm = route.distance / 1000
       let durationMin = route.duration / 60
-      const tariffGroup = tripType === 'roundtrip' ? tariffs.roundtrip : tariffs.oneway
+
+      // ✅ Detect if tariffs are nested or flat
+      let perKmRate = 0
+      let bata = 0
+
+      if (tariffs.oneway || tariffs.roundtrip) {
+        // Tariffs are nested (Payload schema like {oneway:{perKmRate,bata}})
+        const tariffGroup = tripType === 'roundtrip' ? tariffs.roundtrip : tariffs.oneway
+        perKmRate = tariffGroup?.perKmRate || 0
+        bata = tariffGroup?.bata || tariffs?.bata || 0
+      } else {
+        // Tariffs are flat fields (Payload schema like sedanOnewayRate, etc.)
+        const isSUV = selectedVehicleName?.toLowerCase().includes('suv')
+        const isRound = tripType === 'roundtrip'
+
+        if (isRound) {
+          perKmRate = isSUV ? tariffs.suvRoundtripRate : tariffs.sedanRoundtripRate
+        } else {
+          perKmRate = isSUV ? tariffs.suvOnewayRate : tariffs.sedanOnewayRate
+        }
+        bata = tariffs.bata || 0
+      }
+
       if (tripType === 'roundtrip') {
         distanceKm *= 2
         durationMin *= 2
       }
-      const totalFare = distanceKm * tariffGroup.perKmRate + tariffGroup.bata
+
+      const totalFare = distanceKm * perKmRate + bata
+
       setDistanceInfo(`${distanceKm.toFixed(2)} km • ${Math.round(durationMin)} min`)
       setFare(totalFare.toFixed(2))
     } catch (err) {
-      console.error('OSRM error:', err)
+      console.error('❌ Fare calculation error:', err)
     } finally {
       setLoading(false)
     }
