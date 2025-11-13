@@ -51,21 +51,11 @@ type FormValues = {
 }
 
 type Location = {
+  name: string
+  district: string
   lat: string
   lon: string
-  display_name: string
-  short_name?: string
-  address?: any
 }
-
-const SOUTH_INDIAN_STATES = [
-  'Andhra Pradesh',
-  'Telangana',
-  'Karnataka',
-  'Kerala',
-  'Tamil Nadu',
-  'Puducherry',
-]
 
 export default function BookingForm() {
   const { handleSubmit, control, watch, setValue, reset } = useForm<FormValues>({
@@ -89,6 +79,7 @@ export default function BookingForm() {
   const [selectedVehicleName, setSelectedVehicleName] = useState<string>('')
   const [pickupSuggestions, setPickupSuggestions] = useState<Location[]>([])
   const [dropSuggestions, setDropSuggestions] = useState<Location[]>([])
+  const [tnLocations, setTNLocations] = useState<Location[]>([])
   const [pickupCoords, setPickupCoords] = useState<{ lat: string; lon: string } | null>(null)
   const [dropCoords, setDropCoords] = useState<{ lat: string; lon: string } | null>(null)
   const [tariffs, setTariffs] = useState<any>(null)
@@ -123,38 +114,22 @@ export default function BookingForm() {
       console.log('🚕 Tariffs from API:', res.data.docs?.[0])
       setTariffs(res.data.docs?.[0] || null)
     })
+    fetch('/tamil_nadu_locations.json')
+      .then((res) => res.json())
+      .then((data) => {
+        setTNLocations(data.places)
+      })
   }, [])
 
-  let searchTimeout: NodeJS.Timeout
-  const fetchLocationSuggestions = async (
-    query: string,
-    setSuggestions: (s: Location[]) => void,
-  ) => {
-    if (searchTimeout) clearTimeout(searchTimeout)
-    if (!query.trim()) return setSuggestions([])
+  const handleLocationSearch = (text: string, setSuggestions: (s: Location[]) => void) => {
+    if (!text.trim()) return setSuggestions([])
 
-    searchTimeout = setTimeout(async () => {
-      try {
-        const res = await axios.get('https://nominatim.openstreetmap.org/search', {
-          params: { q: query, format: 'json', limit: 8, countrycodes: 'in', addressdetails: 1 },
-          headers: { 'User-Agent': 'CallTaxiApp/1.0' },
-        })
-        const results = res.data
-          .filter((item: any) => SOUTH_INDIAN_STATES.includes(item.address?.state || ''))
-          .map((item: any) => ({
-            ...item,
-            short_name:
-              item.address?.city_district ||
-              item.address?.town ||
-              item.address?.city ||
-              item.address?.village ||
-              item.display_name.split(',')[0].trim(),
-          }))
-        setSuggestions(results)
-      } catch (err) {
-        console.error('Nominatim error:', err)
-      }
-    }, 300)
+    const q = text.toLowerCase()
+    const results = tnLocations.filter(
+      (p) => p.name.toLowerCase().includes(q) || p.district.toLowerCase().includes(q),
+    )
+
+    setSuggestions(results.slice(0, 10))
   }
 
   useEffect(() => {
@@ -397,7 +372,7 @@ export default function BookingForm() {
               alignItems: 'center',
               justifyContent: 'center',
               backgroundImage:
-                'url(https://asset.chase.com/content/dam/unified-assets/photography/articles/auto/buying/seo-suv-vs-sedan-compressed_10062023.jpg)',
+                'ur[](https://asset.chase.com/content/dam/unified-assets/photography/articles/auto/buying/seo-suv-vs-sedan-compressed_10062023.jpg)',
               backgroundSize: 'cover',
               backgroundPosition: 'center',
               position: 'relative',
@@ -554,7 +529,7 @@ export default function BookingForm() {
                           margin="normal"
                           onChange={(e) => {
                             field.onChange(e)
-                            fetchLocationSuggestions(e.target.value, setPickupSuggestions)
+                            handleLocationSearch(e.target.value, setPickupSuggestions)
                           }}
                         />
                       )}
@@ -585,12 +560,12 @@ export default function BookingForm() {
                               '&:hover': { backgroundColor: '#f1f1f1' },
                             }}
                             onClick={() => {
-                              setValue('pickup', s.short_name!)
+                              setValue('pickup', `${s.name}, ${s.district}`)
                               setPickupCoords({ lat: s.lat, lon: s.lon })
                               setPickupSuggestions([])
                             }}
                           >
-                            {s.short_name}
+                            {s.name}, {s.district}
                           </Box>
                         ))}
                       </Paper>
@@ -610,7 +585,7 @@ export default function BookingForm() {
                           margin="normal"
                           onChange={(e) => {
                             field.onChange(e)
-                            fetchLocationSuggestions(e.target.value, setDropSuggestions)
+                            handleLocationSearch(e.target.value, setDropSuggestions)
                           }}
                         />
                       )}
@@ -641,12 +616,12 @@ export default function BookingForm() {
                               '&:hover': { backgroundColor: '#f1f1f1' },
                             }}
                             onClick={() => {
-                              setValue('drop', s.short_name!)
+                              setValue('drop', `${s.name}, ${s.district}`)
                               setDropCoords({ lat: s.lat, lon: s.lon })
                               setDropSuggestions([])
                             }}
                           >
-                            {s.short_name}
+                            {s.name}, {s.district}
                           </Box>
                         ))}
                       </Paper>
@@ -1288,7 +1263,7 @@ export default function BookingForm() {
               </Typography>
               <Typography sx={{ color: '#424242', mb: 2 }}>+91 96009 07550</Typography>
               <Button
-                href="tel:+919600907550"
+                href="tel:+91 94881 04888"
                 variant="contained"
                 sx={{
                   background: 'linear-gradient(90deg,#004d40,#009688)',
@@ -1340,7 +1315,7 @@ export default function BookingForm() {
               <Typography variant="h6" sx={{ fontWeight: 700, color: '#1b5e20', mb: 0.5 }}>
                 WhatsApp
               </Typography>
-              <Typography sx={{ color: '#424242', mb: 2 }}>+91 96009 07550</Typography>
+              <Typography sx={{ color: '#424242', mb: 2 }}>+91 94881 04888</Typography>
               <Button
                 href="https://api.whatsapp.com/send?phone=919600907550&text=Hello%20Kani%20Taxi"
                 target="_blank"
