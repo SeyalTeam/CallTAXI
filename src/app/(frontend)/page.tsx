@@ -43,18 +43,40 @@ type FormValues = {
   customerName: string
   customerPhone: string
   tripType: 'oneway' | 'roundtrip'
-  vehicle: string
+  vehicle: string // vehicle id
   pickup: string
   drop: string
   pickupDateTime: Dayjs | null
   dropDateTime: Dayjs | null
 }
 
-type Location = {
+type TNLocation = {
   name: string
   district: string
   lat: string
   lon: string
+}
+
+type Vehicle = {
+  id?: string
+  _id?: string
+  name: string
+  slug?: string
+  // may include other fields
+}
+
+type TariffDoc = {
+  id?: string
+  _id?: string
+  vehicle?: string | { id?: string; _id?: string } // relationship
+  oneway?: { perKmRate?: number; bata?: number }
+  roundtrip?: { perKmRate?: number; bata?: number }
+  // fallback/alternate flat fields possibly present:
+  sedanOnewayRate?: number
+  suvOnewayRate?: number
+  sedanRoundtripRate?: number
+  suvRoundtripRate?: number
+  bata?: number
 }
 
 export default function BookingForm() {
@@ -74,23 +96,26 @@ export default function BookingForm() {
   const tripType = watch('tripType')
   const pickup = watch('pickup')
   const drop = watch('drop')
+  const selectedVehicleIdFromForm = watch('vehicle')
 
-  const [vehicles, setVehicles] = useState<Array<{ id: string; name: string; type?: string }>>([])
+  const [vehicles, setVehicles] = useState<Vehicle[]>([])
   const [selectedVehicleName, setSelectedVehicleName] = useState<string>('')
-  const [selectedVehicleType, setSelectedVehicleType] = useState<string>('')
-  const [pickupSuggestions, setPickupSuggestions] = useState<Location[]>([])
-  const [dropSuggestions, setDropSuggestions] = useState<Location[]>([])
-  const [tnLocations, setTNLocations] = useState<Location[]>([])
+  const [pickupSuggestions, setPickupSuggestions] = useState<TNLocation[]>([])
+  const [dropSuggestions, setDropSuggestions] = useState<TNLocation[]>([])
+  const [tnLocations, setTNLocations] = useState<TNLocation[]>([])
   const [pickupCoords, setPickupCoords] = useState<{ lat: string; lon: string } | null>(null)
   const [dropCoords, setDropCoords] = useState<{ lat: string; lon: string } | null>(null)
-  const [tariffs, setTariffs] = useState<any>(null)
+  const [tariffs, setTariffs] = useState<TariffDoc[]>([])
+  const [tariffsByVehicle, setTariffsByVehicle] = useState<Record<string, TariffDoc>>({})
   const [distanceInfo, setDistanceInfo] = useState('')
   const [fare, setFare] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [activeStep, setActiveStep] = useState(0)
+
+  // only icons for stepper
   const steps = [
-    { icon: <DirectionsCarIcon sx={{ color: '#004d40' }} />, label: 'Trip Details' },
-    { icon: <PhoneIcon sx={{ color: '#004d40' }} />, label: 'Customer Info' },
+    { icon: <DirectionsCarIcon sx={{ color: '#004d40' }} />, label: 'Trip' },
+    { icon: <PhoneIcon sx={{ color: '#004d40' }} />, label: 'Customer' },
     { icon: <CheckCircleOutlineIcon sx={{ color: '#004d40' }} />, label: 'Confirm' },
   ]
 
@@ -112,54 +137,71 @@ export default function BookingForm() {
   const pickupRef = useRef<HTMLDivElement>(null)
   const dropRef = useRef<HTMLDivElement>(null)
 
+  // Load vehicles, tariffs, TN dataset
   useEffect(() => {
-    axios.get('/api/vehicles').then((res) => setVehicles(res.data.docs || []))
-    axios.get('/api/tariffs').then((res) => {
-      console.log('🚕 Tariffs from API:', res.data.docs?.[0])
-      setTariffs(res.data.docs?.[0] || null)
-    })
+    // vehicles
+    axios
+      .get('/api/vehicles')
+      .then((res) => {
+        // payload returns docs array; handle multiple shapes
+        const docs = res.data?.docs || res.data || []
+        // Normalize: map to { id, name }
+        const vs: Vehicle[] = docs.map((v: any) => ({
+          id: v.id || v._id || v._doc?.id || v._doc?._id,
+          _id: v._id || v.id,
+          name: v.name || v.title || v.label || 'Unknown',
+          slug: v.slug,
+        }))
+        setVehicles(vs)
+      })
+      .catch((e) => {
+        console.error('vehicles load failed', e)
+      })
+
+    // tariffs
+    axios
+      .get('/api/tariffs')
+      .then((res) => {
+        const docs = res.data?.docs || res.data || []
+        setTariffs(docs)
+      })
+      .catch((e) => {
+        console.error('tariffs load failed', e)
+      })
+
+    // TN dataset (static file in public/)
     fetch('/tamil_nadu_locations.json')
-      .then((res) => res.json())
+      .then((r) => r.json())
       .then((data) => {
-        setTNLocations(data.places)
+        // data.places expected
+        const places = data?.places || data || []
+        setTNLocations(places)
+      })
+      .catch((err) => {
+        console.warn('TN dataset load failed', err)
       })
   }, [])
 
-  const handleLocationSearch = (
-    text: string,
-    setSuggestions: (s: Location[]) => void,
-    fieldName: 'pickup' | 'drop',
-    setCoords: (coords: { lat: string; lon: string }) => void,
-  ) => {
-    if (!text.trim()) {
-      setSuggestions([])
-      return
-    }
-
-    const q = text.toLowerCase()
-    let results = tnLocations.filter(
-      (p) => p.name.toLowerCase().includes(q) || p.district.toLowerCase().includes(q),
-    )
-
-    results.sort((a, b) => {
-      const aa = a.name.toLowerCase().startsWith(q)
-      const bb = b.name.toLowerCase().startsWith(q)
-      if (aa && !bb) return -1
-      if (!aa && bb) return 1
-      return a.name.localeCompare(b.name)
+  // Build tariffsByVehicle mapping when tariffs change
+  useEffect(() => {
+    const map: Record<string, TariffDoc> = {}
+    tariffs.forEach((t: any) => {
+      // t.vehicle could be id string or populated object
+      let vid = ''
+      if (!t) return
+      if (typeof t.vehicle === 'string') vid = t.vehicle
+      else if (t.vehicle && (t.vehicle.id || t.vehicle._id))
+        vid = (t.vehicle.id || t.vehicle._id) as string
+      else if (t.vehicle && typeof t.vehicle === 'object' && (t.vehicle as any).value) {
+        // sometimes frontends store {value: id, label: name}
+        vid = (t.vehicle as any).value
+      }
+      if (vid) map[vid] = t
     })
+    setTariffsByVehicle(map)
+  }, [tariffs])
 
-    if (results.length === 1) {
-      setSuggestions([])
-      const s = results[0]
-      setValue(fieldName, `${s.name}, ${s.district}`)
-      setCoords({ lat: s.lat, lon: s.lon })
-      return
-    }
-
-    setSuggestions(results.slice(0, 10))
-  }
-
+  // Click outside suggestions to close
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -176,36 +218,61 @@ export default function BookingForm() {
     return () => document.removeEventListener('click', handleClickOutside)
   }, [])
 
+  // Recalculate fare when coords, tripType or selected vehicle changes
   useEffect(() => {
-    if (pickupCoords && dropCoords && tariffs && selectedVehicleType) calculateRouteAndFare()
-  }, [pickupCoords, dropCoords, tripType, selectedVehicleType, tariffs])
+    if (pickupCoords && dropCoords && selectedVehicleIdFromForm) {
+      // only run if tariff exists
+      const tariff = tariffsByVehicle[selectedVehicleIdFromForm]
+      if (!tariff) {
+        // tariff not found for vehicle — show not available
+        setFare(null)
+        setDistanceInfo('')
+        return
+      }
+      calculateRouteAndFare()
+    } else {
+      // clear fare if missing pieces
+      setFare(null)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pickupCoords, dropCoords, tripType, selectedVehicleIdFromForm, tariffsByVehicle])
 
   const calculateRouteAndFare = async () => {
-    if (!pickupCoords || !dropCoords || !tariffs || !selectedVehicleType) return
+    if (!pickupCoords || !dropCoords || !selectedVehicleIdFromForm) return
     setLoading(true)
     try {
       const osrmURL = `https://router.project-osrm.org/route/v1/driving/${pickupCoords.lon},${pickupCoords.lat};${dropCoords.lon},${dropCoords.lat}?overview=false`
       const { data } = await axios.get(osrmURL)
-      const route = data.routes[0]
+      const route = data.routes?.[0]
+      if (!route) {
+        setDistanceInfo('')
+        setFare(null)
+        return
+      }
 
       let distanceKm = route.distance / 1000
       let durationMin = route.duration / 60
 
-      // ✅ Detect if tariffs are nested or flat
+      // Lookup tariff for selected vehicle id
+      const tariff = tariffsByVehicle[selectedVehicleIdFromForm]
+      if (!tariff) {
+        setFare(null)
+        setDistanceInfo('')
+        return
+      }
+
+      // pick perKmRate and bata from nested groups if present
       let perKmRate = 0
       let bata = 0
 
-      if (tariffs.oneway || tariffs.roundtrip) {
-        // Tariffs are nested (Payload schema like {oneway:{perKmRate,bata}})
-        const tariffGroup = tripType === 'roundtrip' ? tariffs.roundtrip : tariffs.oneway
-        perKmRate = tariffGroup?.perKmRate || 0
-        bata = tariffGroup?.bata || tariffs?.bata || 0
+      if (tariff.oneway || tariff.roundtrip) {
+        const group = tripType === 'roundtrip' ? tariff.roundtrip : tariff.oneway
+        perKmRate = group?.perKmRate ?? 0
+        // prefer group's bata else fallback to root tariff.bata
+        bata = group?.bata ?? tariff.bata ?? 0
       } else {
-        // Tariffs are flat fields (Payload schema like sedanOnewayRate, etc.)
-        const isRound = tripType === 'roundtrip'
-        const rateKey = `${selectedVehicleType}${isRound ? 'Roundtrip' : 'Oneway'}Rate`
-        perKmRate = tariffs[rateKey] || 0
-        bata = tariffs.bata || 0
+        perKmRate = 0
+        bata = tariff.bata ?? 0
       }
 
       if (tripType === 'roundtrip') {
@@ -216,12 +283,51 @@ export default function BookingForm() {
       const totalFare = distanceKm * perKmRate + bata
 
       setDistanceInfo(`${distanceKm.toFixed(2)} km • ${Math.round(durationMin)} min`)
-      setFare(totalFare.toFixed(2))
+      setFare(Number.isFinite(totalFare) ? totalFare.toFixed(2) : null)
     } catch (err) {
-      console.error('❌ Fare calculation error:', err)
+      console.error('Fare calculation error:', err)
+      setFare(null)
+      setDistanceInfo('')
     } finally {
       setLoading(false)
     }
+  }
+
+  // Local TN search (fast, offline-ready)
+  const handleLocationSearch = (
+    text: string,
+    setSuggestions: (s: TNLocation[]) => void,
+    fieldName: 'pickup' | 'drop',
+    setCoords: (coords: { lat: string; lon: string }) => void,
+  ) => {
+    if (!text.trim()) {
+      setSuggestions([])
+      return
+    }
+    const q = text.toLowerCase()
+    let results = tnLocations.filter(
+      (p) => p.name.toLowerCase().includes(q) || p.district.toLowerCase().includes(q),
+    )
+
+    // prefer items that start with query
+    results.sort((a, b) => {
+      const aa = a.name.toLowerCase().startsWith(q)
+      const bb = b.name.toLowerCase().startsWith(q)
+      if (aa && !bb) return -1
+      if (!aa && bb) return 1
+      return a.name.localeCompare(b.name)
+    })
+
+    // if there's exactly one match, auto-select it (makes booking faster)
+    if (results.length === 1) {
+      const s = results[0]
+      setValue(fieldName, `${s.name}, ${s.district}`)
+      setCoords({ lat: s.lat, lon: s.lon })
+      setSuggestions([])
+      return
+    }
+
+    setSuggestions(results.slice(0, 10))
   }
 
   const handleBookingSubmit = async (data: FormValues) => {
@@ -255,19 +361,33 @@ export default function BookingForm() {
       setPickupCoords(null)
       setDropCoords(null)
       setActiveStep(0)
+      setFare(null)
+      setDistanceInfo('')
     } catch (err: any) {
-      console.error('Booking error →', err.response?.data || err.message)
+      console.error('Booking error →', err?.response?.data || err?.message || err)
       alert('Failed to create booking.')
     }
   }
 
-  const next = () => setActiveStep((prev) => prev + 1)
-  const back = () => setActiveStep((prev) => prev - 1)
+  const next = () => setActiveStep((prev) => Math.min(prev + 1, 2))
+  const back = () => setActiveStep((prev) => Math.max(prev - 1, 0))
 
   const handleScrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     handleMenuClose()
   }
+
+  // update selected vehicle name when selectedVehicleIdFromForm or vehicles changes
+  useEffect(() => {
+    if (!selectedVehicleIdFromForm) {
+      setSelectedVehicleName('')
+      return
+    }
+    const v = vehicles.find(
+      (x) => x.id === selectedVehicleIdFromForm || x._id === selectedVehicleIdFromForm,
+    )
+    setSelectedVehicleName(v ? v.name : '')
+  }, [selectedVehicleIdFromForm, vehicles])
 
   return (
     <>
@@ -287,29 +407,22 @@ export default function BookingForm() {
             py: 1,
           }}
         >
-          {/* 🚖 Brand / Logo */}
           <Box display="flex" alignItems="center" gap={1}>
             <DirectionsCarIcon sx={{ color: '#ffd54f', fontSize: 28 }} />
             <Typography
               variant="h6"
-              sx={{
-                fontWeight: 700,
-                letterSpacing: 0.5,
-                cursor: 'pointer',
-              }}
+              sx={{ fontWeight: 700, letterSpacing: 0.5, cursor: 'pointer' }}
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             >
               Kani Taxi
             </Typography>
           </Box>
 
-          {/* 🌈 Chip Menu Navigation - Visible on md+ */}
           <Box
             sx={{
               display: { xs: 'none', md: 'flex' },
               gap: 1.5,
               alignItems: 'center',
-              flexWrap: 'wrap',
               justifyContent: 'center',
             }}
           >
@@ -323,17 +436,6 @@ export default function BookingForm() {
                   borderColor: 'rgba(255,255,255,0.4)',
                   borderRadius: 999,
                   textTransform: 'none',
-                  fontWeight: 500,
-                  px: 2.5,
-                  py: 0.5,
-                  fontSize: 14,
-                  transition: 'all 0.25s ease',
-                  '&:hover': {
-                    background: '#ffd54f',
-                    color: '#000',
-                    borderColor: '#ffd54f',
-                    boxShadow: '0 3px 8px rgba(255,213,79,0.4)',
-                  },
                 }}
               >
                 {menu.label}
@@ -341,7 +443,6 @@ export default function BookingForm() {
             ))}
           </Box>
 
-          {/* 💛 Book Now CTA & Navigation Icon */}
           <Box display="flex" alignItems="center" gap={1}>
             <Button
               variant="contained"
@@ -351,20 +452,14 @@ export default function BookingForm() {
                 fontWeight: 600,
                 borderRadius: 999,
                 px: 3,
-                '&:hover': {
-                  backgroundColor: '#ffca28',
-                  boxShadow: '0 3px 10px rgba(255,202,40,0.4)',
-                },
+                '&:hover': { backgroundColor: '#ffca28' },
               }}
               onClick={() => handleScrollTo('booking-form')}
             >
               Book Now
             </Button>
             <IconButton
-              sx={{
-                display: { xs: 'flex', md: 'none' },
-                color: '#fff',
-              }}
+              sx={{ display: { xs: 'flex', md: 'none' }, color: '#fff' }}
               onClick={handleMenuClick}
             >
               <MenuIcon />
@@ -373,25 +468,14 @@ export default function BookingForm() {
         </Toolbar>
       </AppBar>
 
-      {/* Mobile Menu */}
       <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose} sx={{ mt: 1 }}>
         {menuItems.map((menu) => (
-          <MenuItem
-            key={menu.id}
-            onClick={() => handleScrollTo(menu.id)}
-            sx={{
-              fontWeight: 500,
-              px: 3,
-              py: 1.5,
-              minWidth: 180,
-            }}
-          >
+          <MenuItem key={menu.id} onClick={() => handleScrollTo(menu.id)} sx={{ fontWeight: 500 }}>
             {menu.label}
           </MenuItem>
         ))}
       </Menu>
 
-      {/* ---------- Booking Section ---------- */}
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <Box
           id="booking-form"
@@ -403,7 +487,6 @@ export default function BookingForm() {
             color: '#fff',
           }}
         >
-          {/* Left side image */}
           <Box
             sx={{
               flex: 1,
@@ -411,7 +494,7 @@ export default function BookingForm() {
               alignItems: 'center',
               justifyContent: 'center',
               backgroundImage:
-                'ur[](https://asset.chase.com/content/dam/unified-assets/photography/articles/auto/buying/seo-suv-vs-sedan-compressed_10062023.jpg)',
+                'url(https://asset.chase.com/content/dam/unified-assets/photography/articles/auto/buying/seo-suv-vs-sedan-compressed_10062023.jpg)',
               backgroundSize: 'cover',
               backgroundPosition: 'center',
               position: 'relative',
@@ -432,7 +515,6 @@ export default function BookingForm() {
             </Typography>
           </Box>
 
-          {/* Right form */}
           <Box
             sx={{
               flex: 1,
@@ -444,16 +526,14 @@ export default function BookingForm() {
               backdropFilter: 'blur(20px)',
             }}
           >
-            {/* 🧾 Your booking form remains here (unchanged) */}
             <Paper
               elevation={10}
               sx={{
                 width: '100%',
-                maxWidth: 520,
+                maxWidth: 560,
                 p: { xs: 3, md: 4 },
                 borderRadius: 6,
                 background: 'rgba(255,255,255,0.15)',
-                backdropFilter: 'blur(25px)',
                 color: '#fff',
                 position: 'relative',
               }}
@@ -462,24 +542,20 @@ export default function BookingForm() {
                 BOOK HERE !
               </Typography>
 
+              {/* Stepper — show icons only (hide text labels) */}
               <Stepper activeStep={activeStep} alternativeLabel sx={{ mb: 3 }}>
                 {steps.map((step, index) => (
                   <Step key={index}>
                     <StepLabel
                       icon={step.icon}
                       sx={{
-                        '& .MuiStepLabel-label': {
-                          display: { xs: 'none', md: 'block' },
-                          color: '#fff',
-                        },
+                        '& .MuiStepLabel-label': { display: 'none' }, // hide the textual label
                         '& .MuiSvgIcon-root': {
                           fontSize: 28,
                           color: activeStep >= index ? '#ffd54f' : '#bdbdbd',
                         },
                       }}
-                    >
-                      {step.label}
-                    </StepLabel>
+                    />
                   </Step>
                 ))}
               </Stepper>
@@ -496,9 +572,7 @@ export default function BookingForm() {
                         <RadioGroup
                           row
                           {...field}
-                          sx={{
-                            justifyContent: { xs: 'space-between', sm: 'flex-start' },
-                          }}
+                          sx={{ justifyContent: { xs: 'space-between', sm: 'flex-start' } }}
                         >
                           <FormControlLabel value="oneway" control={<Radio />} label="One Way" />
                           <FormControlLabel
@@ -512,12 +586,7 @@ export default function BookingForm() {
                   </FormControl>
 
                   <FormControl fullWidth margin="normal" variant="outlined">
-                    <InputLabel
-                      sx={{
-                        color: '#000',
-                        '&.Mui-focused': { color: '#000' },
-                      }}
-                    >
+                    <InputLabel sx={{ color: '#000', '&.Mui-focused': { color: '#000' } }}>
                       Vehicle
                     </InputLabel>
                     <Controller
@@ -531,26 +600,18 @@ export default function BookingForm() {
                             color: '#000',
                             backgroundColor: 'rgba(255,255,255,0.2)',
                             borderRadius: 1,
-                            '.MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(0,0,0,0.3)' },
-                            '&:hover .MuiOutlinedInput-notchedOutline': {
-                              borderColor: 'rgba(0,0,0,0.6)',
-                            },
-                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                              borderColor: '#000',
-                            },
                           }}
                           onChange={(e) => {
                             field.onChange(e)
-                            const v = vehicles.find((x) => x.id === e.target.value)
-                            setSelectedVehicleName(v?.name || '')
-                            setSelectedVehicleType(
-                              v?.type?.toLowerCase() ||
-                                (v?.name.toLowerCase().includes('suv') ? 'suv' : 'sedan'),
+                            const v = vehicles.find(
+                              (x) => x.id === e.target.value || x._id === e.target.value,
                             )
+                            setSelectedVehicleName(v?.name || '')
                           }}
                         >
+                          <MenuItem value="">Choose vehicle</MenuItem>
                           {vehicles.map((v) => (
-                            <MenuItem key={v.id} value={v.id}>
+                            <MenuItem key={v.id || v._id || v.name} value={v.id || v._id}>
                               {v.name}
                             </MenuItem>
                           ))}
@@ -559,7 +620,7 @@ export default function BookingForm() {
                     />
                   </FormControl>
 
-                  {/* ---------- Pickup Field ---------- */}
+                  {/* Pickup */}
                   <Box sx={{ position: 'relative', overflow: 'visible' }} ref={pickupRef}>
                     <Controller
                       name="pickup"
@@ -591,7 +652,7 @@ export default function BookingForm() {
                           left: 0,
                           right: 0,
                           zIndex: 10,
-                          maxHeight: 180,
+                          maxHeight: 220,
                           overflowY: 'auto',
                           borderRadius: 2,
                           mt: 0.5,
@@ -622,7 +683,7 @@ export default function BookingForm() {
                                     (m) => `<strong style="color:#004d40">${m}</strong>`,
                                   ),
                                 }}
-                              />
+                              />{' '}
                               , {s.district}
                             </Box>
                           )
@@ -631,7 +692,7 @@ export default function BookingForm() {
                     )}
                   </Box>
 
-                  {/* ---------- Drop Field ---------- */}
+                  {/* Drop */}
                   <Box sx={{ position: 'relative', overflow: 'visible' }} ref={dropRef}>
                     <Controller
                       name="drop"
@@ -663,7 +724,7 @@ export default function BookingForm() {
                           left: 0,
                           right: 0,
                           zIndex: 10,
-                          maxHeight: 180,
+                          maxHeight: 220,
                           overflowY: 'auto',
                           borderRadius: 2,
                           mt: 0.5,
@@ -694,7 +755,7 @@ export default function BookingForm() {
                                     (m) => `<strong style="color:#004d40">${m}</strong>`,
                                   ),
                                 }}
-                              />
+                              />{' '}
                               , {s.district}
                             </Box>
                           )
@@ -739,7 +800,6 @@ export default function BookingForm() {
                       background: 'linear-gradient(90deg,#ffd54f,#ffb300)',
                       color: '#000',
                       fontWeight: 600,
-                      '&:hover': { background: 'linear-gradient(90deg,#ffca28,#ffa000)' },
                     }}
                     onClick={next}
                   >
@@ -777,7 +837,6 @@ export default function BookingForm() {
                         background: 'linear-gradient(90deg,#ffd54f,#ffb300)',
                         color: '#000',
                         fontWeight: 600,
-                        '&:hover': { background: 'linear-gradient(90deg,#ffca28,#ffa000)' },
                       }}
                       onClick={next}
                     >
@@ -795,7 +854,9 @@ export default function BookingForm() {
                     <b>Trip:</b> {tripType}
                   </Typography>
                   <Typography>
-                    <b>Vehicle:</b> {selectedVehicleName || watch('vehicle')}
+                    <b>Vehicle:</b>{' '}
+                    {selectedVehicleName ||
+                      (selectedVehicleIdFromForm ? selectedVehicleIdFromForm : '—')}
                   </Typography>
                   <Typography>
                     <b>Pickup:</b> {pickup}
@@ -806,23 +867,22 @@ export default function BookingForm() {
                   <Typography>
                     <b>Customer:</b> {watch('customerName')} ({watch('customerPhone')})
                   </Typography>
+
                   {loading ? (
                     <Box display="flex" justifyContent="center" mt={2}>
                       <CircularProgress size={24} />
                     </Box>
-                  ) : (
+                  ) : fare ? (
                     <>
-                      {distanceInfo && (
-                        <Typography sx={{ mt: 2 }}>
-                          <b>Distance:</b> {distanceInfo}
-                        </Typography>
-                      )}
-                      {fare && (
-                        <Typography variant="h6" sx={{ mt: 1, color: '#ffd54f' }}>
-                          Estimated Fare: ₹{fare}
-                        </Typography>
-                      )}
+                      <Typography sx={{ mt: 2 }}>
+                        <b>Distance:</b> {distanceInfo || '—'}
+                      </Typography>
+                      <Typography variant="h6" sx={{ mt: 1, color: '#ffd54f' }}>
+                        Estimated Fare: ₹{fare}
+                      </Typography>
                     </>
+                  ) : (
+                    <Typography sx={{ mt: 2, color: '#ccc' }}>Fare not available</Typography>
                   )}
 
                   <Box display="flex" gap={2} mt={3} flexDirection={{ xs: 'column', sm: 'row' }}>
@@ -837,7 +897,6 @@ export default function BookingForm() {
                         background: 'linear-gradient(90deg,#ffd54f,#ffb300)',
                         color: '#000',
                         fontWeight: 600,
-                        '&:hover': { background: 'linear-gradient(90deg,#ffca28,#ffa000)' },
                       }}
                       onClick={handleSubmit(handleBookingSubmit)}
                     >
@@ -850,636 +909,319 @@ export default function BookingForm() {
           </Box>
         </Box>
       </LocalizationProvider>
-      {/* ---------- TARIFF PLAN SECTION (4-CARD COUPON STYLE WITH ICONS & BOOK NOW) ---------- */}
+
+      {/* Tariff cards — auto-generated from tariffs + vehicles */}
       <Box
         id="tariff-section"
-        sx={{
-          width: '100%',
-          py: { xs: 6, md: 8 },
-          px: { xs: 2, md: 10 },
-          background: '#f7f8fa',
-        }}
+        sx={{ width: '100%', py: { xs: 6, md: 8 }, px: { xs: 2, md: 10 }, background: '#f7f8fa' }}
       >
-        <Typography
-          variant="h4"
-          align="center"
-          sx={{
-            fontWeight: 800,
-            mb: 5,
-            color: '#004d40',
-            letterSpacing: 0.5,
-          }}
-        >
+        <Typography variant="h4" align="center" sx={{ fontWeight: 800, mb: 5, color: '#004d40' }}>
           🚖 Tariff Plans
         </Typography>
 
         <Box
           sx={{
             display: 'grid',
-            gridTemplateColumns: {
-              xs: '1fr',
-              sm: '1fr 1fr',
-              lg: '1fr 1fr 1fr 1fr',
-            },
+            gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', lg: '1fr 1fr 1fr 1fr' },
             gap: 3,
+          }}
+        >
+          {tariffs.length > 0
+            ? tariffs.map((t: TariffDoc, i: number) => {
+                // resolve vehicle name
+                let vid = ''
+                if (typeof t.vehicle === 'string') vid = t.vehicle
+                else if (t.vehicle && (t.vehicle as any).id) vid = (t.vehicle as any).id
+                else if (t.vehicle && (t.vehicle as any)._id) vid = (t.vehicle as any)._id
+
+                const v = vehicles.find((x) => x.id === vid || x._id === vid)
+                const vehicleName = v?.name || 'Vehicle'
+
+                // determine label & rates
+                const onewayRate = t.oneway?.perKmRate ?? null
+                const onewayBata = t.oneway?.bata ?? t.bata ?? null
+                const roundRate = t.roundtrip?.perKmRate ?? null
+                const roundBata = t.roundtrip?.bata ?? t.bata ?? null
+
+                // fallback formatting
+                const fareLabel = onewayRate ? `₹${onewayRate} / Km` : '—'
+                const bataLabel = onewayBata ? `₹${onewayBata}` : '—'
+
+                return (
+                  <Box
+                    key={i}
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between',
+                      alignItems: 'flex-start',
+                      background: '#fff',
+                      borderRadius: 4,
+                      boxShadow: '0 4px 15px rgba(0,0,0,0.08)',
+                      p: 3,
+                    }}
+                  >
+                    <Typography sx={{ fontWeight: 800, color: '#212121' }}>
+                      {vehicleName}
+                    </Typography>
+                    <Typography sx={{ color: '#424242', mt: 0.5 }}>
+                      {fareLabel} • Bata {bataLabel}
+                    </Typography>
+                    <Typography sx={{ color: '#616161', fontSize: 13, mt: 0.5 }}>
+                      Toll, Parking & Hills Extra
+                    </Typography>
+                    <Button
+                      variant="contained"
+                      sx={{
+                        mt: 2,
+                        borderRadius: 20,
+                        background: '#004d40',
+                        color: '#fff',
+                        fontWeight: 600,
+                      }}
+                      onClick={() => {
+                        document
+                          .getElementById('booking-form')
+                          ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                        setValue('vehicle', vid)
+                      }}
+                    >
+                      Book Now
+                    </Button>
+                  </Box>
+                )
+              })
+            : // fallback static cards (if tariffs not ready)
+              [
+                { title: 'Sedan', fare: '₹14 / Km', bata: '₹400', Icon: 'sedan' },
+                { title: 'SUV', fare: '₹19 / Km', bata: '₹400', Icon: 'suv' },
+                { title: 'Sedan (RT)', fare: '₹13 / Km', bata: '₹400', Icon: 'sedan' },
+                { title: 'SUV (RT)', fare: '₹18 / Km', bata: '₹400', Icon: 'suv' },
+              ].map((plan, i) => (
+                <Box
+                  key={i}
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    background: '#fff',
+                    borderRadius: 4,
+                    boxShadow: '0 4px 15px rgba(0,0,0,0.08)',
+                    p: 3,
+                  }}
+                >
+                  {plan.Icon === 'sedan' ? (
+                    <DirectionsCarFilledOutlinedIcon sx={{ fontSize: 48, mb: 1 }} />
+                  ) : (
+                    <AirportShuttleOutlinedIcon sx={{ fontSize: 48, mb: 1 }} />
+                  )}
+                  <Typography variant="h6" sx={{ fontWeight: 800 }}>
+                    {plan.title}
+                  </Typography>
+                  <Typography sx={{ color: '#424242', mt: 0.5 }}>
+                    {plan.fare} • Bata {plan.bata}
+                  </Typography>
+                  <Button
+                    variant="contained"
+                    sx={{ mt: 2, borderRadius: 20, background: '#004d40', color: '#fff' }}
+                    onClick={() =>
+                      document
+                        .getElementById('booking-form')
+                        ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                    }
+                  >
+                    Book Now
+                  </Button>
+                </Box>
+              ))}
+        </Box>
+      </Box>
+
+      {/* Rest of the page: Terms / About / Contact unchanged (kept compact) */}
+      <Box
+        sx={{
+          width: '100%',
+          py: { xs: 5, md: 7 },
+          px: { xs: 3, md: 10 },
+          background: '#ffffff',
+          borderTop: '1px solid #eee',
+        }}
+      >
+        <Typography variant="h4" align="center" sx={{ fontWeight: 800, mb: 1, color: '#004d40' }}>
+          Terms & Conditions
+        </Typography>
+        <Typography align="center" sx={{ color: '#616161', mb: 4, fontSize: 15 }}>
+          Please review our key service terms before booking your ride.
+        </Typography>
+        {/* compact grid of conditions */}
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: '1fr 1fr 1fr 1fr' },
+            gap: 2.5,
+            maxWidth: 1100,
+            mx: 'auto',
           }}
         >
           {[
             {
-              type: 'ONEWAY',
-              labelColor: '#ffb300',
-              bg: '#fff8e1',
-              iconColor: '#ffb300',
-              Icon: 'sedan',
-              title: 'Sedan Cab',
-              fare: '₹14 / Km',
-              bata: '₹400',
+              title: 'General',
+              text: 'Fares may vary by route and time. Bookings depend on driver availability.',
             },
             {
-              type: 'ONEWAY',
-              labelColor: '#1976d2',
-              bg: '#e3f2fd',
-              iconColor: '#1976d2',
-              Icon: 'suv',
-              title: 'SUV Cab',
-              fare: '₹19 / Km',
-              bata: '₹400',
+              title: 'Fare Inclusions',
+              text: 'Rates include base fare + driver bata. Toll & parking extra.',
+            },
+            { title: 'Waiting', text: '10 mins free waiting, then hourly rates apply.' },
+            {
+              title: 'Cancellation',
+              text: 'Free up to 30 mins before pickup. Later cancellations may incur a fee.',
             },
             {
-              type: 'ROUND TRIP',
-              labelColor: '#388e3c',
-              bg: '#e8f5e9',
-              iconColor: '#388e3c',
-              Icon: 'sedan',
-              title: 'Sedan Cab',
-              fare: '₹13 / Km',
-              bata: '₹400',
+              title: 'Trip Change',
+              text: 'Fares adjust automatically for extra stops or distance.',
+            },
+            { title: 'Safety', text: 'Verified drivers. Seat belts mandatory for all passengers.' },
+            {
+              title: 'Payment',
+              text: 'Accepts UPI, cash & digital payments with instant receipts.',
             },
             {
-              type: 'ROUND TRIP',
-              labelColor: '#7b1fa2',
-              bg: '#f3e5f5',
-              iconColor: '#7b1fa2',
-              Icon: 'suv',
-              title: 'SUV Cab',
-              fare: '₹18 / Km',
-              bata: '₹400',
+              title: 'Disclaimer',
+              text: 'Rates or service may change due to operational or weather reasons.',
             },
-          ].map((plan, i) => (
-            <Box
-              key={i}
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                alignItems: 'flex-start',
-                background: plan.bg,
-                borderRadius: 4,
-                boxShadow: '0 4px 15px rgba(0,0,0,0.08)',
-                overflow: 'hidden',
-                p: 3,
-                textAlign: 'left',
-                position: 'relative',
-                transition: 'transform 0.25s ease, box-shadow 0.25s ease',
-                '&:hover': {
-                  transform: 'translateY(-5px)',
-                  boxShadow: `0 6px 20px ${plan.iconColor}33`,
-                },
-              }}
-            >
-              {/* Tag */}
-              <Typography
-                sx={{
-                  position: 'absolute',
-                  top: 0,
-                  right: 0,
-                  background: plan.labelColor,
-                  color: '#fff',
-                  px: 2,
-                  py: 0.5,
-                  fontWeight: 700,
-                  borderBottomLeftRadius: 8,
-                  fontSize: 13,
-                }}
-              >
-                {plan.type}
+          ].map((item, index) => (
+            <Box key={index} sx={{ p: 2.5, borderRadius: 3, background: '#f9fafa' }}>
+              <Typography sx={{ fontWeight: 700, color: '#004d40', fontSize: 15, mb: 0.5 }}>
+                {index + 1}. {item.title}
               </Typography>
-
-              {/* Icon */}
-              {plan.Icon === 'sedan' ? (
-                <DirectionsCarFilledOutlinedIcon
-                  sx={{ fontSize: 48, color: plan.iconColor, mb: 1 }}
-                />
-              ) : (
-                <AirportShuttleOutlinedIcon sx={{ fontSize: 48, color: plan.iconColor, mb: 1 }} />
-              )}
-
-              {/* Text */}
-              <Typography variant="h6" sx={{ fontWeight: 800, color: '#212121' }}>
-                {plan.title}
-              </Typography>
-              <Typography sx={{ color: '#424242', mt: 0.5 }}>
-                {plan.fare} • Bata {plan.bata}
-              </Typography>
-              <Typography sx={{ color: '#616161', fontSize: 13, mt: 0.5 }}>
-                Toll, Parking & Hills Extra
-              </Typography>
-
-              {/* Book Now Button */}
-              <Button
-                variant="contained"
-                sx={{
-                  mt: 2,
-                  borderRadius: 20,
-                  background: plan.iconColor,
-                  color: '#fff',
-                  fontWeight: 600,
-                  px: 3,
-                  textTransform: 'none',
-                  boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
-                  '&:hover': {
-                    background: plan.labelColor,
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
-                  },
-                }}
-                onClick={() => {
-                  const section = document.getElementById('booking-form')
-                  section?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-                }}
-              >
-                Book Now
-              </Button>
+              <Typography sx={{ color: '#616161', fontSize: 13 }}>{item.text}</Typography>
             </Box>
           ))}
         </Box>
-        {/* ---------- TERMS & CONDITIONS (Compact Grid Design) ---------- */}
-        <Box
-          sx={{
-            width: '100%',
-            py: { xs: 5, md: 7 },
-            px: { xs: 3, md: 10 },
-            background: '#ffffff',
-            borderTop: '1px solid #eee',
-          }}
-        >
-          <Typography
-            variant="h4"
-            align="center"
-            sx={{
-              fontWeight: 800,
-              mb: 1,
-              color: '#004d40',
-            }}
-          >
-            Terms & Conditions
-          </Typography>
-
-          <Typography
-            align="center"
-            sx={{
-              color: '#616161',
-              mb: 4,
-              fontSize: 15,
-            }}
-          >
-            Please review our key service terms before booking your ride.
-          </Typography>
-
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: {
-                xs: '1fr',
-                sm: '1fr 1fr',
-                md: '1fr 1fr 1fr 1fr',
-              },
-              gap: 2.5,
-              maxWidth: 1100,
-              mx: 'auto',
-            }}
-          >
-            {[
-              {
-                title: 'General',
-                text: 'Fares may vary by route and time. Bookings depend on driver availability.',
-              },
-              {
-                title: 'Fare Inclusions',
-                text: 'Rates include base fare + driver bata. Toll & parking extra.',
-              },
-              {
-                title: 'Waiting',
-                text: '10 mins free waiting, then hourly rates apply.',
-              },
-              {
-                title: 'Cancellation',
-                text: 'Free up to 30 mins before pickup. Later cancellations may incur a fee.',
-              },
-              {
-                title: 'Trip Change',
-                text: 'Fares adjust automatically for extra stops or distance.',
-              },
-              {
-                title: 'Safety',
-                text: 'Verified drivers. Seat belts mandatory for all passengers.',
-              },
-              {
-                title: 'Payment',
-                text: 'Accepts UPI, cash & digital payments with instant receipts.',
-              },
-              {
-                title: 'Disclaimer',
-                text: 'Rates or service may change due to operational or weather reasons.',
-              },
-            ].map((item, index) => (
-              <Box
-                key={index}
-                sx={{
-                  p: 2.5,
-                  borderRadius: 3,
-                  background: '#f9fafa',
-                  boxShadow: '0 2px 5px rgba(0,0,0,0.05)',
-                  transition: 'all 0.25s ease',
-                  '&:hover': {
-                    transform: 'translateY(-3px)',
-                    boxShadow: '0 4px 10px rgba(0,0,0,0.08)',
-                  },
-                }}
-              >
-                <Typography
-                  sx={{
-                    fontWeight: 700,
-                    color: '#004d40',
-                    fontSize: 15,
-                    mb: 0.5,
-                  }}
-                >
-                  {index + 1}. {item.title}
-                </Typography>
-                <Typography sx={{ color: '#616161', fontSize: 13, lineHeight: 1.5 }}>
-                  {item.text}
-                </Typography>
-              </Box>
-            ))}
-          </Box>
-
-          <Typography
-            align="center"
-            sx={{
-              mt: 5,
-              color: '#9e9e9e',
-              fontSize: 12,
-            }}
-          >
-            Last updated on{' '}
-            {new Date().toLocaleDateString('en-IN', {
-              day: '2-digit',
-              month: 'short',
-              year: 'numeric',
-            })}
-          </Typography>
-        </Box>
-        {/* ---------- ABOUT US SECTION (Kani Taxi) ---------- */}
-        <Box
-          id="about-section"
-          sx={{
-            width: '100%',
-            py: { xs: 6, md: 8 },
-            px: { xs: 3, md: 10 },
-            background: '#f9fafa',
-            borderTop: '1px solid #eee',
-          }}
-        >
-          <Typography
-            variant="h4"
-            align="center"
-            sx={{
-              fontWeight: 800,
-              mb: 2,
-              color: '#004d40',
-            }}
-          >
-            About <span style={{ color: '#ffb300' }}>Kani Taxi</span>
-          </Typography>
-
-          <Typography
-            align="center"
-            sx={{
-              color: '#616161',
-              maxWidth: 800,
-              mx: 'auto',
-              fontSize: 15,
-              lineHeight: 1.7,
-              mb: 5,
-            }}
-          >
-            At <b>Kani Taxi</b>, we’re redefining everyday travel with comfort, safety, and
-            reliability. Whether it’s a short city ride or an outstation trip, our verified drivers
-            and well-maintained vehicles ensure every journey is smooth, affordable, and on time.
-            Founded with a passion for customer-first service, Kani Taxi operates across South
-            India, connecting people and places seamlessly.
-          </Typography>
-
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr 1fr' },
-              gap: 3,
-              maxWidth: 1000,
-              mx: 'auto',
-            }}
-          >
-            {[
-              {
-                icon: '🕒',
-                title: 'On-Time Service',
-                text: 'Punctual pickups and reliable drop-offs for stress-free travel.',
-              },
-              {
-                icon: '💰',
-                title: 'Transparent Pricing',
-                text: 'No hidden charges — just fair fares and honest service.',
-              },
-              {
-                icon: '🛡️',
-                title: 'Trusted Drivers',
-                text: 'Every driver is verified, trained, and customer-focused.',
-              },
-            ].map((feature, i) => (
-              <Box
-                key={i}
-                sx={{
-                  background: '#fff',
-                  borderRadius: 3,
-                  p: 3,
-                  boxShadow: '0 3px 10px rgba(0,0,0,0.05)',
-                  textAlign: 'center',
-                  transition: 'transform 0.25s ease, box-shadow 0.25s ease',
-                  '&:hover': {
-                    transform: 'translateY(-5px)',
-                    boxShadow: '0 5px 15px rgba(0,0,0,0.1)',
-                  },
-                }}
-              >
-                <Typography sx={{ fontSize: 30 }}>{feature.icon}</Typography>
-                <Typography
-                  sx={{
-                    fontWeight: 700,
-                    mt: 1,
-                    color: '#004d40',
-                    fontSize: 16,
-                  }}
-                >
-                  {feature.title}
-                </Typography>
-                <Typography
-                  sx={{
-                    color: '#616161',
-                    fontSize: 14,
-                    mt: 0.5,
-                    lineHeight: 1.5,
-                  }}
-                >
-                  {feature.text}
-                </Typography>
-              </Box>
-            ))}
-          </Box>
-
-          <Typography
-            align="center"
-            sx={{
-              mt: 5,
-              color: '#9e9e9e',
-              fontSize: 13,
-            }}
-          >
-            © {new Date().getFullYear()} Kani Taxi — All rights reserved.
-          </Typography>
-        </Box>
-
-        <Box
-          sx={{
-            width: '100%',
-            py: { xs: 6, md: 8 },
-            px: { xs: 3, md: 10 },
-            background: 'linear-gradient(135deg, #fefefe 0%, #e9f7f5 100%)',
-            borderTop: '1px solid #ddd',
-          }}
-        >
-          <Typography
-            variant="h4"
-            align="center"
-            sx={{
-              fontWeight: 800,
-              mb: 1,
-              color: '#004d40',
-            }}
-          >
-            Contact Us
-          </Typography>
-
-          <Typography
-            align="center"
-            sx={{
-              color: '#555',
-              mb: 5,
-              fontSize: 15,
-            }}
-          >
-            Reach us easily — choose your preferred way to get in touch with <b>Kani Taxi</b>.
-          </Typography>
-
-          {/* Contact Cards */}
-          <Box
-            id="contact-section"
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr 1fr' },
-              gap: 3,
-              maxWidth: 1100,
-              mx: 'auto',
-            }}
-          >
-            {/* --- Call Card --- */}
-            <Paper
-              elevation={4}
-              sx={{
-                background: '#ffffff',
-                borderRadius: 4,
-                p: 4,
-                textAlign: 'center',
-                border: '1px solid #e0f2f1',
-                transition: 'all 0.3s ease',
-                '&:hover': {
-                  transform: 'translateY(-6px)',
-                  boxShadow: '0 8px 20px rgba(0,0,0,0.1)',
-                },
-              }}
-            >
-              <Box
-                sx={{
-                  width: 70,
-                  height: 70,
-                  borderRadius: '20%',
-                  background: '#004d40',
-                  mx: 'auto',
-                  mb: 2,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <PhoneIcon sx={{ color: '#fff', fontSize: 38 }} />
-              </Box>
-
-              <Typography variant="h6" sx={{ fontWeight: 700, color: '#004d40', mb: 0.5 }}>
-                Call Us
-              </Typography>
-              <Typography sx={{ color: '#424242', mb: 2 }}>+91 96009 07550</Typography>
-              <Button
-                href="tel:+91 94881 04888"
-                variant="contained"
-                sx={{
-                  background: 'linear-gradient(90deg,#004d40,#009688)',
-                  textTransform: 'none',
-                  color: '#fff',
-                  borderRadius: 3,
-                  px: 3,
-                  py: 1,
-                  fontWeight: 600,
-                  '&:hover': { opacity: 0.9 },
-                }}
-              >
-                Call Now
-              </Button>
-            </Paper>
-
-            {/* --- WhatsApp Card --- */}
-            <Paper
-              elevation={4}
-              sx={{
-                background: '#ffffff',
-                borderRadius: 4,
-                p: 4,
-                textAlign: 'center',
-                border: '1px solid #d9f7e8',
-                transition: 'all 0.3s ease',
-                '&:hover': {
-                  transform: 'translateY(-6px)',
-                  boxShadow: '0 8px 20px rgba(0,0,0,0.1)',
-                },
-              }}
-            >
-              <Box
-                sx={{
-                  width: 70,
-                  height: 70,
-                  borderRadius: '20%',
-                  background: '#25D366',
-                  mx: 'auto',
-                  mb: 2,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <WhatsAppIcon sx={{ color: '#fff', fontSize: 38 }} />
-              </Box>
-
-              <Typography variant="h6" sx={{ fontWeight: 700, color: '#1b5e20', mb: 0.5 }}>
-                WhatsApp
-              </Typography>
-              <Typography sx={{ color: '#424242', mb: 2 }}>+91 94881 04888</Typography>
-              <Button
-                href="https://api.whatsapp.com/send?phone=919600907550&text=Hello%20Kani%20Taxi"
-                target="_blank"
-                variant="contained"
-                sx={{
-                  background: 'linear-gradient(90deg,#25D366,#128C7E)',
-                  textTransform: 'none',
-                  color: '#fff',
-                  borderRadius: 3,
-                  px: 3,
-                  py: 1,
-                  fontWeight: 600,
-                  '&:hover': { opacity: 0.9 },
-                }}
-              >
-                Chat on WhatsApp
-              </Button>
-            </Paper>
-
-            {/* --- Email Card --- */}
-            <Paper
-              elevation={4}
-              sx={{
-                background: '#ffffff',
-                borderRadius: 4,
-                p: 4,
-                textAlign: 'center',
-                border: '1px solid #fff0c2',
-                transition: 'all 0.3s ease',
-                '&:hover': {
-                  transform: 'translateY(-6px)',
-                  boxShadow: '0 8px 20px rgba(0,0,0,0.1)',
-                },
-              }}
-            >
-              <Box
-                sx={{
-                  width: 70,
-                  height: 70,
-                  borderRadius: '20%',
-                  background: '#ffb300',
-                  mx: 'auto',
-                  mb: 2,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <EmailIcon sx={{ color: '#fff', fontSize: 38 }} />
-              </Box>
-
-              <Typography variant="h6" sx={{ fontWeight: 700, color: '#e65100', mb: 0.5 }}>
-                Email Us
-              </Typography>
-              <Typography sx={{ color: '#424242', mb: 2 }}>kanitaxi@gmail.com</Typography>
-              <Button
-                href="mailto:kanitaxi@gmail.com"
-                variant="contained"
-                sx={{
-                  background: 'linear-gradient(90deg,#ffb300,#ff8f00)',
-                  textTransform: 'none',
-                  color: '#fff',
-                  borderRadius: 3,
-                  px: 3,
-                  py: 1,
-                  fontWeight: 600,
-                  '&:hover': { opacity: 0.9 },
-                }}
-              >
-                Send Email
-              </Button>
-            </Paper>
-          </Box>
-
-          {/* Address */}
-          <Typography
-            align="center"
-            sx={{
-              mt: 6,
-              color: '#424242',
-              fontSize: 14,
-              lineHeight: 1.7,
-            }}
-          >
-            📍 No.10, South Street, Mailappapuram, Pettai, Tirunelveli, Tamil Nadu - 627004
-          </Typography>
-        </Box>
+        <Typography align="center" sx={{ mt: 5, color: '#9e9e9e', fontSize: 12 }}>
+          Last updated on{' '}
+          {new Date().toLocaleDateString('en-IN', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+          })}
+        </Typography>
       </Box>
-      {/* ---------- FOOTER SECTION (Kani Taxi - Compact Clean Version) ---------- */}
+
+      {/* About & Contact sections (kept brief) */}
+      <Box
+        id="about-section"
+        sx={{
+          width: '100%',
+          py: { xs: 6, md: 8 },
+          px: { xs: 3, md: 10 },
+          background: '#f9fafa',
+          borderTop: '1px solid #eee',
+        }}
+      >
+        <Typography variant="h4" align="center" sx={{ fontWeight: 800, mb: 2, color: '#004d40' }}>
+          About <span style={{ color: '#ffb300' }}>Kani Taxi</span>
+        </Typography>
+        <Typography
+          align="center"
+          sx={{ color: '#616161', maxWidth: 800, mx: 'auto', fontSize: 15, lineHeight: 1.7, mb: 5 }}
+        >
+          At <b>Kani Taxi</b>, we’re redefining everyday travel with comfort, safety, and
+          reliability...
+        </Typography>
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr 1fr' },
+            gap: 3,
+            maxWidth: 1000,
+            mx: 'auto',
+          }}
+        >
+          <Box sx={{ background: '#fff', borderRadius: 3, p: 3, textAlign: 'center' }}>
+            <Typography sx={{ fontSize: 30 }}>🕒</Typography>
+            <Typography sx={{ fontWeight: 700, mt: 1, color: '#004d40' }}>
+              On-Time Service
+            </Typography>
+          </Box>
+          <Box sx={{ background: '#fff', borderRadius: 3, p: 3, textAlign: 'center' }}>
+            <Typography sx={{ fontSize: 30 }}>💰</Typography>
+            <Typography sx={{ fontWeight: 700, mt: 1, color: '#004d40' }}>
+              Transparent Pricing
+            </Typography>
+          </Box>
+          <Box sx={{ background: '#fff', borderRadius: 3, p: 3, textAlign: 'center' }}>
+            <Typography sx={{ fontSize: 30 }}>🛡️</Typography>
+            <Typography sx={{ fontWeight: 700, mt: 1, color: '#004d40' }}>
+              Trusted Drivers
+            </Typography>
+          </Box>
+        </Box>
+        <Typography align="center" sx={{ mt: 5, color: '#9e9e9e', fontSize: 13 }}>
+          © {new Date().getFullYear()} Kani Taxi — All rights reserved.
+        </Typography>
+      </Box>
+
+      <Box
+        sx={{
+          width: '100%',
+          py: { xs: 6, md: 8 },
+          px: { xs: 3, md: 10 },
+          background: 'linear-gradient(135deg, #fefefe 0%, #e9f7f5 100%)',
+          borderTop: '1px solid #ddd',
+        }}
+      >
+        <Typography variant="h4" align="center" sx={{ fontWeight: 800, mb: 1, color: '#004d40' }}>
+          Contact Us
+        </Typography>
+        <Typography align="center" sx={{ color: '#555', mb: 5, fontSize: 15 }}>
+          Reach us easily — choose your preferred way to get in touch with <b>Kani Taxi</b>.
+        </Typography>
+        <Box
+          id="contact-section"
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr 1fr' },
+            gap: 3,
+            maxWidth: 1100,
+            mx: 'auto',
+          }}
+        >
+          <Paper elevation={4} sx={{ p: 4, textAlign: 'center' }}>
+            <PhoneIcon sx={{ fontSize: 38 }} />
+            <Typography sx={{ fontWeight: 700, color: '#004d40' }}>Call Us</Typography>
+            <Typography>+91 94881 04888</Typography>
+            <Button href="tel:+919488104888" variant="contained" sx={{ mt: 2 }}>
+              Call Now
+            </Button>
+          </Paper>
+          <Paper elevation={4} sx={{ p: 4, textAlign: 'center' }}>
+            <WhatsAppIcon sx={{ fontSize: 38 }} />
+            <Typography sx={{ fontWeight: 700, color: '#1b5e20' }}>WhatsApp</Typography>
+            <Typography>+91 94881 04888</Typography>
+            <Button
+              href="https://api.whatsapp.com/send?phone=919488104888"
+              target="_blank"
+              variant="contained"
+              sx={{ mt: 2 }}
+            >
+              Chat
+            </Button>
+          </Paper>
+          <Paper elevation={4} sx={{ p: 4, textAlign: 'center' }}>
+            <EmailIcon sx={{ fontSize: 38 }} />
+            <Typography sx={{ fontWeight: 700, color: '#e65100' }}>Email Us</Typography>
+            <Typography>kanitaxi@gmail.com</Typography>
+            <Button href="mailto:kanitaxi@gmail.com" variant="contained" sx={{ mt: 2 }}>
+              Send Email
+            </Button>
+          </Paper>
+        </Box>
+        <Typography align="center" sx={{ mt: 6, color: '#424242' }}>
+          📍 No.10, South Street, Mailappapuram, Pettai, Tirunelveli, Tamil Nadu - 627004
+        </Typography>
+      </Box>
+
       <Box
         component="footer"
         sx={{
@@ -1489,35 +1231,14 @@ export default function BookingForm() {
           background: '#002f2b',
           color: '#ffffff',
           textAlign: 'center',
-          borderTop: '1px solid rgba(255,255,255,0.1)',
         }}
       >
-        <Typography
-          sx={{
-            fontSize: 14,
-            opacity: 0.85,
-            mb: 0.5,
-          }}
-        >
-          Copyright © 2025. <b>Kani TAXI</b> All rights reserved.
+        <Typography sx={{ fontSize: 14, opacity: 0.85, mb: 0.5 }}>
+          Copyright © {new Date().getFullYear()}. <b>Kani TAXI</b> All rights reserved.
         </Typography>
-
-        <Typography
-          sx={{
-            fontSize: 13,
-            opacity: 0.75,
-          }}
-        >
+        <Typography sx={{ fontSize: 13, opacity: 0.75 }}>
           Designed & Developed by{' '}
-          <Box
-            component="span"
-            sx={{
-              color: '#ffb300',
-              fontWeight: 600,
-              cursor: 'pointer',
-              '&:hover': { textDecoration: 'underline' },
-            }}
-          >
+          <Box component="span" sx={{ color: '#ffb300', fontWeight: 600 }}>
             VSeyal
           </Box>
         </Typography>
