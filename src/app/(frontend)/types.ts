@@ -1,0 +1,46 @@
+import type { Dayjs } from 'dayjs'
+
+export type FormValues = {
+  customerName: string
+  customerPhone: string
+  tripType: 'oneway' | 'roundtrip' | 'packages'
+  vehicle: string
+  pickup: string
+  drop: string
+  pickupDateTime: Dayjs | null
+  dropDateTime: Dayjs | null
+}
+
+export type TNLocation = {
+  name: string
+  district: string
+  lat: string
+  lon: string
+}
+
+export type VehicleDoc = {
+  id: string
+  name: string
+}
+
+export type TariffGroup = {
+  perKmRate: number
+  bata: number
+  minDistance?: number
+  extras?: string
+}
+
+export type TariffDoc = {
+  id: string
+  vehicle?: VehicleDoc | string
+  oneway?: TariffGroup
+  roundtrip?: TariffGroup
+  packages?: {
+    km: number
+    amount: number
+    bata: number
+    extras?: string
+  }
+  updatedAt?: string
+  createdAt?: string
+}

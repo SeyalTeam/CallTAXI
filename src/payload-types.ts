@@ -195,10 +195,17 @@ export interface Tariff {
   oneway: {
     perKmRate: number;
     bata: number;
+    minDistance: number;
     extras?: string | null;
   };
   roundtrip: {
     perKmRate: number;
+    bata: number;
+    extras?: string | null;
+  };
+  packages: {
+    km: number;
+    amount: number;
     bata: number;
     extras?: string | null;
   };
@@ -227,7 +234,7 @@ export interface Booking {
   customerName: string;
   customerPhone: string;
   vehicle: string | Vehicle;
-  tripType: 'oneway' | 'roundtrip';
+  tripType: 'oneway' | 'roundtrip' | 'packages';
   /**
    * @minItems 2
    * @maxItems 2
@@ -238,8 +245,8 @@ export interface Booking {
    * @minItems 2
    * @maxItems 2
    */
-  dropoffLocation: [number, number];
-  dropoffLocationName: string;
+  dropoffLocation?: [number, number] | null;
+  dropoffLocationName?: string | null;
   pickupDateTime: string;
   dropDateTime?: string | null;
   estimatedFare?: number | null;
@@ -389,12 +396,21 @@ export interface TariffsSelect<T extends boolean = true> {
     | {
         perKmRate?: T;
         bata?: T;
+        minDistance?: T;
         extras?: T;
       };
   roundtrip?:
     | T
     | {
         perKmRate?: T;
+        bata?: T;
+        extras?: T;
+      };
+  packages?:
+    | T
+    | {
+        km?: T;
+        amount?: T;
         bata?: T;
         extras?: T;
       };

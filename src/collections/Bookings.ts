@@ -6,13 +6,18 @@ export const Bookings: CollectionConfig = {
     { name: 'customerName', type: 'text', required: true },
     { name: 'customerPhone', type: 'text', required: true },
     { name: 'vehicle', type: 'relationship', relationTo: 'vehicles', required: true },
-    { name: 'tripType', type: 'select', options: ['oneway', 'roundtrip'], required: true },
+    {
+      name: 'tripType',
+      type: 'select',
+      options: ['oneway', 'roundtrip', 'packages'],
+      required: true,
+    },
 
     { name: 'pickupLocation', type: 'point', required: true },
     { name: 'pickupLocationName', type: 'text', required: true },
 
-    { name: 'dropoffLocation', type: 'point', required: true },
-    { name: 'dropoffLocationName', type: 'text', required: true },
+    { name: 'dropoffLocation', type: 'point', required: false },
+    { name: 'dropoffLocationName', type: 'text', required: false },
 
     { name: 'pickupDateTime', type: 'date', required: true },
     { name: 'dropDateTime', type: 'date', required: false },

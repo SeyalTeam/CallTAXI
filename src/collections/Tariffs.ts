@@ -31,6 +31,13 @@ export const Tariffs: CollectionConfig = {
           required: true,
         },
         {
+          name: 'minDistance',
+          type: 'number',
+          label: 'Minimum Distance (km)',
+          defaultValue: 130,
+          required: true,
+        },
+        {
           name: 'extras',
           type: 'text',
         },
@@ -54,6 +61,36 @@ export const Tariffs: CollectionConfig = {
         {
           name: 'extras',
           type: 'text',
+        },
+      ],
+    },
+    {
+      type: 'group',
+      name: 'packages',
+      label: 'Packages',
+      fields: [
+        {
+          name: 'km',
+          type: 'number',
+          required: true,
+          label: 'KM',
+        },
+        {
+          name: 'amount',
+          type: 'number',
+          required: true,
+          label: 'Amount',
+        },
+        {
+          name: 'bata',
+          type: 'number',
+          required: true,
+          label: 'Bata',
+        },
+        {
+          name: 'extras',
+          type: 'text',
+          label: 'Extras',
         },
       ],
     },
