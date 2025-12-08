@@ -12,7 +12,7 @@ export default function AboutSection() {
       id="about-section"
       sx={{
         py: 8,
-        background: 'linear-gradient(to bottom, #ffffff 0%, #f1f0e8 100%)',
+        background: 'linear-gradient(to bottom, #ffffff 0%, #f4f3eb 100%)',
         color: '#0f172a',
       }}
     >

@@ -49,7 +49,7 @@ export default function PackagesSection() {
       id="packages-section"
       sx={{
         py: 8,
-        background: 'linear-gradient(to bottom, #f1f0e8 0%, #e0dfd5 100%)',
+        background: 'transparent',
         color: '#0f172a',
       }}
     >

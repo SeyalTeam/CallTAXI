@@ -43,7 +43,7 @@ export default function TariffSection() {
   }, [])
 
   return (
-    <Box id="tariff-section" sx={{ py: 8, bgcolor: '#f1f0e8', color: '#0f172a' }}>
+    <Box id="tariff-section" sx={{ py: 8, bgcolor: 'transparent', color: '#0f172a' }}>
       <Container maxWidth="lg">
         <Box textAlign="center" mb={4}>
           <Typography variant="h3" fontWeight="800" gutterBottom sx={{ color: '#0f172a' }}>

@@ -201,6 +201,7 @@ export interface Tariff {
   roundtrip: {
     perKmRate: number;
     bata: number;
+    minDistance: number;
     extras?: string | null;
   };
   packages: {
@@ -404,6 +405,7 @@ export interface TariffsSelect<T extends boolean = true> {
     | {
         perKmRate?: T;
         bata?: T;
+        minDistance?: T;
         extras?: T;
       };
   packages?:

@@ -254,7 +254,7 @@ export default function HeroSection() {
       }
 
       let billDist = distanceKm
-      if (tripType === 'oneway' && distanceKm < minDistance) billDist = minDistance
+      if (distanceKm < minDistance) billDist = minDistance
 
       const total = billDist * rate + bata
 
@@ -335,7 +335,8 @@ export default function HeroSection() {
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundImage: 'url(/hero-bg.png)',
+          backgroundImage:
+            'url(https://bucghzn379yrpbdu.public.blob.vercel-storage.com/Banner/kanitaxi-hero-bg.png)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           zIndex: 0,
@@ -485,7 +486,7 @@ export default function HeroSection() {
                               sx={{
                                 bgcolor: '#f8fafc',
                                 color: '#0f172a',
-                                fontWeight: 'bold',
+                                fontWeight: 500,
                                 '.MuiOutlinedInput-notchedOutline': {
                                   borderColor: '#e2e8f0',
                                 },
@@ -525,7 +526,7 @@ export default function HeroSection() {
                               handleLocationSearch(e.target.value, setPickupSuggestions)
                             }}
                             sx={{
-                              input: { color: '#0f172a', fontWeight: 'bold' },
+                              input: { color: '#0f172a', fontWeight: 500 },
                               label: { color: '#64748b' },
                               '& .MuiOutlinedInput-root': {
                                 bgcolor: '#f8fafc',
@@ -582,7 +583,7 @@ export default function HeroSection() {
                                 handleLocationSearch(e.target.value, setDropSuggestions)
                               }}
                               sx={{
-                                input: { color: '#0f172a', fontWeight: 'bold' },
+                                input: { color: '#0f172a', fontWeight: 500 },
                                 label: { color: '#64748b' },
                                 '& .MuiOutlinedInput-root': {
                                   bgcolor: '#f8fafc',
@@ -639,7 +640,7 @@ export default function HeroSection() {
                                   size: 'small',
                                   fullWidth: true,
                                   sx: {
-                                    input: { color: '#0f172a', fontWeight: 'bold' },
+                                    input: { color: '#0f172a', fontWeight: 500 },
                                     label: { color: '#64748b' },
                                     '& .MuiOutlinedInput-root': {
                                       bgcolor: '#f8fafc',
@@ -676,7 +677,7 @@ export default function HeroSection() {
                                     size: 'small',
                                     fullWidth: true,
                                     sx: {
-                                      input: { color: '#0f172a', fontWeight: 'bold' },
+                                      input: { color: '#0f172a', fontWeight: 500 },
                                       label: { color: '#64748b' },
                                       '& .MuiOutlinedInput-root': {
                                         bgcolor: '#f8fafc',
@@ -709,7 +710,7 @@ export default function HeroSection() {
                             size="small"
                             label="Your Name"
                             sx={{
-                              input: { color: '#000', fontWeight: 'bold' },
+                              input: { color: '#000', fontWeight: 500 },
                               label: { color: 'grey.700' },
                               '& .MuiOutlinedInput-root': {
                                 bgcolor: '#f8fafc',
@@ -733,7 +734,7 @@ export default function HeroSection() {
                             size="small"
                             label="Mobile Number"
                             sx={{
-                              input: { color: '#0f172a', fontWeight: 'bold' },
+                              input: { color: '#0f172a', fontWeight: 500 },
                               label: { color: '#64748b' },
                               '& .MuiOutlinedInput-root': {
                                 bgcolor: '#f8fafc',
