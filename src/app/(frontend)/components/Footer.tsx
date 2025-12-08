@@ -15,9 +15,7 @@ export default function Footer() {
           <Typography variant="h6" color="#FFD700" fontWeight="bold">
             Kani Taxi
           </Typography>
-          <Typography variant="body2">
-            © {new Date().getFullYear()} Kani Taxi. All rights reserved.
-          </Typography>
+          <Typography variant="body2">© {new Date().getFullYear()} Kani Taxi.</Typography>
         </Box>
       </Container>
     </Box>
