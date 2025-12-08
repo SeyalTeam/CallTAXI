@@ -34,7 +34,7 @@ export default function Navbar() {
           borderBottom: '1px solid rgba(255,255,255,0.1)',
         }}
       >
-        <Toolbar sx={{ justifyContent: 'space-between', py: 1 }}>
+        <Toolbar sx={{ justifyContent: 'space-between', py: { xs: 1.5, md: 1 } }}>
           <Box
             display="flex"
             alignItems="center"

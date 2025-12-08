@@ -9,7 +9,12 @@ export default function ContactSection() {
     <Box id="contact-section" sx={{ py: 10, bgcolor: '#000', color: '#fff' }}>
       <Container maxWidth="lg">
         <Box textAlign="center" mb={6}>
-          <Typography variant="h3" fontWeight="bold" gutterBottom sx={{ color: '#FFD700' }}>
+          <Typography
+            variant="h3"
+            fontWeight="bold"
+            gutterBottom
+            sx={{ color: '#FFD700', fontSize: { xs: '2rem', md: '3rem' } }}
+          >
             Contact Us
           </Typography>
           <Typography variant="h6" color="grey.400" maxWidth="600px" mx="auto">
@@ -17,7 +22,7 @@ export default function ContactSection() {
           </Typography>
         </Box>
 
-        <Grid container spacing={8}>
+        <Grid container spacing={{ xs: 4, md: 8 }}>
           <Grid size={{ xs: 12, md: 6 }}>
             <Typography variant="h5" fontWeight="bold" gutterBottom>
               Get in Touch

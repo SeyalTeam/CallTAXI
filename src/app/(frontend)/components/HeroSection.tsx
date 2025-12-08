@@ -360,13 +360,13 @@ export default function HeroSection() {
           zIndex: 1, // Ensure content is above the canvas
         }}
       >
-        <Grid container spacing={6} alignItems="center" justifyContent="flex-end">
+        <Grid container spacing={{ xs: 4, md: 6 }} alignItems="center" justifyContent="flex-end">
           {/* Booking Form Card */}
           <Grid size={{ xs: 12, md: 5 }}>
             <Paper
               elevation={24}
               sx={{
-                p: 5,
+                p: { xs: 3, md: 5 },
                 borderRadius: 4,
                 bgcolor: 'rgba(255, 255, 255, 0.70)',
                 backdropFilter: 'blur(12px)',
@@ -374,7 +374,15 @@ export default function HeroSection() {
                 border: '1px solid rgba(255, 255, 255, 0.5)',
               }}
             >
-              <Typography variant="h5" sx={{ mb: 4, fontWeight: 700, color: '#0f172a' }}>
+              <Typography
+                variant="h5"
+                sx={{
+                  mb: 4,
+                  fontWeight: 700,
+                  color: '#0f172a',
+                  fontSize: { xs: '1.25rem', md: '1.5rem' },
+                }}
+              >
                 Book Your Ride
               </Typography>
 
@@ -432,7 +440,13 @@ export default function HeroSection() {
                       <RadioGroup
                         row
                         {...field}
-                        sx={{ mb: 3, flexWrap: 'nowrap', justifyContent: 'space-between' }}
+                        sx={{
+                          mb: 3,
+                          flexWrap: 'nowrap',
+                          justifyContent: 'space-between',
+                          width: '100%',
+                          overflowX: 'auto',
+                        }}
                       >
                         {['oneway', 'roundtrip', 'packages'].map((t) => (
                           <FormControlLabel
