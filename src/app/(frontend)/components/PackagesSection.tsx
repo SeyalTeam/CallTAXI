@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import {
   Box,
   Container,
@@ -10,37 +10,13 @@ import {
   CardActions,
   Button,
 } from '@mui/material'
-import axios from 'axios'
+
 import { TariffDoc } from '../types'
 import LocalOfferIcon from '@mui/icons-material/LocalOffer'
 
-export default function PackagesSection() {
-  const [packages, setPackages] = useState<TariffDoc[]>([])
-
-  useEffect(() => {
-    async function load() {
-      try {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const res = await axios.get<{ docs?: any[] }>('/api/tariffs')
-        const docs = res.data.docs || []
-        const parsed = docs
-          .map(
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            (d: any) =>
-              ({
-                id: d.id,
-                vehicle: d.vehicle,
-                packages: d.packages,
-              }) as TariffDoc,
-          )
-          .filter((t) => t.packages && t.packages.amount > 0)
-        setPackages(parsed)
-      } catch (e) {
-        console.error(e)
-      }
-    }
-    void load()
-  }, [])
+export default function PackagesSection({ tariffs }: { tariffs: TariffDoc[] }) {
+  // Filter packages from the passed prop
+  const packages = tariffs.filter((t) => t.packages && t.packages.amount > 0)
 
   if (packages.length === 0) return null
 

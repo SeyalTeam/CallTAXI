@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import {
   Box,
   Container,
@@ -12,35 +12,11 @@ import {
   TableRow,
   Paper,
 } from '@mui/material'
-import axios from 'axios'
+
 import { TariffDoc } from '../types'
 
-export default function TariffSection() {
-  const [tariffs, setTariffs] = useState<TariffDoc[]>([])
-
-  useEffect(() => {
-    async function load() {
-      try {
-        const res = await axios.get<{ docs?: any[] }>('/api/tariffs')
-        const docs = res.data.docs || []
-        const parsed = docs.map(
-          (d: any) =>
-            ({
-              id: d.id,
-              vehicle: d.vehicle,
-              oneway: d.oneway,
-              roundtrip: d.roundtrip,
-              packages: d.packages,
-            }) as TariffDoc,
-        )
-        // Basic deduplication or sorting could go here
-        setTariffs(parsed)
-      } catch (e) {
-        console.error(e)
-      }
-    }
-    void load()
-  }, [])
+export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
+  // Client-side fetching removed in favor of SSR props
 
   return (
     <Box id="tariff-section" sx={{ py: 8, bgcolor: 'transparent', color: '#0f172a' }}>

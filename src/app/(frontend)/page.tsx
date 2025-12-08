@@ -1,7 +1,7 @@
-'use client'
-
 import React from 'react'
 import { Box } from '@mui/material'
+import { getPayload } from 'payload'
+import config from '../../payload.config'
 import Navbar from './components/Navbar'
 import HeroSection from './components/HeroSection'
 import AboutSection from './components/AboutSection'
@@ -9,8 +9,29 @@ import TariffSection from './components/TariffSection'
 import PackagesSection from './components/PackagesSection'
 import ContactSection from './components/ContactSection'
 import Footer from './components/Footer'
+import { TariffDoc } from './types'
 
-export default function Page() {
+export default async function Page() {
+  const payload = await getPayload({ config })
+  const tariffsRes = await payload.find({
+    collection: 'tariffs',
+    limit: 100,
+    depth: 1,
+  })
+
+  // Normalize data for client components
+  const tariffs = tariffsRes.docs.map((doc) => {
+    return {
+      id: doc.id,
+      vehicle: doc.vehicle,
+      oneway: doc.oneway,
+      roundtrip: doc.roundtrip,
+      packages: doc.packages,
+      createdAt: doc.createdAt,
+      updatedAt: doc.updatedAt,
+    } as TariffDoc
+  })
+
   return (
     <main style={{ backgroundColor: '#0f172a', minHeight: '100vh' }}>
       <Navbar />
@@ -44,8 +65,8 @@ export default function Page() {
         />
 
         <Box position="relative" zIndex={1}>
-          <TariffSection />
-          <PackagesSection />
+          <TariffSection tariffs={tariffs} />
+          <PackagesSection tariffs={tariffs} />
         </Box>
       </Box>
 
