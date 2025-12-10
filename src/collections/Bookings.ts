@@ -63,6 +63,8 @@ export const Bookings: CollectionConfig = {
     { name: 'pickupDateTime', type: 'date', required: true },
     { name: 'dropDateTime', type: 'date', required: false },
     { name: 'estimatedFare', type: 'number', required: false },
+    { name: 'couponCode', type: 'text', required: false },
+    { name: 'discountAmount', type: 'number', required: false },
     {
       name: 'status',
       type: 'select',

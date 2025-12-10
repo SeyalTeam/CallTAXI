@@ -74,6 +74,7 @@ export interface Config {
     vehicles: Vehicle;
     bookings: Booking;
     customers: Customer;
+    coupons: Coupon;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -92,6 +93,7 @@ export interface Config {
     vehicles: VehiclesSelect<false> | VehiclesSelect<true>;
     bookings: BookingsSelect<false> | BookingsSelect<true>;
     customers: CustomersSelect<false> | CustomersSelect<true>;
+    coupons: CouponsSelect<false> | CouponsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -261,6 +263,8 @@ export interface Booking {
   pickupDateTime: string;
   dropDateTime?: string | null;
   estimatedFare?: number | null;
+  couponCode?: string | null;
+  discountAmount?: number | null;
   status?: ('pending' | 'confirmed' | 'cancelled') | null;
   notes?: string | null;
   updatedAt: string;
@@ -280,6 +284,27 @@ export interface Customer {
     hasNextPage?: boolean;
     totalDocs?: number;
   };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "coupons".
+ */
+export interface Coupon {
+  id: string;
+  name: string;
+  percentage: number;
+  tariffScope: 'all' | 'oneway' | 'roundtrip' | 'packages';
+  vehicleScope: 'all' | 'specific';
+  vehicles?: (string | Vehicle)[] | null;
+  startDate?: string | null;
+  expiryDate?: string | null;
+  /**
+   * Maximum number of times this coupon can be used (leave empty for unlimited)
+   */
+  usageLimit?: number | null;
+  active?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -334,6 +359,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'customers';
         value: string | Customer;
+      } | null)
+    | ({
+        relationTo: 'coupons';
+        value: string | Coupon;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -496,6 +525,8 @@ export interface BookingsSelect<T extends boolean = true> {
   pickupDateTime?: T;
   dropDateTime?: T;
   estimatedFare?: T;
+  couponCode?: T;
+  discountAmount?: T;
   status?: T;
   notes?: T;
   updatedAt?: T;
@@ -510,6 +541,23 @@ export interface CustomersSelect<T extends boolean = true> {
   phone?: T;
   email?: T;
   bookings?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "coupons_select".
+ */
+export interface CouponsSelect<T extends boolean = true> {
+  name?: T;
+  percentage?: T;
+  tariffScope?: T;
+  vehicleScope?: T;
+  vehicles?: T;
+  startDate?: T;
+  expiryDate?: T;
+  usageLimit?: T;
+  active?: T;
   updatedAt?: T;
   createdAt?: T;
 }

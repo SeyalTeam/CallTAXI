@@ -24,7 +24,7 @@ import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
 import axios from 'axios'
-import { FormValues, TNLocation, VehicleDoc, TariffDoc } from '../types'
+import { FormValues, TNLocation, VehicleDoc, TariffDoc, CouponDoc } from '../types'
 
 /**
  * Utility: parse vehicle reference to id and name
@@ -77,6 +77,12 @@ export default function HeroSection() {
   const [distanceInfo, setDistanceInfo] = useState<string>('')
   const [fare, setFare] = useState<string | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
+
+  // Coupon State
+  const [couponCodeInput, setCouponCodeInput] = useState('')
+  const [appliedCoupon, setAppliedCoupon] = useState<CouponDoc | null>(null)
+  const [couponError, setCouponError] = useState<string | null>(null)
+  const [discountAmount, setDiscountAmount] = useState<number>(0)
 
   // refs for outside click
   const pickupRef = useRef<HTMLDivElement | null>(null)
@@ -268,6 +274,113 @@ export default function HeroSection() {
     }
   }
 
+  const validateCoupon = async () => {
+    if (!couponCodeInput) return
+
+    setLoading(true)
+    setCouponError(null)
+    setAppliedCoupon(null)
+    setDiscountAmount(0)
+
+    try {
+      const res = await axios.get<{ docs: CouponDoc[] }>(
+        `/api/coupons?where[name][equals]=${couponCodeInput}`,
+      )
+      const coupons = res.data.docs
+
+      if (coupons.length === 0) {
+        setCouponError('Invalid coupon code')
+        setLoading(false)
+        return
+      }
+
+      const coupon = coupons[0]
+
+      // 1. Check active
+      if (!coupon.active) {
+        setCouponError('This coupon is no longer active')
+        setLoading(false)
+        return
+      }
+
+      // 2. Check dates
+      const now = new Date()
+      if (coupon.startDate && new Date(coupon.startDate) > now) {
+        setCouponError('This coupon is not yet valid')
+        setLoading(false)
+        return
+      }
+      if (coupon.expiryDate && new Date(coupon.expiryDate) < now) {
+        setCouponError('This coupon has expired')
+        setLoading(false)
+        return
+      }
+
+      // 3. Check tariff scope
+      if (coupon.tariffScope !== 'all' && coupon.tariffScope !== tripType) {
+        setCouponError(`This coupon is only valid for ${coupon.tariffScope} trips`)
+        setLoading(false)
+        return
+      }
+
+      // 4. Check vehicle scope
+      if (coupon.vehicleScope === 'specific') {
+        const vehicleIds = (coupon.vehicles || []).map((v) => (typeof v === 'string' ? v : v.id))
+        if (!selectedVehicleId || !vehicleIds.includes(selectedVehicleId)) {
+          setCouponError('This coupon is not valid for the selected vehicle')
+          setLoading(false)
+          return
+        }
+      }
+
+      // Valid!
+      setAppliedCoupon(coupon)
+    } catch (error) {
+      console.error('Coupon check failed', error)
+      setCouponError('Failed to validate coupon')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const clearCoupon = () => {
+    setCouponCodeInput('')
+    setAppliedCoupon(null)
+    setCouponError(null)
+    setDiscountAmount(0)
+  }
+
+  // Recalculate discount when fare or coupon changes
+  useEffect(() => {
+    if (!fare || !appliedCoupon) {
+      setDiscountAmount(0)
+      return
+    }
+
+    const fareNum = Number(fare)
+    const discount = (fareNum * appliedCoupon.percentage) / 100
+    setDiscountAmount(discount)
+  }, [fare, appliedCoupon])
+
+  // Re-validate coupon when trip type or vehicle changes
+  useEffect(() => {
+    if (appliedCoupon) {
+      if (
+        (appliedCoupon.tariffScope !== 'all' && appliedCoupon.tariffScope !== tripType) ||
+        (appliedCoupon.vehicleScope === 'specific' &&
+          selectedVehicleId &&
+          !(appliedCoupon.vehicles as any[])?.some(
+            (v) => (typeof v === 'string' ? v : v.id) === selectedVehicleId,
+          ))
+      ) {
+        setCouponError('Coupon removed due to booking changes')
+        setAppliedCoupon(null)
+        setDiscountAmount(0)
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tripType, selectedVehicleId])
+
   const [bookingSuccess, setBookingSuccess] = useState<string | null>(null)
 
   async function onSubmit(data: FormValues) {
@@ -288,6 +401,8 @@ export default function HeroSection() {
       pickupDateTime: data.pickupDateTime?.toISOString(),
       dropDateTime: data.tripType === 'roundtrip' ? data.dropDateTime?.toISOString() : undefined,
       estimatedFare: fare ? Number(fare) : undefined,
+      couponCode: appliedCoupon?.name,
+      discountAmount: discountAmount || undefined,
       status: 'pending',
       notes:
         data.tripType === 'packages'
@@ -764,6 +879,82 @@ export default function HeroSection() {
                         )}
                       />
                     </Grid>
+                    <Grid size={{ xs: 12 }}>
+                      {/* Coupon Section */}
+                      <Box sx={{ mb: 2 }}>
+                        <Grid container spacing={1} alignItems="center">
+                          <Grid size={{ xs: appliedCoupon ? 12 : 8 }}>
+                            {appliedCoupon ? (
+                              <Box
+                                sx={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'space-between',
+                                  bgcolor: '#dcfce7', // green-100
+                                  color: '#166534', // green-800
+                                  p: 1.5,
+                                  borderRadius: 1,
+                                  border: '1px solid #bbf7d0',
+                                }}
+                              >
+                                <Box>
+                                  <Typography variant="body2" fontWeight="bold">
+                                    Coupon Applied: {appliedCoupon.name}
+                                  </Typography>
+                                  <Typography variant="caption">
+                                    {appliedCoupon.percentage}% Off applied
+                                  </Typography>
+                                </Box>
+                                <Button
+                                  size="small"
+                                  onClick={clearCoupon}
+                                  sx={{ minWidth: 'auto', p: 0.5, color: '#166534' }}
+                                >
+                                  ✕
+                                </Button>
+                              </Box>
+                            ) : (
+                              <TextField
+                                fullWidth
+                                size="small"
+                                placeholder="Coupon Code"
+                                value={couponCodeInput}
+                                onChange={(e) => setCouponCodeInput(e.target.value.toUpperCase())}
+                                error={!!couponError}
+                                helperText={couponError}
+                                sx={{
+                                  input: { color: '#0f172a', fontWeight: 500 },
+                                  '& .MuiOutlinedInput-root': {
+                                    bgcolor: '#f8fafc',
+                                  },
+                                }}
+                              />
+                            )}
+                          </Grid>
+                          {!appliedCoupon && (
+                            <Grid size={{ xs: 4 }}>
+                              <Button
+                                variant="outlined"
+                                fullWidth
+                                onClick={validateCoupon}
+                                disabled={loading || !couponCodeInput}
+                                sx={{
+                                  height: 40,
+                                  borderColor: '#d97706',
+                                  color: '#d97706',
+                                  '&:hover': {
+                                    borderColor: '#b45309',
+                                    bgcolor: '#fff7ed',
+                                  },
+                                }}
+                              >
+                                Apply
+                              </Button>
+                            </Grid>
+                          )}
+                        </Grid>
+                      </Box>
+                    </Grid>
 
                     {fare && (
                       <Grid size={{ xs: 12 }}>
@@ -775,10 +966,56 @@ export default function HeroSection() {
                             border: '1px solid #fed7aa', // orange/200
                           }}
                         >
-                          <Typography variant="subtitle1" color="#c2410c" fontWeight="bold">
-                            Estimated Share: ₹{fare}
-                          </Typography>
-                          <Typography variant="body2" color="#9ca3af">
+                          {discountAmount > 0 ? (
+                            <>
+                              <Box
+                                sx={{
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
+                                  mb: 0.5,
+                                  color: '#64748b',
+                                  textDecoration: 'line-through',
+                                }}
+                              >
+                                <Typography variant="body2">Original Fare:</Typography>
+                                <Typography variant="body2">₹{fare}</Typography>
+                              </Box>
+                              <Box
+                                sx={{
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
+                                  mb: 0.5,
+                                  color: '#16a34a',
+                                }}
+                              >
+                                <Typography variant="body2">Discount:</Typography>
+                                <Typography variant="body2">
+                                  - ₹{discountAmount.toFixed(2)}
+                                </Typography>
+                              </Box>
+                              <Box
+                                sx={{
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
+                                  pt: 1,
+                                  borderTop: '1px dashed #fed7aa',
+                                }}
+                              >
+                                <Typography variant="subtitle1" color="#c2410c" fontWeight="bold">
+                                  Final Amount:
+                                </Typography>
+                                <Typography variant="subtitle1" color="#c2410c" fontWeight="bold">
+                                  ₹{(Number(fare) - discountAmount).toFixed(2)}
+                                </Typography>
+                              </Box>
+                            </>
+                          ) : (
+                            <Typography variant="subtitle1" color="#c2410c" fontWeight="bold">
+                              Estimated Share: ₹{fare}
+                            </Typography>
+                          )}
+
+                          <Typography variant="body2" color="#9ca3af" mt={0.5}>
                             {distanceInfo}
                           </Typography>
                         </Box>

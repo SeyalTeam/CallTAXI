@@ -9,6 +9,7 @@ export type FormValues = {
   drop: string
   pickupDateTime: Dayjs | null
   dropDateTime: Dayjs | null
+  couponCode?: string
 }
 
 export type TNLocation = {
@@ -43,4 +44,16 @@ export type TariffDoc = {
   }
   updatedAt?: string
   createdAt?: string
+}
+
+export type CouponDoc = {
+  id: string
+  name: string
+  percentage: number
+  tariffScope: 'all' | 'oneway' | 'roundtrip' | 'packages'
+  vehicleScope: 'all' | 'specific'
+  vehicles?: string[] | VehicleDoc[]
+  active: boolean
+  expiryDate?: string
+  startDate?: string
 }
