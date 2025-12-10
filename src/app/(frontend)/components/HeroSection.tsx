@@ -83,6 +83,7 @@ export default function HeroSection() {
   const [appliedCoupon, setAppliedCoupon] = useState<CouponDoc | null>(null)
   const [couponError, setCouponError] = useState<string | null>(null)
   const [discountAmount, setDiscountAmount] = useState<number>(0)
+  const [hasActiveCoupons, setHasActiveCoupons] = useState<boolean>(false)
 
   // refs for outside click
   const pickupRef = useRef<HTMLDivElement | null>(null)
@@ -143,9 +144,23 @@ export default function HeroSection() {
       }
     }
 
+    async function checkActiveCoupons() {
+      try {
+        const res = await axios.get<{ totalDocs: number; docs: CouponDoc[] }>(
+          '/api/coupons?where[active][equals]=true&limit=1',
+        )
+        if (mounted && res.data.totalDocs > 0) {
+          setHasActiveCoupons(true)
+        }
+      } catch (error) {
+        console.error('Failed to check active coupons', error)
+      }
+    }
+
     void loadVehicles()
     void loadTariffs()
     void loadTN()
+    void checkActiveCoupons()
 
     return () => {
       mounted = false
@@ -879,82 +894,84 @@ export default function HeroSection() {
                         )}
                       />
                     </Grid>
-                    <Grid size={{ xs: 12 }}>
-                      {/* Coupon Section */}
-                      <Box sx={{ mb: 2 }}>
-                        <Grid container spacing={1} alignItems="center">
-                          <Grid size={{ xs: appliedCoupon ? 12 : 8 }}>
-                            {appliedCoupon ? (
-                              <Box
-                                sx={{
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  justifyContent: 'space-between',
-                                  bgcolor: '#dcfce7', // green-100
-                                  color: '#166534', // green-800
-                                  p: 1.5,
-                                  borderRadius: 1,
-                                  border: '1px solid #bbf7d0',
-                                }}
-                              >
-                                <Box>
-                                  <Typography variant="body2" fontWeight="bold">
-                                    Coupon Applied: {appliedCoupon.name}
-                                  </Typography>
-                                  <Typography variant="caption">
-                                    {appliedCoupon.percentage}% Off applied
-                                  </Typography>
-                                </Box>
-                                <Button
-                                  size="small"
-                                  onClick={clearCoupon}
-                                  sx={{ minWidth: 'auto', p: 0.5, color: '#166534' }}
+                    {hasActiveCoupons && (
+                      <Grid size={{ xs: 12 }}>
+                        {/* Coupon Section */}
+                        <Box sx={{ mb: 2 }}>
+                          <Grid container spacing={1} alignItems="center">
+                            <Grid size={{ xs: appliedCoupon ? 12 : 8 }}>
+                              {appliedCoupon ? (
+                                <Box
+                                  sx={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    bgcolor: '#dcfce7', // green-100
+                                    color: '#166534', // green-800
+                                    p: 1.5,
+                                    borderRadius: 1,
+                                    border: '1px solid #bbf7d0',
+                                  }}
                                 >
-                                  ✕
+                                  <Box>
+                                    <Typography variant="body2" fontWeight="bold">
+                                      Coupon Applied: {appliedCoupon.name}
+                                    </Typography>
+                                    <Typography variant="caption">
+                                      {appliedCoupon.percentage}% Off applied
+                                    </Typography>
+                                  </Box>
+                                  <Button
+                                    size="small"
+                                    onClick={clearCoupon}
+                                    sx={{ minWidth: 'auto', p: 0.5, color: '#166534' }}
+                                  >
+                                    ✕
+                                  </Button>
+                                </Box>
+                              ) : (
+                                <TextField
+                                  fullWidth
+                                  size="small"
+                                  placeholder="Coupon Code"
+                                  value={couponCodeInput}
+                                  onChange={(e) => setCouponCodeInput(e.target.value.toUpperCase())}
+                                  error={!!couponError}
+                                  helperText={couponError}
+                                  sx={{
+                                    input: { color: '#0f172a', fontWeight: 500 },
+                                    '& .MuiOutlinedInput-root': {
+                                      bgcolor: '#f8fafc',
+                                    },
+                                  }}
+                                />
+                              )}
+                            </Grid>
+                            {!appliedCoupon && (
+                              <Grid size={{ xs: 4 }}>
+                                <Button
+                                  variant="outlined"
+                                  fullWidth
+                                  onClick={validateCoupon}
+                                  disabled={loading || !couponCodeInput}
+                                  sx={{
+                                    height: 40,
+                                    borderColor: '#d97706',
+                                    color: '#d97706',
+                                    '&:hover': {
+                                      borderColor: '#b45309',
+                                      bgcolor: '#fff7ed',
+                                    },
+                                  }}
+                                >
+                                  Apply
                                 </Button>
-                              </Box>
-                            ) : (
-                              <TextField
-                                fullWidth
-                                size="small"
-                                placeholder="Coupon Code"
-                                value={couponCodeInput}
-                                onChange={(e) => setCouponCodeInput(e.target.value.toUpperCase())}
-                                error={!!couponError}
-                                helperText={couponError}
-                                sx={{
-                                  input: { color: '#0f172a', fontWeight: 500 },
-                                  '& .MuiOutlinedInput-root': {
-                                    bgcolor: '#f8fafc',
-                                  },
-                                }}
-                              />
+                              </Grid>
                             )}
                           </Grid>
-                          {!appliedCoupon && (
-                            <Grid size={{ xs: 4 }}>
-                              <Button
-                                variant="outlined"
-                                fullWidth
-                                onClick={validateCoupon}
-                                disabled={loading || !couponCodeInput}
-                                sx={{
-                                  height: 40,
-                                  borderColor: '#d97706',
-                                  color: '#d97706',
-                                  '&:hover': {
-                                    borderColor: '#b45309',
-                                    bgcolor: '#fff7ed',
-                                  },
-                                }}
-                              >
-                                Apply
-                              </Button>
-                            </Grid>
-                          )}
-                        </Grid>
-                      </Box>
-                    </Grid>
+                        </Box>
+                      </Grid>
+                    )}
 
                     {fare && (
                       <Grid size={{ xs: 12 }}>
