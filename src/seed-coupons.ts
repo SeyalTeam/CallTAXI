@@ -10,7 +10,7 @@ const seed = async () => {
   const vehicles = await payload.find({ collection: 'vehicles', limit: 3 })
   const vehicleIds = vehicles.docs.map((v) => v.id)
 
-  const coupons = [
+  const coupons: any[] = [
     {
       name: 'WELCOME50',
       percentage: 50,
