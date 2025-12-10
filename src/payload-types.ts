@@ -73,12 +73,17 @@ export interface Config {
     tariffs: Tariff;
     vehicles: Vehicle;
     bookings: Booking;
+    customers: Customer;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
-  collectionsJoins: {};
+  collectionsJoins: {
+    customers: {
+      bookings: 'bookings';
+    };
+  };
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
@@ -86,6 +91,7 @@ export interface Config {
     tariffs: TariffsSelect<false> | TariffsSelect<true>;
     vehicles: VehiclesSelect<false> | VehiclesSelect<true>;
     bookings: BookingsSelect<false> | BookingsSelect<true>;
+    customers: CustomersSelect<false> | CustomersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -237,6 +243,7 @@ export interface Booking {
   id: string;
   customerName: string;
   customerPhone: string;
+  customer?: (string | null) | Customer;
   vehicle: string | Vehicle;
   tripType: 'oneway' | 'roundtrip' | 'packages';
   /**
@@ -256,6 +263,23 @@ export interface Booking {
   estimatedFare?: number | null;
   status?: ('pending' | 'confirmed' | 'cancelled') | null;
   notes?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "customers".
+ */
+export interface Customer {
+  id: string;
+  name: string;
+  phone: string;
+  email?: string | null;
+  bookings?: {
+    docs?: (string | Booking)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -306,6 +330,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'bookings';
         value: string | Booking;
+      } | null)
+    | ({
+        relationTo: 'customers';
+        value: string | Customer;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -458,6 +486,7 @@ export interface VehiclesSelect<T extends boolean = true> {
 export interface BookingsSelect<T extends boolean = true> {
   customerName?: T;
   customerPhone?: T;
+  customer?: T;
   vehicle?: T;
   tripType?: T;
   pickupLocation?: T;
@@ -469,6 +498,18 @@ export interface BookingsSelect<T extends boolean = true> {
   estimatedFare?: T;
   status?: T;
   notes?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "customers_select".
+ */
+export interface CustomersSelect<T extends boolean = true> {
+  name?: T;
+  phone?: T;
+  email?: T;
+  bookings?: T;
   updatedAt?: T;
   createdAt?: T;
 }

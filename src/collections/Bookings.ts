@@ -2,9 +2,50 @@ import type { CollectionConfig } from 'payload'
 
 export const Bookings: CollectionConfig = {
   slug: 'bookings',
+  hooks: {
+    beforeChange: [
+      async ({ data, req, operation }) => {
+        if ((operation === 'create' || operation === 'update') && data.customerPhone) {
+          const existingCustomer = await req.payload.find({
+            collection: 'customers',
+            where: {
+              phone: {
+                equals: data.customerPhone,
+              },
+            },
+            limit: 1,
+            depth: 0,
+          })
+
+          if (existingCustomer.docs.length > 0) {
+            data.customer = existingCustomer.docs[0].id
+          } else {
+            const newCustomer = await req.payload.create({
+              collection: 'customers',
+              data: {
+                name: data.customerName || 'Unknown',
+                phone: data.customerPhone,
+              },
+            })
+            data.customer = newCustomer.id
+          }
+        }
+        return data
+      },
+    ],
+  },
   fields: [
     { name: 'customerName', type: 'text', required: true },
     { name: 'customerPhone', type: 'text', required: true },
+    {
+      name: 'customer',
+      type: 'relationship',
+      relationTo: 'customers',
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+      },
+    },
     { name: 'vehicle', type: 'relationship', relationTo: 'vehicles', required: true },
     {
       name: 'tripType',
