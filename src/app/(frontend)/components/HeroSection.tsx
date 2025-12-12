@@ -95,7 +95,7 @@ export default function HeroSection() {
 
     async function loadVehicles() {
       try {
-        const res = await axios.get<{ docs?: unknown[] }>('/api/vehicles')
+        const res = await axios.get<{ docs?: unknown[] }>('/api/vehicles?limit=100')
         const docs = Array.isArray(res.data.docs) ? res.data.docs : []
         const parsed = docs
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -112,7 +112,7 @@ export default function HeroSection() {
 
     async function loadTariffs() {
       try {
-        const res = await axios.get<{ docs?: unknown[] }>('/api/tariffs')
+        const res = await axios.get<{ docs?: unknown[] }>('/api/tariffs?limit=100&sort=-updatedAt')
         const docs = Array.isArray(res.data.docs) ? res.data.docs : []
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const parsed = docs.map((d: any) => {
