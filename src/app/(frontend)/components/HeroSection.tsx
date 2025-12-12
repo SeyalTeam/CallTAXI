@@ -1092,9 +1092,9 @@ export default function HeroSection() {
                           bgcolor: 'linear-gradient(to right, #f59e0b, #d97706)',
                           color: '#fff',
                           fontWeight: '800',
-                          py: { xs: 1.5, md: 2 },
+                          py: 1,
                           textTransform: 'none',
-                          fontSize: '1.1rem',
+                          fontSize: '1rem',
                           boxShadow: '0 4px 12px rgba(217, 119, 6, 0.3)',
                           '&:hover': {
                             bgcolor: '#b45309',
