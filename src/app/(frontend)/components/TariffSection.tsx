@@ -22,7 +22,12 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
     <Box id="tariff-section" sx={{ py: 8, bgcolor: 'transparent', color: '#0f172a' }}>
       <Container maxWidth="lg">
         <Box textAlign="center" mb={4}>
-          <Typography variant="h3" fontWeight="800" gutterBottom sx={{ color: '#0f172a' }}>
+          <Typography
+            variant="h3"
+            fontWeight="800"
+            gutterBottom
+            sx={{ color: '#0f172a', fontSize: { xs: '1.75rem', md: '3rem' }, whiteSpace: 'nowrap' }}
+          >
             Transparent <span style={{ color: '#d97706' }}>Tariffs</span>
           </Typography>
           <Typography variant="h6" color="#64748b" maxWidth="600px" mx="auto" fontWeight="400">
@@ -47,8 +52,34 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
                 sx={{ '& th': { color: '#0f172a', fontWeight: '700', fontSize: '1rem', py: 3 } }}
               >
                 <TableCell>Vehicle Type</TableCell>
-                <TableCell align="right">One Way (per km)</TableCell>
-                <TableCell align="right">Round Trip (per km)</TableCell>
+                <TableCell align="right">
+                  One Way
+                  <Box
+                    component="span"
+                    sx={{
+                      display: 'block',
+                      fontSize: '0.875rem',
+                      fontWeight: 400,
+                      color: '#64748b',
+                    }}
+                  >
+                    (per km)
+                  </Box>
+                </TableCell>
+                <TableCell align="right">
+                  Round Trip
+                  <Box
+                    component="span"
+                    sx={{
+                      display: 'block',
+                      fontSize: '0.875rem',
+                      fontWeight: 400,
+                      color: '#64748b',
+                    }}
+                  >
+                    (per km)
+                  </Box>
+                </TableCell>
                 <TableCell align="right">Driver Bata</TableCell>
               </TableRow>
             </TableHead>
