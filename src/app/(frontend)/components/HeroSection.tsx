@@ -6,9 +6,6 @@ import {
   TextField,
   Button,
   FormControl,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
   Select,
   MenuItem,
   InputLabel,
@@ -20,7 +17,7 @@ import {
   Container,
 } from '@mui/material'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
 import axios from 'axios'
@@ -571,49 +568,48 @@ export default function HeroSection() {
                     name="tripType"
                     control={control}
                     render={({ field }) => (
-                      <RadioGroup
-                        row
-                        {...field}
+                      <Box
                         sx={{
-                          mb: { xs: 1.5, md: 3 },
-                          flexWrap: 'wrap',
-                          gap: { xs: 0.5, md: 2 },
+                          mb: { xs: 1, md: 3 },
+                          display: 'flex',
+                          gap: 1,
                           width: '100%',
                         }}
                       >
-                        {['oneway', 'roundtrip', 'packages'].map((t) => (
-                          <FormControlLabel
-                            key={t}
-                            value={t}
-                            control={
-                              <Radio
-                                size="small"
-                                sx={{
-                                  color: '#94a3b8',
-                                  '&.Mui-checked': { color: '#d97706' },
-                                }}
-                              />
-                            }
-                            label={
-                              <Typography
-                                sx={{
-                                  color: field.value === t ? '#0f172a' : '#64748b',
-                                  fontWeight: field.value === t ? 600 : 400,
-                                  textTransform: 'capitalize',
-                                  whiteSpace: 'nowrap',
-                                  fontSize: { xs: '0.85rem', md: '1rem' },
-                                }}
-                              >
-                                {t === 'oneway'
-                                  ? 'One Way'
-                                  : t === 'roundtrip'
-                                    ? 'Round Trip'
-                                    : 'Packages'}
-                              </Typography>
-                            }
-                          />
-                        ))}
-                      </RadioGroup>
+                        {['oneway', 'roundtrip', 'packages'].map((t) => {
+                          const isSelected = field.value === t
+                          return (
+                            <Box
+                              key={t}
+                              onClick={() => field.onChange(t)}
+                              sx={{
+                                flex: 1,
+                                textAlign: 'center',
+                                py: 0.75,
+                                borderRadius: 10,
+                                cursor: 'pointer',
+                                bgcolor: isSelected ? '#d97706' : '#f1f5f9',
+                                color: isSelected ? '#ffffff' : '#64748b',
+                                fontWeight: isSelected ? 600 : 500,
+                                fontSize: { xs: '0.85rem', md: '0.9rem' },
+                                border: '1px solid',
+                                borderColor: isSelected ? '#d97706' : 'transparent',
+                                transition: 'all 0.2s',
+                                userSelect: 'none',
+                                '&:hover': {
+                                  bgcolor: isSelected ? '#b45309' : '#e2e8f0',
+                                },
+                              }}
+                            >
+                              {t === 'oneway'
+                                ? 'One Way'
+                                : t === 'roundtrip'
+                                  ? 'Round Trip'
+                                  : 'Packages'}
+                            </Box>
+                          )
+                        })}
+                      </Box>
                     )}
                   />
 
@@ -793,7 +789,7 @@ export default function HeroSection() {
                           name="pickupDateTime"
                           control={control}
                           render={({ field }) => (
-                            <DateTimePicker
+                            <DatePicker
                               label="Pickup Date"
                               value={field.value}
                               onChange={field.onChange}
@@ -835,7 +831,7 @@ export default function HeroSection() {
                             name="dropDateTime"
                             control={control}
                             render={({ field }) => (
-                              <DateTimePicker
+                              <DatePicker
                                 label="Return Date"
                                 value={field.value}
                                 onChange={field.onChange}
