@@ -24,20 +24,27 @@ export default function ContactSection() {
 
         <Grid container spacing={{ xs: 4, md: 8 }}>
           <Grid size={{ xs: 12, md: 6 }}>
-            <Typography variant="h5" fontWeight="bold" gutterBottom>
+            <Typography
+              variant="h5"
+              fontWeight="bold"
+              gutterBottom
+              sx={{ fontSize: { xs: '1.25rem', md: '1.5rem' } }}
+            >
               Get in Touch
             </Typography>
-            <Box display="flex" alignItems="center" gap={2} mb={3} mt={4}>
-              <PhoneIcon sx={{ color: '#FFD700' }} />
-              <Typography>+91 98765 43210</Typography>
+            <Box display="flex" alignItems="center" gap={2} mb={2} mt={2}>
+              <PhoneIcon sx={{ color: '#FFD700', fontSize: '1.25rem' }} />
+              <Typography sx={{ fontSize: '0.9rem' }}>+91 97155 55828</Typography>
+            </Box>
+            <Box display="flex" alignItems="center" gap={2} mb={2}>
+              <EmailIcon sx={{ color: '#FFD700', fontSize: '1.25rem' }} />
+              <Typography sx={{ fontSize: '0.9rem' }}>booking@kanitaxi.com</Typography>
             </Box>
             <Box display="flex" alignItems="center" gap={2} mb={3}>
-              <EmailIcon sx={{ color: '#FFD700' }} />
-              <Typography>booking@kanitaxi.com</Typography>
-            </Box>
-            <Box display="flex" alignItems="center" gap={2} mb={3}>
-              <LocationOnIcon sx={{ color: '#FFD700' }} />
-              <Typography>123 Corporate Tower, Business District, Chennai, TN, India.</Typography>
+              <LocationOnIcon sx={{ color: '#FFD700', fontSize: '1.25rem' }} />
+              <Typography sx={{ fontSize: '0.9rem' }}>
+                123 Corporate Tower, Business District, Chennai, TN, India.
+              </Typography>
             </Box>
           </Grid>
 
@@ -48,9 +55,10 @@ export default function ContactSection() {
                   <TextField
                     label="Name"
                     fullWidth
+                    size="small"
                     sx={{
-                      input: { color: '#fff' },
-                      label: { color: 'grey.500' },
+                      input: { color: '#fff', fontSize: '0.9rem', py: 1 },
+                      label: { color: 'grey.500', fontSize: '0.9rem' },
                       fieldset: { borderColor: '#333' },
                       '&:hover fieldset': { borderColor: '#555' },
                       '& .MuiOutlinedInput-root.Mui-focused fieldset': { borderColor: '#FFD700' },
@@ -61,9 +69,10 @@ export default function ContactSection() {
                   <TextField
                     label="Email"
                     fullWidth
+                    size="small"
                     sx={{
-                      input: { color: '#fff' },
-                      label: { color: 'grey.500' },
+                      input: { color: '#fff', fontSize: '0.9rem', py: 1 },
+                      label: { color: 'grey.500', fontSize: '0.9rem' },
                       fieldset: { borderColor: '#333' },
                       '&:hover fieldset': { borderColor: '#555' },
                       '& .MuiOutlinedInput-root.Mui-focused fieldset': { borderColor: '#FFD700' },
@@ -76,9 +85,10 @@ export default function ContactSection() {
                     multiline
                     rows={4}
                     fullWidth
+                    size="small"
                     sx={{
-                      textarea: { color: '#fff' },
-                      label: { color: 'grey.500' },
+                      textarea: { color: '#fff', fontSize: '0.9rem' },
+                      label: { color: 'grey.500', fontSize: '0.9rem' },
                       fieldset: { borderColor: '#333' },
                       '&:hover fieldset': { borderColor: '#555' },
                       '& .MuiOutlinedInput-root.Mui-focused fieldset': { borderColor: '#FFD700' },
@@ -88,12 +98,14 @@ export default function ContactSection() {
                 <Grid size={{ xs: 12 }}>
                   <Button
                     variant="contained"
-                    size="large"
+                    size="medium"
                     fullWidth
                     sx={{
                       bgcolor: '#FFD700',
                       color: '#000',
                       fontWeight: 'bold',
+                      fontSize: '0.9rem',
+                      py: 1,
                       '&:hover': { bgcolor: '#FACC15' },
                     }}
                   >

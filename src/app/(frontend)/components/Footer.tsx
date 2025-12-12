@@ -11,7 +11,7 @@ export default function Footer() {
           color: '#fff',
           py: 4,
           borderTop: '1px solid #333',
-          pb: { xs: 10, md: 4 },
+          pb: 4,
         }}
       >
         <Container maxWidth="lg">
@@ -30,22 +30,17 @@ export default function Footer() {
         </Container>
       </Box>
 
-      {/* Mobile Sticky Action Bar */}
+      {/* Mobile Action Bar - Not fixed (scrollable) */}
       <Box
         sx={{
-          position: 'fixed',
-          bottom: 0,
-          left: 0,
-          right: 0,
           bgcolor: '#d97706',
-          zIndex: 1000,
           display: { xs: 'flex', md: 'none' },
           boxShadow: '0 -4px 6px -1px rgba(0, 0, 0, 0.1)',
         }}
       >
         <Box
           component="a"
-          href="tel:+919944778806"
+          href="tel:+919715555828"
           sx={{
             flex: 1,
             display: 'flex',
@@ -66,7 +61,7 @@ export default function Footer() {
         </Box>
         <Box
           component="a"
-          href="https://wa.me/919944778806"
+          href="https://wa.me/919715555828"
           target="_blank"
           sx={{
             flex: 1,
