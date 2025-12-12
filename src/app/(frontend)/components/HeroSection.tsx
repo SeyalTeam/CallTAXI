@@ -511,7 +511,7 @@ export default function HeroSection() {
               <Typography
                 variant="h5"
                 sx={{
-                  mb: { xs: 2.5, md: 4 },
+                  mb: { xs: 1.5, md: 4 },
                   fontWeight: 700,
                   color: '#0f172a',
                   fontSize: { xs: '1.25rem', md: '1.5rem' },
@@ -1053,7 +1053,7 @@ export default function HeroSection() {
                           bgcolor: 'linear-gradient(to right, #f59e0b, #d97706)',
                           color: '#fff',
                           fontWeight: '800',
-                          py: 2,
+                          py: { xs: 1.5, md: 2 },
                           textTransform: 'none',
                           fontSize: '1.1rem',
                           boxShadow: '0 4px 12px rgba(217, 119, 6, 0.3)',
