@@ -1,8 +1,31 @@
+'use client'
+
+import React, { useEffect, useState } from 'react'
 import PhoneIcon from '@mui/icons-material/Phone'
 import WhatsAppIcon from '@mui/icons-material/WhatsApp'
 import { Box, Container, Typography } from '@mui/material'
 
 export default function Footer() {
+  const [showSticky, setShowSticky] = useState(false)
+
+  useEffect(() => {
+    // Observe #home to toggle sticky footer
+    const homeEl = document.getElementById('home')
+    if (!homeEl) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        // If home is intersecting (visible), hide sticky footer.
+        // If not intersecting (scrolled past), show it.
+        setShowSticky(!entry.isIntersecting)
+      },
+      { threshold: 0 },
+    )
+
+    observer.observe(homeEl)
+    return () => observer.disconnect()
+  }, [])
+
   return (
     <>
       <Box
@@ -30,57 +53,69 @@ export default function Footer() {
         </Container>
       </Box>
 
-      {/* Mobile Action Bar - Not fixed (scrollable) */}
-      <Box
-        sx={{
-          bgcolor: '#d97706',
-          display: { xs: 'flex', md: 'none' },
-          boxShadow: '0 -4px 6px -1px rgba(0, 0, 0, 0.1)',
-        }}
-      >
+      {/* Mobile Action Bar - Conditional Sticky */}
+      {showSticky && (
         <Box
-          component="a"
-          href="tel:+919715555828"
           sx={{
-            flex: 1,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            py: 1.5,
-            color: '#fff',
-            textDecoration: 'none',
-            borderRight: '1px solid rgba(255, 255, 255, 0.3)',
-            '&:active': { bgcolor: '#b45309' },
+            position: 'fixed',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            bgcolor: '#d97706',
+            zIndex: 1000,
+            display: { xs: 'flex', md: 'none' },
+            boxShadow: '0 -4px 6px -1px rgba(0, 0, 0, 0.1)',
+            animation: 'slideUp 0.3s ease-out',
+            '@keyframes slideUp': {
+              from: { transform: 'translateY(100%)' },
+              to: { transform: 'translateY(0)' },
+            },
           }}
         >
-          <PhoneIcon sx={{ mb: 0.5 }} />
-          <Typography variant="subtitle2" fontWeight="bold">
-            Call Now
-          </Typography>
+          <Box
+            component="a"
+            href="tel:+919715555828"
+            sx={{
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              py: 1.5,
+              color: '#fff',
+              textDecoration: 'none',
+              borderRight: '1px solid rgba(255, 255, 255, 0.3)',
+              '&:active': { bgcolor: '#b45309' },
+            }}
+          >
+            <PhoneIcon sx={{ mb: 0.5 }} />
+            <Typography variant="subtitle2" fontWeight="bold">
+              Call Now
+            </Typography>
+          </Box>
+          <Box
+            component="a"
+            href="https://wa.me/919715555828"
+            target="_blank"
+            sx={{
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              py: 1.5,
+              color: '#fff',
+              textDecoration: 'none',
+              '&:active': { bgcolor: '#b45309' },
+            }}
+          >
+            <WhatsAppIcon sx={{ mb: 0.5 }} />
+            <Typography variant="subtitle2" fontWeight="bold">
+              Let&apos;s Connect
+            </Typography>
+          </Box>
         </Box>
-        <Box
-          component="a"
-          href="https://wa.me/919715555828"
-          target="_blank"
-          sx={{
-            flex: 1,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            py: 1.5,
-            color: '#fff',
-            textDecoration: 'none',
-            '&:active': { bgcolor: '#b45309' },
-          }}
-        >
-          <WhatsAppIcon sx={{ mb: 0.5 }} />
-          <Typography variant="subtitle2" fontWeight="bold">
-            Let&apos;s Connect
-          </Typography>
-        </Box>
-      </Box>
+      )}
     </>
   )
 }
