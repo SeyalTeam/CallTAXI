@@ -63,6 +63,8 @@ export default function HeroSection() {
 
   const tripType = watch('tripType')
   const selectedVehicleId = watch('vehicle')
+  const pickupDateTime = watch('pickupDateTime')
+  const dropDateTime = watch('dropDateTime')
 
   const [vehicles, setVehicles] = useState<VehicleDoc[]>([])
   const [pickupSuggestions, setPickupSuggestions] = useState<TNLocation[]>([])
@@ -202,7 +204,7 @@ export default function HeroSection() {
       void calculateRouteAndFare()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pickupCoords, dropCoords, tripType, tariffs, selectedVehicleId])
+  }, [pickupCoords, dropCoords, tripType, tariffs, selectedVehicleId, pickupDateTime, dropDateTime])
 
   const handleLocationSearch = (text: string, setSuggestions: (s: TNLocation[]) => void) => {
     const q = text.trim().toLowerCase()
@@ -273,6 +275,14 @@ export default function HeroSection() {
         return
       }
 
+      let days = 1
+      if (tripType === 'roundtrip' && pickupDateTime && dropDateTime) {
+        const start = pickupDateTime.startOf('day')
+        const end = dropDateTime.startOf('day')
+        const diff = end.diff(start, 'day') + 1 // inclusive
+        days = diff > 0 ? diff : 1
+      }
+
       if (tripType === 'roundtrip') {
         distanceKm *= 2
         durationMin *= 2
@@ -292,10 +302,15 @@ export default function HeroSection() {
       let billDist = distanceKm
       if (distanceKm < minDistance) billDist = minDistance
 
-      const total = billDist * rate + bata
+      let total = billDist * rate + bata
+
+      // Multiply by days for roundtrip
+      if (tripType === 'roundtrip') {
+        total = total * days
+      }
 
       setDistanceInfo(`${distanceKm.toFixed(2)} km • ${Math.round(durationMin)} min`)
-      setFare(total.toFixed(2))
+      setFare(Math.round(total).toString())
     } catch (e) {
       console.error(e)
       setFare(null)
