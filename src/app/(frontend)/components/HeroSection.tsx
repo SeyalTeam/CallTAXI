@@ -95,7 +95,9 @@ export default function HeroSection() {
 
     async function loadVehicles() {
       try {
-        const res = await axios.get<{ docs?: unknown[] }>('/api/vehicles?limit=100')
+        const res = await axios.get<{ docs?: unknown[] }>(
+          `${process.env.NEXT_PUBLIC_PAYLOAD_URL || ''}/api/vehicles?limit=100`,
+        )
         const docs = Array.isArray(res.data.docs) ? res.data.docs : []
         const parsed = docs
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -112,7 +114,9 @@ export default function HeroSection() {
 
     async function loadTariffs() {
       try {
-        const res = await axios.get<{ docs?: unknown[] }>('/api/tariffs?limit=100&sort=-updatedAt')
+        const res = await axios.get<{ docs?: unknown[] }>(
+          `${process.env.NEXT_PUBLIC_PAYLOAD_URL || ''}/api/tariffs?limit=100&sort=-updatedAt`,
+        )
         const docs = Array.isArray(res.data.docs) ? res.data.docs : []
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const parsed = docs.map((d: any) => {
@@ -147,7 +151,7 @@ export default function HeroSection() {
     async function checkActiveCoupons() {
       try {
         const res = await axios.get<{ totalDocs: number; docs: CouponDoc[] }>(
-          '/api/coupons?where[active][equals]=true&limit=1',
+          `${process.env.NEXT_PUBLIC_PAYLOAD_URL || ''}/api/coupons?where[active][equals]=true&limit=1`,
         )
         if (mounted && res.data.totalDocs > 0) {
           setHasActiveCoupons(true)
@@ -299,7 +303,7 @@ export default function HeroSection() {
 
     try {
       const res = await axios.get<{ docs: CouponDoc[] }>(
-        `/api/coupons?where[name][equals]=${couponCodeInput}`,
+        `${process.env.NEXT_PUBLIC_PAYLOAD_URL || ''}/api/coupons?where[name][equals]=${couponCodeInput}`,
       )
       const coupons = res.data.docs
 
