@@ -11,11 +11,14 @@ import ContactSection from './components/ContactSection'
 import Footer from './components/Footer'
 import { TariffDoc } from './types'
 
+export const dynamic = 'force-dynamic'
+
 export default async function Page() {
   const payload = await getPayload({ config })
   const tariffsRes = await payload.find({
     collection: 'tariffs',
     limit: 100,
+    sort: '-updatedAt',
     depth: 1,
   })
 
