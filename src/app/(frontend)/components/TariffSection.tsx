@@ -19,7 +19,7 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
   // Client-side fetching removed in favor of SSR props
 
   return (
-    <Box id="tariff-section" sx={{ py: 8, bgcolor: 'transparent', color: '#0f172a' }}>
+    <Box id="tariff-section" sx={{ py: 4, bgcolor: 'transparent', color: '#0f172a' }}>
       <Container maxWidth="lg">
         <Box textAlign="center" mb={4}>
           <Typography

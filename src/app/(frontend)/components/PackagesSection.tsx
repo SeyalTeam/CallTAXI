@@ -24,7 +24,7 @@ export default function PackagesSection({ tariffs }: { tariffs: TariffDoc[] }) {
     <Box
       id="packages-section"
       sx={{
-        py: 8,
+        py: 4,
         background: 'transparent',
         color: '#0f172a',
       }}

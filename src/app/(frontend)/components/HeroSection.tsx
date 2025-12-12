@@ -586,7 +586,7 @@ export default function HeroSection() {
                                 flex: 1,
                                 textAlign: 'center',
                                 py: 0.75,
-                                borderRadius: 10,
+                                borderRadius: 2,
                                 cursor: 'pointer',
                                 bgcolor: isSelected ? '#d97706' : '#f1f5f9',
                                 color: isSelected ? '#ffffff' : '#64748b',
