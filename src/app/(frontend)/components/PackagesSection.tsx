@@ -150,9 +150,16 @@ export default function PackagesSection({ tariffs }: { tariffs: TariffDoc[] }) {
                           borderWidth: 2,
                         },
                       }}
-                      onClick={() =>
+                      onClick={() => {
+                        const targetId =
+                          typeof pkg.vehicle === 'string' ? pkg.vehicle : pkg.vehicle?.id
+                        if (targetId) {
+                          const url = new URL(window.location.href)
+                          url.searchParams.set('packageVehicle', targetId)
+                          window.history.pushState({}, '', url.toString())
+                        }
                         document.getElementById('home')?.scrollIntoView({ behavior: 'smooth' })
-                      }
+                      }}
                     >
                       Book This Package
                     </Button>

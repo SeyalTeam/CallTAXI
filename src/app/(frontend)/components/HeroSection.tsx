@@ -86,6 +86,20 @@ export default function HeroSection() {
   const pickupRef = useRef<HTMLDivElement | null>(null)
   const dropRef = useRef<HTMLDivElement | null>(null)
 
+  // Handle Package Selection from URL
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const pkgVehicle = params.get('packageVehicle')
+    if (pkgVehicle) {
+      setValue('tripType', 'packages')
+      setValue('vehicle', pkgVehicle)
+      // Optional: Clean up URL after selection
+      // const url = new URL(window.location.href)
+      // url.searchParams.delete('packageVehicle')
+      // window.history.replaceState({}, '', url.toString())
+    }
+  }, [setValue])
+
   // load data
   useEffect(() => {
     let mounted = true
