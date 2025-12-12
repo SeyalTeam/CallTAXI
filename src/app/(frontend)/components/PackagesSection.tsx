@@ -74,24 +74,62 @@ export default function PackagesSection({ tariffs }: { tariffs: TariffDoc[] }) {
                     },
                   }}
                 >
-                  <CardContent sx={{ flexGrow: 1, textAlign: 'center', py: 3 }}>
-                    <LocalOfferIcon sx={{ fontSize: 40, color: '#d97706', mb: 1 }} />
-                    <Typography variant="h6" gutterBottom fontWeight="bold" color="#0f172a">
+                  <CardContent
+                    sx={{
+                      flexGrow: 1,
+                      textAlign: 'center',
+                      py: { xs: 1.5, md: 3 },
+                      px: { xs: 1, md: 2 },
+                    }}
+                  >
+                    <LocalOfferIcon
+                      sx={{
+                        fontSize: { xs: 32, md: 40 },
+                        color: '#d97706',
+                        mb: { xs: 0.5, md: 1 },
+                      }}
+                    />
+                    <Typography
+                      variant="h6"
+                      gutterBottom
+                      fontWeight="bold"
+                      color="#0f172a"
+                      sx={{
+                        fontSize: { xs: '0.9rem', md: '1.25rem' },
+                        mb: { xs: 0.5, md: '0.35em' },
+                      }}
+                    >
                       {vName}
                     </Typography>
-                    <Typography variant="h4" color="#d97706" fontWeight="800" my={1}>
+                    <Typography
+                      variant="h4"
+                      color="#d97706"
+                      fontWeight="800"
+                      my={1}
+                      sx={{ fontSize: { xs: '1.25rem', md: '2.125rem' }, my: { xs: 0.5, md: 1 } }}
+                    >
                       ₹{pkg.packages?.amount}
                     </Typography>
-                    <Typography color="#64748b" variant="body2">
+                    <Typography
+                      color="#64748b"
+                      variant="body2"
+                      sx={{ fontSize: { xs: '0.75rem', md: '0.875rem' } }}
+                    >
                       {pkg.packages?.km} KM Package
                     </Typography>
                     {pkg.packages?.extras && (
-                      <Typography variant="caption" color="#94a3b8" display="block" mt={1}>
+                      <Typography
+                        variant="caption"
+                        color="#94a3b8"
+                        display="block"
+                        mt={0.5}
+                        sx={{ fontSize: { xs: '0.65rem', md: '0.75rem' } }}
+                      >
                         {pkg.packages.extras}
                       </Typography>
                     )}
                   </CardContent>
-                  <CardActions sx={{ justifyContent: 'center', pb: 3 }}>
+                  <CardActions sx={{ justifyContent: 'center', pb: { xs: 1.5, md: 3 }, px: 1 }}>
                     <Button
                       variant="outlined"
                       size="small"
@@ -100,10 +138,11 @@ export default function PackagesSection({ tariffs }: { tariffs: TariffDoc[] }) {
                         borderColor: '#d97706',
                         borderWidth: 2,
                         textTransform: 'none',
-                        fontSize: { xs: '0.75rem', md: '0.9rem' },
+                        fontSize: { xs: '0.7rem', md: '0.9rem' },
                         fontWeight: 600,
                         px: { xs: 1, md: 3 },
-                        py: 0.5,
+                        py: { xs: 0.25, md: 0.5 },
+                        width: '100%',
                         '&:hover': {
                           borderColor: '#b45309',
                           color: '#b45309',
