@@ -46,10 +46,18 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
             overflow: 'hidden',
           }}
         >
-          <Table sx={{ minWidth: 650 }}>
+          <Table sx={{ minWidth: { xs: 0, md: 650 } }}>
             <TableHead sx={{ bgcolor: '#f8fafc' }}>
               <TableRow
-                sx={{ '& th': { color: '#0f172a', fontWeight: '700', fontSize: '1rem', py: 3 } }}
+                sx={{
+                  '& th': {
+                    color: '#0f172a',
+                    fontWeight: '700',
+                    fontSize: { xs: '0.8rem', md: '1rem' },
+                    py: { xs: 1.5, md: 3 },
+                    px: { xs: 1, md: 2 },
+                  },
+                }}
               >
                 <TableCell>Vehicle Type</TableCell>
                 <TableCell align="right">
@@ -58,7 +66,7 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
                     component="span"
                     sx={{
                       display: 'block',
-                      fontSize: '0.875rem',
+                      fontSize: { xs: '0.7rem', md: '0.875rem' },
                       fontWeight: 400,
                       color: '#64748b',
                     }}
@@ -72,7 +80,7 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
                     component="span"
                     sx={{
                       display: 'block',
-                      fontSize: '0.875rem',
+                      fontSize: { xs: '0.7rem', md: '0.875rem' },
                       fontWeight: 400,
                       color: '#64748b',
                     }}
@@ -80,7 +88,9 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
                     (per km)
                   </Box>
                 </TableCell>
-                <TableCell align="right">Driver Bata</TableCell>
+                <TableCell align="right" sx={{ display: { xs: 'none', md: 'table-cell' } }}>
+                  Driver Bata
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -93,8 +103,9 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
                       '& td': {
                         color: '#334155',
                         borderBottom: '1px solid #f1f5f9',
-                        fontSize: '1rem',
-                        py: 2.5,
+                        fontSize: { xs: '0.85rem', md: '1rem' },
+                        py: { xs: 1.5, md: 2.5 },
+                        px: { xs: 1, md: 2 },
                       },
                       '&:hover': { bgcolor: '#f8fafc' },
                       '&:last-child td': { borderBottom: 0 },
@@ -109,7 +120,9 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
                     </TableCell>
                     <TableCell align="right">₹{row.oneway?.perKmRate ?? '-'}</TableCell>
                     <TableCell align="right">₹{row.roundtrip?.perKmRate ?? '-'}</TableCell>
-                    <TableCell align="right">₹{row.oneway?.bata ?? '-'}</TableCell>
+                    <TableCell align="right" sx={{ display: { xs: 'none', md: 'table-cell' } }}>
+                      ₹{row.oneway?.bata ?? '-'}
+                    </TableCell>
                   </TableRow>
                 )
               })}
