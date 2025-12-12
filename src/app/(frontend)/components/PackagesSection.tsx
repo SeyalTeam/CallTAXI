@@ -31,19 +31,31 @@ export default function PackagesSection({ tariffs }: { tariffs: TariffDoc[] }) {
     >
       <Container maxWidth="lg">
         <Box textAlign="center" mb={4}>
-          <Typography variant="h3" fontWeight="800" gutterBottom sx={{ color: '#0f172a' }}>
+          <Typography
+            variant="h3"
+            fontWeight="800"
+            gutterBottom
+            sx={{ color: '#0f172a', fontSize: { xs: '1.75rem', md: '3rem' } }}
+          >
             Exclusive <span style={{ color: '#d97706' }}>Packages</span>
           </Typography>
-          <Typography variant="h6" color="#64748b" maxWidth="600px" mx="auto" fontWeight="400">
+          <Typography
+            variant="h6"
+            color="#64748b"
+            maxWidth="600px"
+            mx="auto"
+            fontWeight="400"
+            sx={{ fontSize: { xs: '0.9rem', md: '1.25rem' } }}
+          >
             Curated trips at the best prices.
           </Typography>
         </Box>
 
-        <Grid container spacing={4} justifyContent="center">
+        <Grid container spacing={2} justifyContent="center">
           {packages.map((pkg) => {
             const vName = typeof pkg.vehicle === 'string' ? pkg.vehicle : pkg.vehicle?.name
             return (
-              <Grid size={{ xs: 12, sm: 6, md: 3 }} key={pkg.id}>
+              <Grid size={{ xs: 6, md: 3 }} key={pkg.id}>
                 <Card
                   elevation={0}
                   sx={{
@@ -88,9 +100,9 @@ export default function PackagesSection({ tariffs }: { tariffs: TariffDoc[] }) {
                         borderColor: '#d97706',
                         borderWidth: 2,
                         textTransform: 'none',
-                        fontSize: '0.9rem',
+                        fontSize: { xs: '0.75rem', md: '0.9rem' },
                         fontWeight: 600,
-                        px: 3,
+                        px: { xs: 1, md: 3 },
                         py: 0.5,
                         '&:hover': {
                           borderColor: '#b45309',

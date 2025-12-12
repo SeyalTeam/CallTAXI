@@ -30,7 +30,16 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
           >
             Transparent <span style={{ color: '#d97706' }}>Tariffs</span>
           </Typography>
-          <Typography variant="h6" color="#64748b" maxWidth="600px" mx="auto" fontWeight="400">
+          <Typography
+            variant="h6"
+            color="#64748b"
+            mx="auto"
+            fontWeight="400"
+            sx={{
+              maxWidth: { xs: '300px', md: '600px' },
+              fontSize: { xs: '0.9rem', md: '1.25rem' },
+            }}
+          >
             No hidden charges. Pay for what you ride.
           </Typography>
         </Box>

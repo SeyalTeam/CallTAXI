@@ -18,10 +18,29 @@ export default function AboutSection() {
     >
       <Container maxWidth="lg">
         <Box textAlign="center" mb={4}>
-          <Typography variant="h3" fontWeight="800" gutterBottom sx={{ color: '#0f172a', mb: 2 }}>
+          <Typography
+            variant="h3"
+            fontWeight="800"
+            gutterBottom
+            sx={{
+              color: '#0f172a',
+              mb: 2,
+              fontSize: { xs: '1.75rem', md: '3rem' },
+              whiteSpace: 'nowrap',
+            }}
+          >
             Why Choose <span style={{ color: '#d97706' }}>Us?</span>
           </Typography>
-          <Typography variant="h6" color="#64748b" maxWidth="800px" mx="auto" fontWeight="400">
+          <Typography
+            variant="h6"
+            color="#64748b"
+            mx="auto"
+            fontWeight="400"
+            sx={{
+              maxWidth: { xs: '320px', md: '800px' },
+              fontSize: { xs: '0.9rem', md: '1.25rem' },
+            }}
+          >
             We provide reliable, safe, and luxurious transportation for all your travel needs.
           </Typography>
         </Box>
