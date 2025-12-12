@@ -500,7 +500,7 @@ export default function HeroSection() {
             <Paper
               elevation={24}
               sx={{
-                p: { xs: 3, md: 5 },
+                p: { xs: 2, md: 5 },
                 borderRadius: 4,
                 bgcolor: 'rgba(255, 255, 255, 0.70)',
                 backdropFilter: 'blur(12px)',
@@ -511,7 +511,7 @@ export default function HeroSection() {
               <Typography
                 variant="h5"
                 sx={{
-                  mb: 4,
+                  mb: { xs: 2.5, md: 4 },
                   fontWeight: 700,
                   color: '#0f172a',
                   fontSize: { xs: '1.25rem', md: '1.5rem' },
@@ -575,9 +575,9 @@ export default function HeroSection() {
                         row
                         {...field}
                         sx={{
-                          mb: 3,
+                          mb: { xs: 1.5, md: 3 },
                           flexWrap: 'wrap',
-                          gap: { xs: 1, md: 2 },
+                          gap: { xs: 0.5, md: 2 },
                           width: '100%',
                         }}
                       >
