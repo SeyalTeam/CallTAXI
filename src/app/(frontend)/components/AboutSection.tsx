@@ -11,7 +11,8 @@ export default function AboutSection() {
     <Box
       id="about-section"
       sx={{
-        py: 8,
+        pt: { xs: '480px', md: 8 },
+        pb: 8,
         background: 'linear-gradient(to bottom, #ffffff 0%, #f4f3eb 100%)',
         color: '#0f172a',
       }}

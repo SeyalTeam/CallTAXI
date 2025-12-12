@@ -464,13 +464,15 @@ export default function HeroSection() {
         position: 'relative',
         minHeight: '100vh',
         display: 'flex',
-        alignItems: 'center',
+        alignItems: { xs: 'flex-end', md: 'center' }, // Push form to bottom on mobile
         justifyContent: 'center',
         // Premium corporate light theme background
-        background: '#ffffff',
+        background: { xs: 'transparent', md: '#ffffff' },
         color: '#000',
         pt: 8, // space for navbar
-        overflow: 'hidden',
+        overflow: { xs: 'visible', md: 'hidden' },
+        mb: { xs: '-500px', md: 0 }, // Pull next section up by 500px
+        pb: { xs: '50px', md: 0 }, // Lift form up 50px
       }}
     >
       <Box
@@ -479,7 +481,7 @@ export default function HeroSection() {
           top: 0,
           left: 0,
           right: 0,
-          bottom: 0,
+          bottom: { xs: '500px', md: 0 }, // Lift BG bottom 500px to match overlap
           backgroundImage:
             'url(https://bucghzn379yrpbdu.public.blob.vercel-storage.com/Banner/kanitaxi-hero-bg.png)',
           backgroundSize: 'cover',
@@ -513,7 +515,7 @@ export default function HeroSection() {
               sx={{
                 p: { xs: 2, md: 5 },
                 borderRadius: 4,
-                bgcolor: 'rgba(255, 255, 255, 0.70)',
+                bgcolor: '#fcc78a',
                 backdropFilter: 'blur(12px)',
                 boxShadow: '0 20px 40px -10px rgba(0, 0, 0, 0.1)',
                 border: '1px solid rgba(255, 255, 255, 0.5)',
