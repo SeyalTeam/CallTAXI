@@ -9,20 +9,19 @@ export default function Footer() {
   const [showSticky, setShowSticky] = useState(false)
 
   useEffect(() => {
-    // Observe #home to toggle sticky footer
-    const homeEl = document.getElementById('home')
-    if (!homeEl) return
+    // Observe #about-section to toggle sticky footer
+    const targetEl = document.getElementById('about-section')
+    if (!targetEl) return
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        // If home is intersecting (visible), hide sticky footer.
-        // If not intersecting (scrolled past), show it.
-        setShowSticky(!entry.isIntersecting)
+        // Show sticky footer ONLY when About section is visible
+        setShowSticky(entry.isIntersecting)
       },
       { threshold: 0 },
     )
 
-    observer.observe(homeEl)
+    observer.observe(targetEl)
     return () => observer.disconnect()
   }, [])
 
