@@ -9,14 +9,14 @@ export default function Footer() {
   const [showSticky, setShowSticky] = useState(false)
 
   useEffect(() => {
-    // Observe #about-section to toggle sticky footer
-    const targetEl = document.getElementById('about-section')
+    // Observe #home to toggle sticky footer
+    const targetEl = document.getElementById('home')
     if (!targetEl) return
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        // Show sticky footer ONLY when About section is visible
-        setShowSticky(entry.isIntersecting)
+        // Hide when Hero is visible. Show when scrolled past Hero (till footer).
+        setShowSticky(!entry.isIntersecting)
       },
       { threshold: 0 },
     )
