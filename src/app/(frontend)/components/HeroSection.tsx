@@ -576,10 +576,9 @@ export default function HeroSection() {
                         {...field}
                         sx={{
                           mb: 3,
-                          flexWrap: 'nowrap',
-                          justifyContent: 'space-between',
+                          flexWrap: 'wrap',
+                          gap: { xs: 1, md: 2 },
                           width: '100%',
-                          overflowX: 'auto',
                         }}
                       >
                         {['oneway', 'roundtrip', 'packages'].map((t) => (
@@ -602,6 +601,7 @@ export default function HeroSection() {
                                   fontWeight: field.value === t ? 600 : 400,
                                   textTransform: 'capitalize',
                                   whiteSpace: 'nowrap',
+                                  fontSize: { xs: '0.85rem', md: '1rem' },
                                 }}
                               >
                                 {t === 'oneway'
