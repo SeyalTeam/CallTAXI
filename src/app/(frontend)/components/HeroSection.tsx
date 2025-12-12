@@ -635,6 +635,10 @@ export default function HeroSection() {
                                 bgcolor: '#f8fafc',
                                 color: '#0f172a',
                                 fontWeight: 500,
+                                fontSize: '0.9rem',
+                                '.MuiSelect-select': {
+                                  py: 1, // reduced padding
+                                },
                                 '.MuiOutlinedInput-notchedOutline': {
                                   borderColor: '#e2e8f0',
                                 },
@@ -674,8 +678,13 @@ export default function HeroSection() {
                               handleLocationSearch(e.target.value, setPickupSuggestions)
                             }}
                             sx={{
-                              input: { color: '#0f172a', fontWeight: 500 },
-                              label: { color: '#64748b' },
+                              input: {
+                                color: '#0f172a',
+                                fontWeight: 500,
+                                fontSize: '0.9rem',
+                                py: 1, // reduced padding
+                              },
+                              label: { color: '#64748b', fontSize: '0.9rem' },
                               '& .MuiOutlinedInput-root': {
                                 bgcolor: '#f8fafc',
                                 '& fieldset': { borderColor: '#e2e8f0' },
@@ -731,8 +740,13 @@ export default function HeroSection() {
                                 handleLocationSearch(e.target.value, setDropSuggestions)
                               }}
                               sx={{
-                                input: { color: '#0f172a', fontWeight: 500 },
-                                label: { color: '#64748b' },
+                                input: {
+                                  color: '#0f172a',
+                                  fontWeight: 500,
+                                  fontSize: '0.9rem',
+                                  py: 1,
+                                },
+                                label: { color: '#64748b', fontSize: '0.9rem' },
                                 '& .MuiOutlinedInput-root': {
                                   bgcolor: '#f8fafc',
                                   '& fieldset': { borderColor: '#e2e8f0' },
@@ -788,8 +802,13 @@ export default function HeroSection() {
                                   size: 'small',
                                   fullWidth: true,
                                   sx: {
-                                    input: { color: '#0f172a', fontWeight: 500 },
-                                    label: { color: '#64748b' },
+                                    input: {
+                                      color: '#0f172a',
+                                      fontWeight: 500,
+                                      fontSize: '0.9rem',
+                                      py: 1,
+                                    },
+                                    label: { color: '#64748b', fontSize: '0.9rem' },
                                     '& .MuiOutlinedInput-root': {
                                       bgcolor: '#f8fafc',
                                       '& fieldset': { borderColor: '#e2e8f0' },
@@ -825,8 +844,13 @@ export default function HeroSection() {
                                     size: 'small',
                                     fullWidth: true,
                                     sx: {
-                                      input: { color: '#0f172a', fontWeight: 500 },
-                                      label: { color: '#64748b' },
+                                      input: {
+                                        color: '#0f172a',
+                                        fontWeight: 500,
+                                        fontSize: '0.9rem',
+                                        py: 1,
+                                      },
+                                      label: { color: '#64748b', fontSize: '0.9rem' },
                                       '& .MuiOutlinedInput-root': {
                                         bgcolor: '#f8fafc',
                                         '& fieldset': { borderColor: '#e2e8f0' },
@@ -858,8 +882,13 @@ export default function HeroSection() {
                             size="small"
                             label="Your Name"
                             sx={{
-                              input: { color: '#000', fontWeight: 500 },
-                              label: { color: 'grey.700' },
+                              input: {
+                                color: '#000',
+                                fontWeight: 500,
+                                fontSize: '0.9rem',
+                                py: 1,
+                              },
+                              label: { color: 'grey.700', fontSize: '0.9rem' },
                               '& .MuiOutlinedInput-root': {
                                 bgcolor: '#f8fafc',
                                 '& fieldset': { borderColor: 'rgba(0,0,0,0.1)' },
@@ -882,8 +911,13 @@ export default function HeroSection() {
                             size="small"
                             label="Mobile Number"
                             sx={{
-                              input: { color: '#0f172a', fontWeight: 500 },
-                              label: { color: '#64748b' },
+                              input: {
+                                color: '#0f172a',
+                                fontWeight: 500,
+                                fontSize: '0.9rem',
+                                py: 1,
+                              },
+                              label: { color: '#64748b', fontSize: '0.9rem' },
                               '& .MuiOutlinedInput-root': {
                                 bgcolor: '#f8fafc',
                                 '& fieldset': { borderColor: '#e2e8f0' },
@@ -943,7 +977,12 @@ export default function HeroSection() {
                                   error={!!couponError}
                                   helperText={couponError}
                                   sx={{
-                                    input: { color: '#0f172a', fontWeight: 500 },
+                                    input: {
+                                      color: '#0f172a',
+                                      fontWeight: 500,
+                                      fontSize: '0.9rem',
+                                      py: 1,
+                                    },
                                     '& .MuiOutlinedInput-root': {
                                       bgcolor: '#f8fafc',
                                     },
