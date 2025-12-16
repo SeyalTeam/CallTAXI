@@ -37,8 +37,9 @@ export type TariffDoc = {
   oneway?: TariffGroup
   roundtrip?: TariffGroup
   packages?: {
+    hours: number
+    perHourRate: number
     km: number
-    amount: number
     bata: number
     extras?: string
   }

@@ -77,17 +77,24 @@ export const Tariffs: CollectionConfig = {
       label: 'Packages',
       fields: [
         {
+          name: 'hours',
+          type: 'number',
+          required: true,
+          label: 'Hours',
+        },
+        {
+          name: 'perHourRate',
+          type: 'number',
+          required: true,
+          label: 'Per Hour Rate',
+        },
+        {
           name: 'km',
           type: 'number',
           required: true,
           label: 'KM',
         },
-        {
-          name: 'amount',
-          type: 'number',
-          required: true,
-          label: 'Amount',
-        },
+
         {
           name: 'bata',
           type: 'number',

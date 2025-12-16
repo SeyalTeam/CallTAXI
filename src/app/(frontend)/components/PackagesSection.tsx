@@ -16,7 +16,7 @@ import LocalOfferIcon from '@mui/icons-material/LocalOffer'
 
 export default function PackagesSection({ tariffs }: { tariffs: TariffDoc[] }) {
   // Filter packages from the passed prop
-  const packages = tariffs.filter((t) => t.packages && t.packages.amount > 0)
+  const packages = tariffs.filter((t) => t.packages && t.packages.perHourRate > 0)
 
   if (packages.length === 0) return null
 
@@ -54,6 +54,8 @@ export default function PackagesSection({ tariffs }: { tariffs: TariffDoc[] }) {
         <Grid container spacing={2} justifyContent="center">
           {packages.map((pkg) => {
             const vName = typeof pkg.vehicle === 'string' ? pkg.vehicle : pkg.vehicle?.name
+            const calculatedAmount = (pkg.packages?.hours || 0) * (pkg.packages?.perHourRate || 0)
+
             return (
               <Grid size={{ xs: 6, md: 3 }} key={pkg.id}>
                 <Card
@@ -108,14 +110,14 @@ export default function PackagesSection({ tariffs }: { tariffs: TariffDoc[] }) {
                       my={1}
                       sx={{ fontSize: { xs: '1.25rem', md: '2.125rem' }, my: { xs: 0.5, md: 1 } }}
                     >
-                      ₹{pkg.packages?.amount}
+                      ₹{calculatedAmount}
                     </Typography>
                     <Typography
                       color="#64748b"
                       variant="body2"
                       sx={{ fontSize: { xs: '0.75rem', md: '0.875rem' } }}
                     >
-                      {pkg.packages?.km} KM Package
+                      {pkg.packages?.hours} Hrs / {pkg.packages?.km} KM Package
                     </Typography>
                     {pkg.packages?.extras && (
                       <Typography

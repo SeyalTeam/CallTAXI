@@ -83,6 +83,7 @@ export default function HeroSection() {
   const [couponError, setCouponError] = useState<string | null>(null)
   const [discountAmount, setDiscountAmount] = useState<number>(0)
   const [hasActiveCoupons, setHasActiveCoupons] = useState<boolean>(false)
+  const [packageHours, setPackageHours] = useState<number>(1)
 
   // refs for outside click
   const pickupRef = useRef<HTMLDivElement | null>(null)
@@ -204,7 +205,16 @@ export default function HeroSection() {
       void calculateRouteAndFare()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pickupCoords, dropCoords, tripType, tariffs, selectedVehicleId, pickupDateTime, dropDateTime])
+  }, [
+    pickupCoords,
+    dropCoords,
+    tripType,
+    tariffs,
+    selectedVehicleId,
+    pickupDateTime,
+    dropDateTime,
+    packageHours,
+  ])
 
   const handleLocationSearch = (text: string, setSuggestions: (s: TNLocation[]) => void) => {
     const q = text.trim().toLowerCase()
@@ -265,8 +275,11 @@ export default function HeroSection() {
 
       if (tripType === 'packages') {
         if (chosen?.packages) {
-          setDistanceInfo(`Package: ${chosen.packages.km} km`)
-          setFare((chosen.packages.amount + chosen.packages.bata).toFixed(2))
+          const hrs = packageHours
+          const rate = chosen.packages.perHourRate || 0
+          const amount = rate * hrs
+          setDistanceInfo(`Package: ${hrs} Hrs / ${chosen.packages.km} km`)
+          setFare((amount + chosen.packages.bata).toFixed(2))
         } else {
           setDistanceInfo('')
           setFare(null)
@@ -451,7 +464,7 @@ export default function HeroSection() {
       status: 'pending',
       notes:
         data.tripType === 'packages'
-          ? `${data.pickup} (Package)`
+          ? `${data.pickup} (${packageHours} Hrs Package)`
           : `${data.pickup} to ${data.drop}`,
     }
 
@@ -645,7 +658,7 @@ export default function HeroSection() {
                   />
 
                   <Grid container spacing={2}>
-                    <Grid size={{ xs: 12 }}>
+                    <Grid size={{ xs: 12, md: tripType === 'packages' ? 6 : 12 }}>
                       <Controller
                         name="vehicle"
                         control={control}
@@ -690,7 +703,49 @@ export default function HeroSection() {
                       />
                     </Grid>
 
-                    <Grid size={{ xs: 12 }} position="relative" ref={pickupRef}>
+                    {tripType === 'packages' && (
+                      <Grid size={{ xs: 12, md: 6 }}>
+                        <FormControl fullWidth size="small">
+                          <InputLabel id="hours-label" sx={{ color: '#9ca3af' }}>
+                            Select Duration
+                          </InputLabel>
+                          <Select
+                            labelId="hours-label"
+                            label="Select Duration"
+                            value={packageHours}
+                            onChange={(e) => setPackageHours(Number(e.target.value))}
+                            sx={{
+                              bgcolor: '#f8fafc',
+                              color: '#0f172a',
+                              fontWeight: 500,
+                              fontSize: '0.9rem',
+                              '.MuiSelect-select': { py: 1 },
+                              '.MuiOutlinedInput-notchedOutline': { borderColor: '#e2e8f0' },
+                              '&:hover .MuiOutlinedInput-notchedOutline': {
+                                borderColor: '#cbd5e1',
+                              },
+                              '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                borderColor: '#d97706',
+                                borderWidth: 2,
+                              },
+                              '.MuiSvgIcon-root': { color: '#64748b' },
+                            }}
+                          >
+                            {Array.from({ length: 12 }, (_, i) => i + 1).map((h) => (
+                              <MenuItem key={h} value={h}>
+                                {h} Hour{h > 1 ? 's' : ''}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      </Grid>
+                    )}
+
+                    <Grid
+                      size={{ xs: 12, md: tripType === 'packages' ? 12 : 6 }}
+                      position="relative"
+                      ref={pickupRef}
+                    >
                       <Controller
                         name="pickup"
                         control={control}
@@ -752,7 +807,7 @@ export default function HeroSection() {
                     </Grid>
 
                     {tripType !== 'packages' && (
-                      <Grid size={{ xs: 12 }} position="relative" ref={dropRef}>
+                      <Grid size={{ xs: 12, md: 6 }} position="relative" ref={dropRef}>
                         <Controller
                           name="drop"
                           control={control}
@@ -814,7 +869,7 @@ export default function HeroSection() {
                       </Grid>
                     )}
 
-                    <Grid size={{ xs: 12 }}>
+                    <Grid size={{ xs: 12, md: tripType === 'roundtrip' ? 6 : 12 }}>
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <Controller
                           name="pickupDateTime"
@@ -856,7 +911,7 @@ export default function HeroSection() {
                     </Grid>
 
                     {tripType === 'roundtrip' && (
-                      <Grid size={{ xs: 12 }}>
+                      <Grid size={{ xs: 12, md: 6 }}>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                           <Controller
                             name="dropDateTime"
