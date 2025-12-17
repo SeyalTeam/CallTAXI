@@ -89,6 +89,23 @@ export const Tariffs: CollectionConfig = {
           label: 'Per Hour Rate',
         },
         {
+          name: 'extraKmRate',
+          type: 'number',
+          required: true,
+          label: 'Extra KM Rate',
+        },
+        {
+          name: 'extraHourRate',
+          type: 'number',
+          required: true,
+          label: 'Extra Hour Rate',
+        },
+        {
+          name: 'nightBata',
+          type: 'number',
+          label: 'Night Bata',
+        },
+        {
           name: 'km',
           type: 'number',
           required: true,

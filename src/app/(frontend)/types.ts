@@ -39,6 +39,9 @@ export type TariffDoc = {
   packages?: {
     hours: number
     perHourRate: number
+    extraKmRate: number
+    extraHourRate: number
+    nightBata?: number
     km: number
     bata: number
     extras?: string

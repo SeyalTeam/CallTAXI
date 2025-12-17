@@ -218,6 +218,9 @@ export interface Tariff {
   packages: {
     hours: number;
     perHourRate: number;
+    extraKmRate: number;
+    extraHourRate: number;
+    nightBata?: number | null;
     km: number;
     bata: number;
     extras?: string | null;
@@ -491,6 +494,9 @@ export interface TariffsSelect<T extends boolean = true> {
     | {
         hours?: T;
         perHourRate?: T;
+        extraKmRate?: T;
+        extraHourRate?: T;
+        nightBata?: T;
         km?: T;
         bata?: T;
         extras?: T;

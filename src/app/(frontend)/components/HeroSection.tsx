@@ -278,7 +278,10 @@ export default function HeroSection() {
           const hrs = packageHours
           const rate = chosen.packages.perHourRate || 0
           const amount = rate * hrs
-          setDistanceInfo(`Package: ${hrs} Hrs / ${chosen.packages.km} km`)
+          const allowedKm = hrs * chosen.packages.km
+          setDistanceInfo(
+            `Package: ${hrs} Hrs / ${allowedKm} km\nExtra: ₹${chosen.packages.extraHourRate}/hr, ₹${chosen.packages.extraKmRate}/km`,
+          )
           setFare((amount + chosen.packages.bata).toFixed(2))
         } else {
           setDistanceInfo('')
