@@ -34,16 +34,16 @@ export default function ContactSection() {
             </Typography>
             <Box display="flex" alignItems="center" gap={2} mb={2} mt={2}>
               <PhoneIcon sx={{ color: '#FFD700', fontSize: '1.25rem' }} />
-              <Typography sx={{ fontSize: '0.9rem' }}>+91 97155 55828</Typography>
+              <Typography sx={{ fontSize: '0.9rem' }}>+91 94881 04888</Typography>
             </Box>
             <Box display="flex" alignItems="center" gap={2} mb={2}>
               <EmailIcon sx={{ color: '#FFD700', fontSize: '1.25rem' }} />
-              <Typography sx={{ fontSize: '0.9rem' }}>booking@kanitaxi.com</Typography>
+              <Typography sx={{ fontSize: '0.9rem' }}>kanitaxi5555@gmail.com</Typography>
             </Box>
             <Box display="flex" alignItems="center" gap={2} mb={3}>
               <LocationOnIcon sx={{ color: '#FFD700', fontSize: '1.25rem' }} />
               <Typography sx={{ fontSize: '0.9rem' }}>
-                123 Corporate Tower, Business District, Chennai, TN, India.
+                33 Chetti street subramaniyapuram sawyerpuram Thoothukudi 628251
               </Typography>
             </Box>
           </Grid>

@@ -73,7 +73,7 @@ export default function Footer() {
         >
           <Box
             component="a"
-            href="tel:+919715555828"
+            href="tel:+919488104888"
             sx={{
               flex: 1,
               display: 'flex',
@@ -94,7 +94,7 @@ export default function Footer() {
           </Box>
           <Box
             component="a"
-            href="https://wa.me/919715555828"
+            href="https://wa.me/919488104888"
             target="_blank"
             sx={{
               flex: 1,
