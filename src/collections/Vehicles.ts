@@ -82,13 +82,13 @@ export const Vehicles: CollectionConfig = {
       name: 'image',
       type: 'upload',
       relationTo: 'vehicle-images',
-      required: true,
+      required: false, // Changed from true
     },
     {
       name: 'icon',
       type: 'upload',
       relationTo: 'vehicle-icons',
-      required: true,
+      required: false, // Changed from true
     },
   ],
   access: {
