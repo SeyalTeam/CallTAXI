@@ -116,13 +116,13 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
                     flexDirection: 'row',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    gap: { xs: 2, md: 4 },
+                    gap: { xs: 1, md: 4 }, // Reduced gap on mobile to fit larger image
                   }}
                 >
                   {/* Vehicle Image */}
                   <Box
                     sx={{
-                      width: { xs: '35%', md: '280px' },
+                      width: { xs: '45%', md: '280px' }, // Increased to 45%
                       minHeight: { xs: '80px', md: '120px' },
                       display: 'flex',
                       alignItems: 'center',
@@ -137,7 +137,7 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
                         sx={{
                           width: '100%',
                           height: 'auto',
-                          maxHeight: { xs: '100px', md: '100%' },
+                          maxHeight: { xs: '120px', md: '100%' }, // Increased max height
                           objectFit: 'contain',
                         }}
                       />
