@@ -69,7 +69,7 @@ export default async function Page() {
     collection: 'tariffs',
     limit: 100,
     sort: '-updatedAt',
-    depth: 1,
+    depth: 2,
   })
 
   // Normalize data for client components

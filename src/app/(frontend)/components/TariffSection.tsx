@@ -104,7 +104,13 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
             </TableHead>
             <TableBody>
               {tariffs.map((row) => {
-                const vName = typeof row.vehicle === 'string' ? row.vehicle : row.vehicle?.name
+                const vehicle = row.vehicle
+                const vName = typeof vehicle === 'string' ? vehicle : vehicle?.name
+                const vIcon =
+                  typeof vehicle !== 'string' && typeof vehicle?.icon !== 'string'
+                    ? vehicle?.icon
+                    : null
+
                 return (
                   <TableRow
                     key={row.id}
@@ -125,7 +131,23 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
                       scope="row"
                       sx={{ fontWeight: 600, color: '#0f172a !important' }}
                     >
-                      {vName}
+                      <Box>
+                        {vName}
+                        {vIcon && (
+                          <Box
+                            component="img"
+                            src={vIcon.url}
+                            alt={vIcon.alt}
+                            sx={{
+                              display: 'block',
+                              width: '40px',
+                              height: 'auto',
+                              mt: 0.5,
+                              objectFit: 'contain',
+                            }}
+                          />
+                        )}
+                      </Box>
                     </TableCell>
                     <TableCell align="right">₹{row.oneway?.perKmRate ?? '-'}</TableCell>
                     <TableCell align="right">₹{row.roundtrip?.perKmRate ?? '-'}</TableCell>
