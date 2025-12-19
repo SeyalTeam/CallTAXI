@@ -13,6 +13,53 @@ import { TariffDoc } from './types'
 
 export const dynamic = 'force-dynamic'
 
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'TaxiService',
+  name: 'Kani Taxi',
+  image: 'https://bucghzn379yrpbdu.public.blob.vercel-storage.com/Banner/kanitaxi-location.png',
+  width: '100%',
+  telephone: '+919488104888',
+  email: 'kanitaxi5555@gmail.com',
+  url: 'https://kanitaxi.com',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: '33 Chetti street subramaniyapuram sawyerpuram',
+    addressLocality: 'Thoothukudi',
+    addressRegion: 'Tamil Nadu',
+    postalCode: '628251',
+    addressCountry: 'IN',
+  },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: 8.7642, // Approximate for Thoothukudi/Sawyerpuram, can be refined
+    longitude: 78.1348,
+  },
+  areaServed: [
+    {
+      '@type': 'City',
+      name: 'Thoothukudi',
+    },
+    {
+      '@type': 'City',
+      name: 'Sawyerpuram',
+    },
+    {
+      '@type': 'City',
+      name: 'Tirunelveli',
+    },
+  ],
+  priceRange: '₹',
+  openingHoursSpecification: [
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+      opens: '00:00',
+      closes: '23:59',
+    },
+  ],
+}
+
 export default async function Page() {
   const payload = await getPayload({ config })
   const tariffsRes = await payload.find({
@@ -37,6 +84,10 @@ export default async function Page() {
 
   return (
     <main style={{ backgroundColor: '#0f172a', minHeight: '100vh' }}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Navbar />
       <HeroSection />
       <AboutSection />
