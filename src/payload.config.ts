@@ -14,6 +14,7 @@ import { Tariffs } from './collections/Tariffs'
 import { Vehicles } from './collections/Vehicles'
 import { Bookings } from './collections/Bookings'
 import { Customers } from './collections/Customers'
+import { Logo } from './app/(payload)/components/Logo'
 
 import { Coupons } from './collections/Coupons'
 
@@ -25,6 +26,12 @@ export default buildConfig({
     user: Users.slug,
     importMap: {
       baseDir: path.resolve(dirname),
+    },
+    components: {
+      graphics: {
+        Logo: Logo as any,
+        Icon: Logo as any,
+      },
     },
   },
   collections: [Users, Media, Drivers, Tariffs, Vehicles, Bookings, Customers, Coupons],
