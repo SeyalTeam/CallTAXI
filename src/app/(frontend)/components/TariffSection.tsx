@@ -160,14 +160,14 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
                         src={vIcon.url}
                         alt={vIcon.alt}
                         sx={{
-                          width: '60px', // Reduced size as requested
+                          width: '90px', // Increased size
                           height: 'auto',
                           objectFit: 'contain',
                         }}
                       />
                     ) : (
                       <Box
-                        sx={{ width: '60px', height: '30px', bgcolor: '#f1f5f9', borderRadius: 1 }}
+                        sx={{ width: '90px', height: '45px', bgcolor: '#f1f5f9', borderRadius: 1 }}
                       />
                     )}
                   </Box>
