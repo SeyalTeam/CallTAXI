@@ -75,6 +75,8 @@ export interface Config {
     bookings: Booking;
     customers: Customer;
     coupons: Coupon;
+    'vehicle-images': VehicleImage;
+    'vehicle-icons': VehicleIcon;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -94,6 +96,8 @@ export interface Config {
     bookings: BookingsSelect<false> | BookingsSelect<true>;
     customers: CustomersSelect<false> | CustomersSelect<true>;
     coupons: CouponsSelect<false> | CouponsSelect<true>;
+    'vehicle-images': VehicleImagesSelect<false> | VehicleImagesSelect<true>;
+    'vehicle-icons': VehicleIconsSelect<false> | VehicleIconsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -239,10 +243,50 @@ export interface Vehicle {
   number: string;
   ownerName: string;
   lastFc: string;
-  image: string | Media;
-  icon: string | Media;
+  image: string | VehicleImage;
+  icon: string | VehicleIcon;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "vehicle-images".
+ */
+export interface VehicleImage {
+  id: string;
+  alt: string;
+  prefix?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "vehicle-icons".
+ */
+export interface VehicleIcon {
+  id: string;
+  alt: string;
+  prefix?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -370,6 +414,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'coupons';
         value: string | Coupon;
+      } | null)
+    | ({
+        relationTo: 'vehicle-images';
+        value: string | VehicleImage;
+      } | null)
+    | ({
+        relationTo: 'vehicle-icons';
+        value: string | VehicleIcon;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -574,6 +626,44 @@ export interface CouponsSelect<T extends boolean = true> {
   active?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "vehicle-images_select".
+ */
+export interface VehicleImagesSelect<T extends boolean = true> {
+  alt?: T;
+  prefix?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "vehicle-icons_select".
+ */
+export interface VehicleIconsSelect<T extends boolean = true> {
+  alt?: T;
+  prefix?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

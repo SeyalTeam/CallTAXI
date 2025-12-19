@@ -11,11 +11,10 @@ import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Drivers } from './collections/Drivers'
 import { Tariffs } from './collections/Tariffs'
-import { Vehicles } from './collections/Vehicles'
+import { Vehicles, VehicleImages, VehicleIcons } from './collections/Vehicles'
 import { Bookings } from './collections/Bookings'
 import { Customers } from './collections/Customers'
 import { Coupons } from './collections/Coupons'
-// import { Logo } from './app/(payload)/components/Logo'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -33,7 +32,18 @@ export default buildConfig({
       },
     },
   },
-  collections: [Users, Media, Drivers, Tariffs, Vehicles, Bookings, Customers, Coupons],
+  collections: [
+    Users,
+    Media,
+    Drivers,
+    Tariffs,
+    Vehicles,
+    Bookings,
+    Customers,
+    Coupons,
+    VehicleImages,
+    VehicleIcons,
+  ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
@@ -49,6 +59,12 @@ export default buildConfig({
       collections: {
         media: {
           prefix: 'Call Taxi/Kani Taxi',
+        },
+        'vehicle-images': {
+          prefix: 'Call Taxi/Kani Taxi/Vehicles',
+        },
+        'vehicle-icons': {
+          prefix: 'Call Taxi/Kani Taxi/Icons',
         },
       },
       token: process.env.BLOB_READ_WRITE_TOKEN,

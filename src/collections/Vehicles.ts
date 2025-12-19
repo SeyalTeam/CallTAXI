@@ -1,5 +1,47 @@
 import type { CollectionConfig } from 'payload'
 
+export const VehicleImages: CollectionConfig = {
+  slug: 'vehicle-images',
+  admin: {
+    hidden: true,
+  },
+  access: {
+    read: () => true,
+  },
+  upload: {
+    staticDir: 'vehicle-images',
+    mimeTypes: ['image/*'],
+  },
+  fields: [
+    {
+      name: 'alt',
+      type: 'text',
+      required: true,
+    },
+  ],
+}
+
+export const VehicleIcons: CollectionConfig = {
+  slug: 'vehicle-icons',
+  admin: {
+    hidden: true,
+  },
+  access: {
+    read: () => true,
+  },
+  upload: {
+    staticDir: 'vehicle-icons',
+    mimeTypes: ['image/*'],
+  },
+  fields: [
+    {
+      name: 'alt',
+      type: 'text',
+      required: true,
+    },
+  ],
+}
+
 export const Vehicles: CollectionConfig = {
   slug: 'vehicles',
   admin: {
@@ -34,13 +76,13 @@ export const Vehicles: CollectionConfig = {
     {
       name: 'image',
       type: 'upload',
-      relationTo: 'media',
+      relationTo: 'vehicle-images',
       required: true,
     },
     {
       name: 'icon',
       type: 'upload',
-      relationTo: 'media',
+      relationTo: 'vehicle-icons',
       required: true,
     },
   ],
