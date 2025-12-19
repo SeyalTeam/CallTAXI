@@ -48,7 +48,14 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
         </Box>
 
         {/* Cards Grid */}
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <Box
+          sx={{
+            display: { xs: 'flex', md: 'grid' },
+            flexDirection: { xs: 'column', md: 'unset' },
+            gridTemplateColumns: { md: 'repeat(2, 1fr)' },
+            gap: { xs: 2, md: 3 },
+          }}
+        >
           {tariffs.map((row) => {
             const vehicle = row.vehicle
             const vName = typeof vehicle === 'string' ? vehicle : vehicle?.name
@@ -90,7 +97,16 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
                     <Typography
                       variant="h6"
                       component="h3"
-                      sx={{ fontWeight: 800, color: '#0f172a', fontSize: '1rem', lineHeight: 1.2 }}
+                      sx={{
+                        fontWeight: 800,
+                        color: '#0f172a',
+                        fontSize: '1rem',
+                        lineHeight: 1.2,
+                        display: '-webkit-box',
+                        overflow: 'hidden',
+                        WebkitBoxOrient: 'vertical',
+                        WebkitLineClamp: 2,
+                      }}
                     >
                       {vName}
                     </Typography>
