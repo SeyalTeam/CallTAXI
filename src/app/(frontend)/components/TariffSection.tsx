@@ -116,17 +116,18 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
                     flexDirection: { xs: 'column', md: 'row' },
                     alignItems: { xs: 'flex-start', md: 'center' },
                     justifyContent: 'space-between',
-                    gap: { xs: 3, md: 4 },
+                    gap: { xs: 2, md: 4 },
                   }}
                 >
                   {/* Vehicle Image */}
                   <Box
                     sx={{
                       width: { xs: '100%', md: '280px' },
-                      height: { xs: 'auto', md: '120px' },
+                      minHeight: { xs: '140px', md: '120px' },
                       display: 'flex',
                       alignItems: 'center',
-                      justifyContent: { xs: 'center', md: 'flex-start' },
+                      justifyContent: 'center', // Centered on all screens
+                      mb: { xs: 2, md: 0 },
                     }}
                   >
                     {vIcon ? (
@@ -136,9 +137,9 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
                         alt={vIcon.alt}
                         sx={{
                           width: '100%',
-                          height: '100%',
-                          maxWidth: { xs: '240px', md: '100%' },
-                          maxHeight: { xs: '140px', md: '100%' },
+                          height: 'auto',
+                          maxWidth: { xs: '320px', md: '100%' }, // Increased mobile max-width
+                          maxHeight: { xs: '180px', md: '100%' },
                           objectFit: 'contain',
                         }}
                       />
@@ -159,15 +160,23 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
                     sx={{
                       display: 'flex',
                       flexDirection: 'row',
-                      flexWrap: 'wrap',
-                      gap: { xs: 3, md: 6 },
+                      flexWrap: 'nowrap', // Force side-by-side on mobile
+                      gap: { xs: 2, md: 6 },
                       width: { xs: '100%', md: 'auto' },
                       justifyContent: { xs: 'space-between', md: 'flex-end' },
                     }}
                   >
                     {/* One Way */}
-                    <Box>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                    <Box sx={{ flex: 1, textAlign: { xs: 'right', md: 'left' } }}>
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: { xs: 'flex-end', md: 'flex-start' },
+                          gap: 1,
+                          mb: 0.5,
+                        }}
+                      >
                         <Box
                           sx={{
                             width: 20,
@@ -183,7 +192,12 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
                         >
                           ↑
                         </Box>
-                        <Typography variant="body2" color="#64748b" fontWeight={500}>
+                        <Typography
+                          variant="body2"
+                          color="#64748b"
+                          fontWeight={500}
+                          sx={{ fontSize: { xs: '0.8rem', md: '0.875rem' } }}
+                        >
                           One way
                         </Typography>
                       </Box>
@@ -192,7 +206,7 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
                         sx={{
                           fontWeight: 800,
                           color: '#0f172a',
-                          fontSize: { xs: '1.25rem', md: '1.75rem' },
+                          fontSize: { xs: '1.5rem', md: '1.75rem' },
                         }}
                       >
                         ₹{row.oneway?.perKmRate}
@@ -211,8 +225,16 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
                     </Box>
 
                     {/* Round Trip */}
-                    <Box>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                    <Box sx={{ flex: 1, textAlign: { xs: 'right', md: 'left' } }}>
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: { xs: 'flex-end', md: 'flex-start' },
+                          gap: 1,
+                          mb: 0.5,
+                        }}
+                      >
                         <Box
                           sx={{
                             width: 20,
@@ -228,7 +250,12 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
                         >
                           ↓↑
                         </Box>
-                        <Typography variant="body2" color="#64748b" fontWeight={500}>
+                        <Typography
+                          variant="body2"
+                          color="#64748b"
+                          fontWeight={500}
+                          sx={{ fontSize: { xs: '0.8rem', md: '0.875rem' } }}
+                        >
                           Round Trip
                         </Typography>
                       </Box>
@@ -237,7 +264,7 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
                         sx={{
                           fontWeight: 800,
                           color: '#0f172a',
-                          fontSize: { xs: '1.25rem', md: '1.75rem' },
+                          fontSize: { xs: '1.5rem', md: '1.75rem' },
                         }}
                       >
                         ₹{row.roundtrip?.perKmRate}
