@@ -76,207 +76,325 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
                   },
                 }}
               >
-                {/* Vehicle Header */}
+                {/* --- MOBILE LAYOUT (Grid) --- */}
                 <Box
                   sx={{
-                    display: 'flex',
-                    alignItems: 'baseline',
-                    gap: 1.5,
-                    mb: 2,
+                    display: { xs: 'grid', md: 'none' },
+                    gridTemplateColumns: '1fr 1fr 1fr',
+                    gap: 2,
+                    alignItems: 'center',
                   }}
                 >
-                  <Typography
-                    variant="h5"
-                    component="h3"
-                    sx={{
-                      fontWeight: 800,
-                      color: '#0f172a',
-                      fontSize: { xs: '1.25rem', md: '1.5rem' },
-                    }}
-                  >
-                    {vName}
-                  </Typography>
-                  {seatCount && (
+                  {/* Row 1, Col 1: Vehicle Name */}
+                  <Box sx={{ gridColumn: '1 / 2' }}>
                     <Typography
-                      component="span"
+                      variant="h6"
+                      component="h3"
+                      sx={{ fontWeight: 800, color: '#0f172a', fontSize: '1rem', lineHeight: 1.2 }}
+                    >
+                      {vName}
+                    </Typography>
+                    {seatCount && (
+                      <Typography
+                        component="div"
+                        sx={{ color: '#94a3b8', fontSize: '0.75rem', fontWeight: 500 }}
+                      >
+                        {seatCount} seater
+                      </Typography>
+                    )}
+                  </Box>
+
+                  {/* Row 1, Col 2: One Way Label */}
+                  <Box sx={{ gridColumn: '2 / 3', textAlign: 'center' }}>
+                    <Box
                       sx={{
-                        color: '#94a3b8',
-                        fontSize: { xs: '0.875rem', md: '1rem' },
-                        fontWeight: 500,
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 0.5,
+                        bgcolor: 'rgba(16, 185, 129, 0.1)',
+                        px: 1,
+                        py: 0.5,
+                        borderRadius: 1,
                       }}
                     >
-                      {seatCount} seater
-                    </Typography>
-                  )}
-                </Box>
+                      <Typography
+                        variant="caption"
+                        color="#10b981"
+                        fontWeight={700}
+                        sx={{ fontSize: '0.7rem' }}
+                      >
+                        ↑ One Way
+                      </Typography>
+                    </Box>
+                  </Box>
 
-                <Box
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    gap: { xs: 1, md: 4 }, // Reduced gap on mobile to fit larger image
-                  }}
-                >
-                  {/* Vehicle Image */}
-                  <Box
-                    sx={{
-                      width: { xs: '45%', md: '280px' }, // Increased to 45%
-                      minHeight: { xs: '80px', md: '120px' },
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
+                  {/* Row 1, Col 3: Round Trip Label */}
+                  <Box sx={{ gridColumn: '3 / 4', textAlign: 'right' }}>
+                    <Box
+                      sx={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 0.5,
+                        bgcolor: 'rgba(16, 185, 129, 0.1)',
+                        px: 1,
+                        py: 0.5,
+                        borderRadius: 1,
+                      }}
+                    >
+                      <Typography
+                        variant="caption"
+                        color="#10b981"
+                        fontWeight={700}
+                        sx={{ fontSize: '0.7rem' }}
+                      >
+                        ↓↑ Round
+                      </Typography>
+                    </Box>
+                  </Box>
+
+                  {/* Row 2, Col 1: Icon (Small) */}
+                  <Box sx={{ gridColumn: '1 / 2', display: 'flex', justifyContent: 'flex-start' }}>
                     {vIcon ? (
                       <Box
                         component="img"
                         src={vIcon.url}
                         alt={vIcon.alt}
                         sx={{
-                          width: '100%',
+                          width: '60px', // Reduced size as requested
                           height: 'auto',
-                          maxHeight: { xs: '120px', md: '100%' }, // Increased max height
                           objectFit: 'contain',
                         }}
                       />
                     ) : (
                       <Box
-                        sx={{
-                          width: '100%',
-                          height: '80px',
-                          bgcolor: '#f1f5f9',
-                          borderRadius: 2,
-                        }}
+                        sx={{ width: '60px', height: '30px', bgcolor: '#f1f5f9', borderRadius: 1 }}
                       />
                     )}
                   </Box>
 
-                  {/* Pricing Details */}
+                  {/* Row 2, Col 2: One Way Price */}
+                  <Box sx={{ gridColumn: '2 / 3', textAlign: 'center' }}>
+                    <Typography
+                      variant="h6"
+                      sx={{ fontWeight: 800, color: '#0f172a', fontSize: '1.25rem' }}
+                    >
+                      ₹{row.oneway?.perKmRate}
+                      <Typography
+                        component="span"
+                        sx={{ fontSize: '0.7em', color: '#64748b', fontWeight: 600 }}
+                      >
+                        /km
+                      </Typography>
+                    </Typography>
+                  </Box>
+
+                  {/* Row 2, Col 3: Round Trip Price */}
+                  <Box sx={{ gridColumn: '3 / 4', textAlign: 'right' }}>
+                    <Typography
+                      variant="h6"
+                      sx={{ fontWeight: 800, color: '#0f172a', fontSize: '1.25rem' }}
+                    >
+                      ₹{row.roundtrip?.perKmRate}
+                      <Typography
+                        component="span"
+                        sx={{ fontSize: '0.7em', color: '#64748b', fontWeight: 600 }}
+                      >
+                        /km
+                      </Typography>
+                    </Typography>
+                  </Box>
+                </Box>
+
+                {/* --- DESKTOP LAYOUT (Existing Flex) --- */}
+                <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+                  {/* Vehicle Header */}
                   <Box
                     sx={{
                       display: 'flex',
-                      flexDirection: { xs: 'column', md: 'row' },
-                      flex: 1,
-                      gap: { xs: 2, md: 6 },
-                      justifyContent: { xs: 'center', md: 'flex-end' },
+                      alignItems: 'baseline',
+                      gap: 1.5,
+                      mb: 2,
                     }}
                   >
-                    {/* One Way */}
-                    <Box sx={{ textAlign: { xs: 'right', md: 'left' } }}>
-                      <Box
+                    <Typography
+                      variant="h5"
+                      component="h3"
+                      sx={{
+                        fontWeight: 800,
+                        color: '#0f172a',
+                        fontSize: { md: '1.5rem' },
+                      }}
+                    >
+                      {vName}
+                    </Typography>
+                    {seatCount && (
+                      <Typography
+                        component="span"
                         sx={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: { xs: 'flex-end', md: 'flex-start' },
-                          gap: 1,
-                          mb: 0.5,
+                          color: '#94a3b8',
+                          fontSize: { md: '1rem' },
+                          fontWeight: 500,
                         }}
                       >
+                        {seatCount} seater
+                      </Typography>
+                    )}
+                  </Box>
+
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: 4,
+                    }}
+                  >
+                    {/* Vehicle Image */}
+                    <Box
+                      sx={{
+                        width: '280px',
+                        height: '120px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'flex-start',
+                      }}
+                    >
+                      {vIcon ? (
+                        <Box
+                          component="img"
+                          src={vIcon.url}
+                          alt={vIcon.alt}
+                          sx={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'contain',
+                          }}
+                        />
+                      ) : (
                         <Box
                           sx={{
-                            width: 20,
-                            height: 20,
-                            borderRadius: 1,
-                            bgcolor: 'rgba(16, 185, 129, 0.1)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            color: '#10b981',
-                            fontSize: '0.875rem',
+                            width: '100%',
+                            height: '100px',
+                            bgcolor: '#f1f5f9',
+                            borderRadius: 2,
                           }}
-                        >
-                          ↑
-                        </Box>
-                        <Typography
-                          variant="body2"
-                          color="#64748b"
-                          fontWeight={500}
-                          sx={{ fontSize: { xs: '0.8rem', md: '0.875rem' } }}
-                        >
-                          One way
-                        </Typography>
-                      </Box>
-                      <Typography
-                        variant="h5"
-                        sx={{
-                          fontWeight: 800,
-                          color: '#0f172a',
-                          fontSize: { xs: '1.25rem', md: '1.75rem' },
-                        }}
-                      >
-                        ₹{row.oneway?.perKmRate}
-                        <Typography
-                          component="span"
-                          sx={{
-                            fontSize: '0.6em',
-                            color: '#0f172a',
-                            fontWeight: 700,
-                            ml: 0.5,
-                          }}
-                        >
-                          /km
-                        </Typography>
-                      </Typography>
+                        />
+                      )}
                     </Box>
 
-                    {/* Round Trip */}
-                    <Box sx={{ textAlign: { xs: 'right', md: 'left' } }}>
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: { xs: 'flex-end', md: 'flex-start' },
-                          gap: 1,
-                          mb: 0.5,
-                        }}
-                      >
+                    {/* Pricing Details */}
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        gap: 6,
+                        justifyContent: 'flex-end',
+                      }}
+                    >
+                      {/* One Way */}
+                      <Box>
                         <Box
                           sx={{
-                            width: 20,
-                            height: 20,
-                            borderRadius: 1,
-                            bgcolor: 'rgba(16, 185, 129, 0.1)',
                             display: 'flex',
                             alignItems: 'center',
-                            justifyContent: 'center',
-                            color: '#10b981',
-                            fontSize: '0.875rem',
+                            gap: 1,
+                            mb: 0.5,
                           }}
                         >
-                          ↓↑
+                          <Box
+                            sx={{
+                              width: 20,
+                              height: 20,
+                              borderRadius: 1,
+                              bgcolor: 'rgba(16, 185, 129, 0.1)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              color: '#10b981',
+                              fontSize: '0.875rem',
+                            }}
+                          >
+                            ↑
+                          </Box>
+                          <Typography variant="body2" color="#64748b" fontWeight={500}>
+                            One way
+                          </Typography>
                         </Box>
                         <Typography
-                          variant="body2"
-                          color="#64748b"
-                          fontWeight={500}
-                          sx={{ fontSize: { xs: '0.8rem', md: '0.875rem' } }}
-                        >
-                          Round Trip
-                        </Typography>
-                      </Box>
-                      <Typography
-                        variant="h5"
-                        sx={{
-                          fontWeight: 800,
-                          color: '#0f172a',
-                          fontSize: { xs: '1.25rem', md: '1.75rem' },
-                        }}
-                      >
-                        ₹{row.roundtrip?.perKmRate}
-                        <Typography
-                          component="span"
+                          variant="h5"
                           sx={{
-                            fontSize: '0.6em',
+                            fontWeight: 800,
                             color: '#0f172a',
-                            fontWeight: 700,
-                            ml: 0.5,
+                            fontSize: '1.75rem',
                           }}
                         >
-                          /km
+                          ₹{row.oneway?.perKmRate}
+                          <Typography
+                            component="span"
+                            sx={{
+                              fontSize: '0.6em',
+                              color: '#0f172a',
+                              fontWeight: 700,
+                              ml: 0.5,
+                            }}
+                          >
+                            /km
+                          </Typography>
                         </Typography>
-                      </Typography>
+                      </Box>
+
+                      {/* Round Trip */}
+                      <Box>
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 1,
+                            mb: 0.5,
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              width: 20,
+                              height: 20,
+                              borderRadius: 1,
+                              bgcolor: 'rgba(16, 185, 129, 0.1)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              color: '#10b981',
+                              fontSize: '0.875rem',
+                            }}
+                          >
+                            ↓↑
+                          </Box>
+                          <Typography variant="body2" color="#64748b" fontWeight={500}>
+                            Round Trip
+                          </Typography>
+                        </Box>
+                        <Typography
+                          variant="h5"
+                          sx={{
+                            fontWeight: 800,
+                            color: '#0f172a',
+                            fontSize: '1.75rem',
+                          }}
+                        >
+                          ₹{row.roundtrip?.perKmRate}
+                          <Typography
+                            component="span"
+                            sx={{
+                              fontSize: '0.6em',
+                              color: '#0f172a',
+                              fontWeight: 700,
+                              ml: 0.5,
+                            }}
+                          >
+                            /km
+                          </Typography>
+                        </Typography>
+                      </Box>
                     </Box>
                   </Box>
                 </Box>
