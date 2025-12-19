@@ -113,8 +113,8 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
                 <Box
                   sx={{
                     display: 'flex',
-                    flexDirection: { xs: 'column', md: 'row' },
-                    alignItems: { xs: 'flex-start', md: 'center' },
+                    flexDirection: 'row',
+                    alignItems: 'center',
                     justifyContent: 'space-between',
                     gap: { xs: 2, md: 4 },
                   }}
@@ -122,12 +122,11 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
                   {/* Vehicle Image */}
                   <Box
                     sx={{
-                      width: { xs: '100%', md: '280px' },
-                      minHeight: { xs: '140px', md: '120px' },
+                      width: { xs: '35%', md: '280px' },
+                      minHeight: { xs: '80px', md: '120px' },
                       display: 'flex',
                       alignItems: 'center',
-                      justifyContent: 'center', // Centered on all screens
-                      mb: { xs: 2, md: 0 },
+                      justifyContent: 'center',
                     }}
                   >
                     {vIcon ? (
@@ -138,8 +137,7 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
                         sx={{
                           width: '100%',
                           height: 'auto',
-                          maxWidth: { xs: '320px', md: '100%' }, // Increased mobile max-width
-                          maxHeight: { xs: '180px', md: '100%' },
+                          maxHeight: { xs: '100px', md: '100%' },
                           objectFit: 'contain',
                         }}
                       />
@@ -147,7 +145,7 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
                       <Box
                         sx={{
                           width: '100%',
-                          height: '100px',
+                          height: '80px',
                           bgcolor: '#f1f5f9',
                           borderRadius: 2,
                         }}
@@ -159,15 +157,14 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
                   <Box
                     sx={{
                       display: 'flex',
-                      flexDirection: 'row',
-                      flexWrap: 'nowrap', // Force side-by-side on mobile
+                      flexDirection: { xs: 'column', md: 'row' },
+                      flex: 1,
                       gap: { xs: 2, md: 6 },
-                      width: { xs: '100%', md: 'auto' },
-                      justifyContent: { xs: 'space-between', md: 'flex-end' },
+                      justifyContent: { xs: 'center', md: 'flex-end' },
                     }}
                   >
                     {/* One Way */}
-                    <Box sx={{ flex: 1, textAlign: { xs: 'right', md: 'left' } }}>
+                    <Box sx={{ textAlign: { xs: 'right', md: 'left' } }}>
                       <Box
                         sx={{
                           display: 'flex',
@@ -206,7 +203,7 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
                         sx={{
                           fontWeight: 800,
                           color: '#0f172a',
-                          fontSize: { xs: '1.5rem', md: '1.75rem' },
+                          fontSize: { xs: '1.25rem', md: '1.75rem' },
                         }}
                       >
                         ₹{row.oneway?.perKmRate}
@@ -225,7 +222,7 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
                     </Box>
 
                     {/* Round Trip */}
-                    <Box sx={{ flex: 1, textAlign: { xs: 'right', md: 'left' } }}>
+                    <Box sx={{ textAlign: { xs: 'right', md: 'left' } }}>
                       <Box
                         sx={{
                           display: 'flex',
@@ -264,7 +261,7 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
                         sx={{
                           fontWeight: 800,
                           color: '#0f172a',
-                          fontSize: { xs: '1.5rem', md: '1.75rem' },
+                          fontSize: { xs: '1.25rem', md: '1.75rem' },
                         }}
                       >
                         ₹{row.roundtrip?.perKmRate}
