@@ -16,17 +16,20 @@ import {
 import { TariffDoc } from '../types'
 
 export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
-  // Client-side fetching removed in favor of SSR props
-
   return (
     <Box id="tariff-section" sx={{ py: 4, bgcolor: 'transparent', color: '#0f172a' }}>
       <Container maxWidth="lg">
-        <Box textAlign="center" mb={4}>
+        {/* Header Section */}
+        <Box textAlign="center" mb={6}>
           <Typography
             variant="h3"
             fontWeight="800"
             gutterBottom
-            sx={{ color: '#0f172a', fontSize: { xs: '1.75rem', md: '3rem' }, whiteSpace: 'nowrap' }}
+            sx={{
+              color: '#0f172a',
+              fontSize: { xs: '1.75rem', md: '3rem' },
+              whiteSpace: 'nowrap',
+            }}
           >
             Transparent <span style={{ color: '#d97706' }}>Tariffs</span>
           </Typography>
@@ -44,122 +47,219 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
           </Typography>
         </Box>
 
-        <TableContainer
-          component={Paper}
-          elevation={0}
-          sx={{
-            bgcolor: '#fff',
-            borderRadius: 4,
-            border: '1px solid #e2e8f0',
-            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.05)',
-            overflow: 'hidden',
-          }}
-        >
-          <Table sx={{ minWidth: { xs: 0, md: 650 } }}>
-            <TableHead sx={{ bgcolor: '#f8fafc' }}>
-              <TableRow
+        {/* Cards Grid */}
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          {tariffs.map((row) => {
+            const vehicle = row.vehicle
+            const vName = typeof vehicle === 'string' ? vehicle : vehicle?.name
+            const vIcon =
+              typeof vehicle !== 'string' && typeof vehicle?.icon !== 'string'
+                ? vehicle?.icon
+                : null
+            const seatCount = typeof vehicle !== 'string' ? vehicle?.seatCount : null
+
+            return (
+              <Paper
+                key={row.id}
+                elevation={0}
                 sx={{
-                  '& th': {
-                    color: '#0f172a',
-                    fontWeight: '700',
-                    fontSize: { xs: '0.8rem', md: '1rem' },
-                    py: { xs: 1.5, md: 3 },
-                    px: { xs: 1, md: 2 },
+                  p: { xs: 2, md: 3 },
+                  borderRadius: 4,
+                  bgcolor: '#fff',
+                  boxShadow:
+                    '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                  transition: 'transform 0.2s',
+                  '&:hover': {
+                    transform: 'translateY(-2px)',
+                    boxShadow:
+                      '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
                   },
                 }}
               >
-                <TableCell>Vehicle Type</TableCell>
-                <TableCell align="right">
-                  One Way
-                  <Box
-                    component="span"
+                {/* Vehicle Header */}
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'baseline',
+                    gap: 1.5,
+                    mb: 2,
+                  }}
+                >
+                  <Typography
+                    variant="h5"
+                    component="h3"
                     sx={{
-                      display: 'block',
-                      fontSize: { xs: '0.7rem', md: '0.875rem' },
-                      fontWeight: 400,
-                      color: '#64748b',
+                      fontWeight: 800,
+                      color: '#0f172a',
+                      fontSize: { xs: '1.25rem', md: '1.5rem' },
                     }}
                   >
-                    (per km)
-                  </Box>
-                </TableCell>
-                <TableCell align="right">
-                  Round Trip
-                  <Box
-                    component="span"
-                    sx={{
-                      display: 'block',
-                      fontSize: { xs: '0.7rem', md: '0.875rem' },
-                      fontWeight: 400,
-                      color: '#64748b',
-                    }}
-                  >
-                    (per km)
-                  </Box>
-                </TableCell>
-                <TableCell align="right" sx={{ display: { xs: 'none', md: 'table-cell' } }}>
-                  Driver Bata
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {tariffs.map((row) => {
-                const vehicle = row.vehicle
-                const vName = typeof vehicle === 'string' ? vehicle : vehicle?.name
-                const vIcon =
-                  typeof vehicle !== 'string' && typeof vehicle?.icon !== 'string'
-                    ? vehicle?.icon
-                    : null
-
-                return (
-                  <TableRow
-                    key={row.id}
-                    sx={{
-                      '& td': {
-                        color: '#334155',
-                        borderBottom: '1px solid #f1f5f9',
-                        fontSize: { xs: '0.85rem', md: '1rem' },
-                        py: { xs: 1.5, md: 2.5 },
-                        px: { xs: 1, md: 2 },
-                      },
-                      '&:hover': { bgcolor: '#f8fafc' },
-                      '&:last-child td': { borderBottom: 0 },
-                    }}
-                  >
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      sx={{ fontWeight: 600, color: '#0f172a !important' }}
+                    {vName}
+                  </Typography>
+                  {seatCount && (
+                    <Typography
+                      component="span"
+                      sx={{
+                        color: '#94a3b8',
+                        fontSize: { xs: '0.875rem', md: '1rem' },
+                        fontWeight: 500,
+                      }}
                     >
-                      <Box>
-                        {vName}
-                        {vIcon && (
-                          <Box
-                            component="img"
-                            src={vIcon.url}
-                            alt={vIcon.alt}
-                            sx={{
-                              display: 'block',
-                              width: '40px',
-                              height: 'auto',
-                              mt: 0.5,
-                              objectFit: 'contain',
-                            }}
-                          />
-                        )}
+                      {seatCount} seater
+                    </Typography>
+                  )}
+                </Box>
+
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: { xs: 'column', md: 'row' },
+                    alignItems: { xs: 'flex-start', md: 'center' },
+                    justifyContent: 'space-between',
+                    gap: { xs: 3, md: 4 },
+                  }}
+                >
+                  {/* Vehicle Image */}
+                  <Box
+                    sx={{
+                      width: { xs: '100%', md: '280px' },
+                      height: { xs: 'auto', md: '120px' },
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: { xs: 'center', md: 'flex-start' },
+                    }}
+                  >
+                    {vIcon ? (
+                      <Box
+                        component="img"
+                        src={vIcon.url}
+                        alt={vIcon.alt}
+                        sx={{
+                          width: '100%',
+                          height: '100%',
+                          maxWidth: { xs: '240px', md: '100%' },
+                          maxHeight: { xs: '140px', md: '100%' },
+                          objectFit: 'contain',
+                        }}
+                      />
+                    ) : (
+                      <Box
+                        sx={{
+                          width: '100%',
+                          height: '100px',
+                          bgcolor: '#f1f5f9',
+                          borderRadius: 2,
+                        }}
+                      />
+                    )}
+                  </Box>
+
+                  {/* Pricing Details */}
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                      flexWrap: 'wrap',
+                      gap: { xs: 3, md: 6 },
+                      width: { xs: '100%', md: 'auto' },
+                      justifyContent: { xs: 'space-between', md: 'flex-end' },
+                    }}
+                  >
+                    {/* One Way */}
+                    <Box>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                        <Box
+                          sx={{
+                            width: 20,
+                            height: 20,
+                            borderRadius: 1,
+                            bgcolor: 'rgba(16, 185, 129, 0.1)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: '#10b981',
+                            fontSize: '0.875rem',
+                          }}
+                        >
+                          ↑
+                        </Box>
+                        <Typography variant="body2" color="#64748b" fontWeight={500}>
+                          One way
+                        </Typography>
                       </Box>
-                    </TableCell>
-                    <TableCell align="right">₹{row.oneway?.perKmRate ?? '-'}</TableCell>
-                    <TableCell align="right">₹{row.roundtrip?.perKmRate ?? '-'}</TableCell>
-                    <TableCell align="right" sx={{ display: { xs: 'none', md: 'table-cell' } }}>
-                      ₹{row.oneway?.bata ?? '-'}
-                    </TableCell>
-                  </TableRow>
-                )
-              })}
-            </TableBody>
-          </Table>
-        </TableContainer>
+                      <Typography
+                        variant="h5"
+                        sx={{
+                          fontWeight: 800,
+                          color: '#0f172a',
+                          fontSize: { xs: '1.25rem', md: '1.75rem' },
+                        }}
+                      >
+                        ₹{row.oneway?.perKmRate}
+                        <Typography
+                          component="span"
+                          sx={{
+                            fontSize: '0.6em',
+                            color: '#0f172a',
+                            fontWeight: 700,
+                            ml: 0.5,
+                          }}
+                        >
+                          /km
+                        </Typography>
+                      </Typography>
+                    </Box>
+
+                    {/* Round Trip */}
+                    <Box>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                        <Box
+                          sx={{
+                            width: 20,
+                            height: 20,
+                            borderRadius: 1,
+                            bgcolor: 'rgba(16, 185, 129, 0.1)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: '#10b981',
+                            fontSize: '0.875rem',
+                          }}
+                        >
+                          ↓↑
+                        </Box>
+                        <Typography variant="body2" color="#64748b" fontWeight={500}>
+                          Round Trip
+                        </Typography>
+                      </Box>
+                      <Typography
+                        variant="h5"
+                        sx={{
+                          fontWeight: 800,
+                          color: '#0f172a',
+                          fontSize: { xs: '1.25rem', md: '1.75rem' },
+                        }}
+                      >
+                        ₹{row.roundtrip?.perKmRate}
+                        <Typography
+                          component="span"
+                          sx={{
+                            fontSize: '0.6em',
+                            color: '#0f172a',
+                            fontWeight: 700,
+                            ml: 0.5,
+                          }}
+                        >
+                          /km
+                        </Typography>
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Box>
+              </Paper>
+            )
+          })}
+        </Box>
       </Container>
     </Box>
   )

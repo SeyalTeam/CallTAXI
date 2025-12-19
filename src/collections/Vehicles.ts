@@ -59,6 +59,11 @@ export const Vehicles: CollectionConfig = {
       required: true,
     },
     {
+      name: 'seatCount',
+      type: 'number',
+      label: 'Seat Count',
+    },
+    {
       name: 'ownerName',
       type: 'text',
       required: true,

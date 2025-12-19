@@ -28,6 +28,7 @@ export type VehicleDoc = {
         alt: string
       }
     | string
+  seatCount?: number
 }
 
 export type TariffGroup = {

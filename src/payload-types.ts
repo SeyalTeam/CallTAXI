@@ -241,6 +241,7 @@ export interface Vehicle {
   id: string;
   name: string;
   number: string;
+  seatCount?: number | null;
   ownerName: string;
   lastFc: string;
   image: string | VehicleImage;
@@ -567,6 +568,7 @@ export interface TariffsSelect<T extends boolean = true> {
 export interface VehiclesSelect<T extends boolean = true> {
   name?: T;
   number?: T;
+  seatCount?: T;
   ownerName?: T;
   lastFc?: T;
   image?: T;
