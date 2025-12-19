@@ -15,10 +15,9 @@ export const dynamic = 'force-dynamic'
 
 const jsonLd = {
   '@context': 'https://schema.org',
-  '@type': 'TaxiService',
+  '@type': 'LocalBusiness',
   name: 'Kani Taxi',
   image: 'https://bucghzn379yrpbdu.public.blob.vercel-storage.com/Banner/kanitaxi-location.png',
-  width: '100%',
   telephone: '+919488104888',
   email: 'kanitaxi5555@gmail.com',
   url: 'https://kanitaxi.com',
@@ -32,7 +31,7 @@ const jsonLd = {
   },
   geo: {
     '@type': 'GeoCoordinates',
-    latitude: 8.7642, // Approximate for Thoothukudi/Sawyerpuram, can be refined
+    latitude: 8.7642,
     longitude: 78.1348,
   },
   areaServed: [
@@ -57,6 +56,10 @@ const jsonLd = {
       opens: '00:00',
       closes: '23:59',
     },
+  ],
+  sameAs: [
+    'https://www.facebook.com/kanitaxi', // Example, can be removed if not known
+    // Add other social profiles if available
   ],
 }
 
