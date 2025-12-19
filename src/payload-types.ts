@@ -238,6 +238,8 @@ export interface Vehicle {
   number: string;
   ownerName: string;
   lastFc: string;
+  image: string | Media;
+  icon: string | Media;
   updatedAt: string;
   createdAt: string;
 }
@@ -513,6 +515,8 @@ export interface VehiclesSelect<T extends boolean = true> {
   number?: T;
   ownerName?: T;
   lastFc?: T;
+  image?: T;
+  icon?: T;
   updatedAt?: T;
   createdAt?: T;
 }

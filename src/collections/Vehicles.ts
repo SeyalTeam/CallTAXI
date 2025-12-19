@@ -31,6 +31,18 @@ export const Vehicles: CollectionConfig = {
         },
       },
     },
+    {
+      name: 'image',
+      type: 'upload',
+      relationTo: 'media',
+      required: true,
+    },
+    {
+      name: 'icon',
+      type: 'upload',
+      relationTo: 'media',
+      required: true,
+    },
   ],
   access: {
     create: ({ req: { user } }) => user?.role === 'superadmin' || user?.role === 'admin',
