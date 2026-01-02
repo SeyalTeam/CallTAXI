@@ -18,6 +18,8 @@ import { Customers } from './collections/Customers'
 import { Coupons } from './collections/Coupons'
 import { SliderImages } from './collections/SliderImages'
 import { getBookingReport } from './endpoints/getBookingReport'
+import { getCustomerReport } from './endpoints/getCustomerReport'
+import { CustomerReport } from './globals/CustomerReport'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -28,6 +30,11 @@ export default buildConfig({
       path: '/get-booking-report',
       method: 'get',
       handler: getBookingReport,
+    },
+    {
+      path: '/get-customer-report',
+      method: 'get',
+      handler: getCustomerReport,
     },
   ],
   admin: {
@@ -57,7 +64,7 @@ export default buildConfig({
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
-  globals: [BookingReport],
+  globals: [BookingReport, CustomerReport],
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },

@@ -59,6 +59,13 @@ export const getBookingReport: PayloadHandler = async (req): Promise<Response> =
       }
     }
 
+    const customerPhone = params.customerPhone
+    if (customerPhone) {
+      where.customerPhone = {
+        equals: customerPhone,
+      }
+    }
+
     if (and.length > 0) {
       where.and = and
     }

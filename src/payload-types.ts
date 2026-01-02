@@ -111,9 +111,11 @@ export interface Config {
   fallbackLocale: null;
   globals: {
     'booking-report': BookingReport;
+    'customer-report': CustomerReport;
   };
   globalsSelect: {
     'booking-report': BookingReportSelect<false> | BookingReportSelect<true>;
+    'customer-report': CustomerReportSelect<false> | CustomerReportSelect<true>;
   };
   locale: null;
   user: User & {
@@ -851,9 +853,27 @@ export interface BookingReport {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "customer-report".
+ */
+export interface CustomerReport {
+  id: string;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "booking-report_select".
  */
 export interface BookingReportSelect<T extends boolean = true> {
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "customer-report_select".
+ */
+export interface CustomerReportSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
