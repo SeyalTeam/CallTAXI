@@ -115,7 +115,7 @@ export default async function Page() {
             right: 0,
             bottom: 0,
             background:
-              'linear-gradient(to bottom, #f4f3eb 0%, rgba(244, 243, 235, 0.96) 15%, rgba(244, 243, 235, 0.96) 100%)',
+              'linear-gradient(to bottom, #f3f4f6 0%, rgba(243, 244, 246, 0.98) 15%, rgba(243, 244, 246, 0.98) 100%)',
             bgcolor: 'transparent', // fallback
             zIndex: 0,
           }}

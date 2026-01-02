@@ -13,7 +13,7 @@ export default function AboutSection() {
       sx={{
         pt: { xs: '480px', md: 8 },
         pb: 8,
-        background: 'linear-gradient(to bottom, #ffffff 0%, #f4f3eb 100%)',
+        background: 'linear-gradient(to bottom, #ffffff 0%, #f3f4f6 100%)',
         color: '#0f172a',
       }}
     >
