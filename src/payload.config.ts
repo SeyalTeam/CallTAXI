@@ -13,13 +13,23 @@ import { Drivers } from './collections/Drivers'
 import { Tariffs } from './collections/Tariffs'
 import { Vehicles, VehicleImages, VehicleIcons } from './collections/Vehicles'
 import { Bookings } from './collections/Bookings'
+import { BookingReport } from './globals/BookingReport'
 import { Customers } from './collections/Customers'
 import { Coupons } from './collections/Coupons'
+import { SliderImages } from './collections/SliderImages'
+import { getBookingReport } from './endpoints/getBookingReport'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
 export default buildConfig({
+  endpoints: [
+    {
+      path: '/get-booking-report',
+      method: 'get',
+      handler: getBookingReport,
+    },
+  ],
   admin: {
     user: Users.slug,
     importMap: {
@@ -43,9 +53,11 @@ export default buildConfig({
     Coupons,
     VehicleImages,
     VehicleIcons,
+    SliderImages,
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
+  globals: [BookingReport],
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
@@ -65,6 +77,9 @@ export default buildConfig({
         },
         'vehicle-icons': {
           prefix: 'Call Taxi/Kani Taxi/Icons',
+        },
+        'slider-images': {
+          prefix: 'Call Taxi/Kani Taxi/slider',
         },
       },
       token: process.env.BLOB_READ_WRITE_TOKEN,

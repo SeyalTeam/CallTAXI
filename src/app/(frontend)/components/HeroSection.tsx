@@ -17,11 +17,18 @@ import {
   Container,
 } from '@mui/material'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
-import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
 import axios from 'axios'
 import { FormValues, TNLocation, VehicleDoc, TariffDoc, CouponDoc } from '../types'
+
+// Define Slider Image Type
+interface SliderImage {
+  id: string
+  url: string
+  alt: string
+}
 
 /**
  * Utility: parse vehicle reference to id and name
@@ -84,6 +91,10 @@ export default function HeroSection() {
   const [discountAmount, setDiscountAmount] = useState<number>(0)
   const [hasActiveCoupons, setHasActiveCoupons] = useState<boolean>(false)
   const [packageHours, setPackageHours] = useState<number>(1)
+
+  // Slider State
+  const [sliderImages, setSliderImages] = useState<SliderImage[]>([])
+  const [currentSlideIndex, setCurrentSlideIndex] = useState<number>(0)
 
   // refs for outside click
   const pickupRef = useRef<HTMLDivElement | null>(null)
@@ -175,15 +186,48 @@ export default function HeroSection() {
       }
     }
 
+    async function loadSliderImages() {
+      try {
+        const res = await axios.get<{ docs: any[] }>(
+          `${process.env.NEXT_PUBLIC_PAYLOAD_URL || ''}/api/slider-images?limit=10`,
+        )
+        const docs = res.data.docs || []
+        const images: SliderImage[] = docs
+          .filter((d) => d.url)
+          .map((d) => ({
+            id: d.id,
+            url: d.url,
+            alt: d.alt || 'Slider Image',
+          }))
+        if (mounted && images.length > 0) {
+          setSliderImages(images)
+        }
+      } catch (error) {
+        console.error('Failed to load slider images', error)
+      }
+    }
+
     void loadVehicles()
     void loadTariffs()
     void loadTN()
     void checkActiveCoupons()
+    void loadSliderImages()
 
     return () => {
       mounted = false
     }
   }, [])
+
+  // Slider Interval
+  useEffect(() => {
+    if (sliderImages.length <= 1) return
+
+    const interval = setInterval(() => {
+      setCurrentSlideIndex((prev) => (prev + 1) % sliderImages.length)
+    }, 5000)
+
+    return () => clearInterval(interval)
+  }, [sliderImages.length])
 
   // hide suggestions
   useEffect(() => {
@@ -506,30 +550,63 @@ export default function HeroSection() {
         pb: { xs: '50px', md: 0 }, // Lift form up 50px
       }}
     >
-      <Box
-        sx={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: { xs: '500px', md: 0 }, // Lift BG bottom 500px to match overlap
-          backgroundImage:
-            'url(https://bucghzn379yrpbdu.public.blob.vercel-storage.com/Banner/kanitaxi-hero-bg.png)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          zIndex: 0,
-          // Dark overlay for text readability
-          '&::before': {
-            content: '""',
+      {/* Background Slider */}
+      {sliderImages.length > 0 ? (
+        sliderImages.map((img, index) => (
+          <Box
+            key={img.id}
+            sx={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: { xs: '500px', md: 0 },
+              backgroundImage: `url(${img.url})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              zIndex: 0,
+              opacity: index === currentSlideIndex ? 1 : 0,
+              transition: 'opacity 1s ease-in-out',
+              // Dark overlay for text readability
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+              },
+            }}
+          />
+        ))
+      ) : (
+        // Fallback Static Image
+        <Box
+          sx={{
             position: 'absolute',
             top: 0,
             left: 0,
             right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          },
-        }}
-      />
+            bottom: { xs: '500px', md: 0 },
+            backgroundImage:
+              'url(https://bucghzn379yrpbdu.public.blob.vercel-storage.com/Banner/kanitaxi-hero-bg.png)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            zIndex: 0,
+            // Dark overlay for text readability
+            '&::before': {
+              content: '""',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            },
+          }}
+        />
+      )}
 
       <Container
         maxWidth="xl"
@@ -878,8 +955,8 @@ export default function HeroSection() {
                           name="pickupDateTime"
                           control={control}
                           render={({ field }) => (
-                            <DatePicker
-                              label="Pickup Date"
+                            <DateTimePicker
+                              label="Pickup Date & Time"
                               value={field.value}
                               onChange={field.onChange}
                               slotProps={{
@@ -920,8 +997,8 @@ export default function HeroSection() {
                             name="dropDateTime"
                             control={control}
                             render={({ field }) => (
-                              <DatePicker
-                                label="Return Date"
+                              <DateTimePicker
+                                label="Return Date & Time"
                                 value={field.value}
                                 onChange={field.onChange}
                                 slotProps={{

@@ -3,6 +3,7 @@ import type { CollectionConfig } from 'payload'
 export const VehicleImages: CollectionConfig = {
   slug: 'vehicle-images',
   admin: {
+    group: 'Collection',
     hidden: true,
   },
   access: {
@@ -43,6 +44,7 @@ export const VehicleImages: CollectionConfig = {
 export const VehicleIcons: CollectionConfig = {
   slug: 'vehicle-icons',
   admin: {
+    group: 'Collection',
     hidden: true,
   },
   access: {
@@ -69,6 +71,7 @@ export const VehicleIcons: CollectionConfig = {
 export const Vehicles: CollectionConfig = {
   slug: 'vehicles',
   admin: {
+    group: 'Collection',
     useAsTitle: 'name',
   },
   fields: [

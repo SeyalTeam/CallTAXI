@@ -3,6 +3,7 @@ import type { CollectionConfig } from 'payload'
 export const Coupons: CollectionConfig = {
   slug: 'coupons',
   admin: {
+    group: 'Collection',
     useAsTitle: 'name',
     defaultColumns: ['name', 'percentage', 'active', 'expiryDate'],
   },

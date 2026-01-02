@@ -2,6 +2,19 @@ import type { CollectionConfig } from 'payload'
 
 export const Bookings: CollectionConfig = {
   slug: 'bookings',
+  defaultSort: '-createdAt',
+  admin: {
+    group: 'Collection',
+    defaultColumns: [
+      'customerName',
+      'customerPhone',
+      'tripType',
+      'pickupLocationName',
+      'dropoffLocationName',
+      'estimatedFare',
+      'status',
+    ],
+  },
   hooks: {
     beforeChange: [
       async ({ data, req, operation }) => {
@@ -60,8 +73,26 @@ export const Bookings: CollectionConfig = {
     { name: 'dropoffLocation', type: 'point', required: false },
     { name: 'dropoffLocationName', type: 'text', required: false },
 
-    { name: 'pickupDateTime', type: 'date', required: true },
-    { name: 'dropDateTime', type: 'date', required: false },
+    {
+      name: 'pickupDateTime',
+      type: 'date',
+      required: true,
+      admin: {
+        date: {
+          pickerAppearance: 'dayAndTime',
+        },
+      },
+    },
+    {
+      name: 'dropDateTime',
+      type: 'date',
+      required: false,
+      admin: {
+        date: {
+          pickerAppearance: 'dayAndTime',
+        },
+      },
+    },
     { name: 'estimatedFare', type: 'number', required: false },
     { name: 'couponCode', type: 'text', required: false },
     { name: 'discountAmount', type: 'number', required: false },

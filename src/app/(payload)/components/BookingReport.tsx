@@ -1,0 +1,483 @@
+'use client'
+
+import React, { useState, useEffect, useCallback } from 'react'
+import {
+  Box,
+  Typography,
+  Select,
+  MenuItem,
+  TextField,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  IconButton,
+  Chip,
+  Stack,
+  FormControl,
+  InputLabel,
+  Card,
+  Menu,
+} from '@mui/material'
+import RefreshIcon from '@mui/icons-material/Refresh'
+import DownloadIcon from '@mui/icons-material/Download'
+
+interface Booking {
+  id: string
+  customerName: string
+  customerPhone: string
+  tripType: string
+  pickupDateTime: string
+  vehicle?: { name: string } | string
+  pickupLocationName: string
+  dropoffLocationName?: string
+  estimatedFare?: number
+  status: string
+}
+
+const BookingReport = () => {
+  const [data, setData] = useState<Booking[]>([])
+  const [loading, setLoading] = useState(false)
+
+  // Filters
+  const [date, setDate] = useState('')
+  const [status, setStatus] = useState('all')
+  const [tripType, setTripType] = useState('all')
+
+  // Status Update State
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null)
+
+  const handleStatusClick = (event: React.MouseEvent<HTMLElement>, id: string) => {
+    setAnchorEl(event.currentTarget)
+    setSelectedBookingId(id)
+  }
+
+  const handleStatusClose = () => {
+    setAnchorEl(null)
+    setSelectedBookingId(null)
+  }
+
+  const handleStatusUpdate = async (newStatus: string) => {
+    if (!selectedBookingId) return
+
+    // Optimistic update
+    setData((prev) =>
+      prev.map((b) => (b.id === selectedBookingId ? { ...b, status: newStatus } : b)),
+    )
+    handleStatusClose()
+
+    try {
+      await fetch(`/api/bookings/${selectedBookingId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: newStatus }),
+      })
+    } catch (error) {
+      console.error('Failed to update status:', error)
+      fetchData() // Revert/sync on error
+    }
+  }
+
+  const fetchData = useCallback(async () => {
+    setLoading(true)
+    try {
+      const queryParams = new URLSearchParams()
+
+      // Pass single date as startDate; API handles single-day range if only startDate provided
+      if (date) queryParams.append('startDate', date)
+      if (status !== 'all') queryParams.append('status', status)
+      if (tripType !== 'all') queryParams.append('tripType', tripType)
+
+      const url = `/api/get-booking-report?${queryParams.toString()}`
+
+      const res = await fetch(url)
+      const json = await res.json()
+      if (json.docs) {
+        setData(json.docs)
+      }
+    } catch (error) {
+      console.error('Error fetching bookings:', error)
+    } finally {
+      setLoading(false)
+    }
+  }, [date, status, tripType])
+
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
+
+  const handleRefresh = () => {
+    setDate('')
+    setStatus('all')
+    setTripType('all')
+  }
+
+  const handleExport = () => {
+    // Basic CSV export logic
+    const headers = [
+      'S.NO',
+      'Customer Name',
+      'Phone',
+      'Trip Type',
+      'Vehicle',
+      'PICKUP DATE',
+      'From',
+      'To',
+      'Amount',
+      'Status',
+    ]
+    const csvContent = [
+      headers.join(','),
+      ...data.map((row, index) =>
+        [
+          index + 1,
+          `"${row.customerName || ''}"`,
+          `"${row.customerPhone || ''}"`,
+          row.tripType,
+          typeof row.vehicle === 'object' ? `"${row.vehicle?.name || ''}"` : '',
+          `"${new Date(row.pickupDateTime).toLocaleDateString()}"`,
+          `"${row.pickupLocationName || ''}"`,
+          `"${row.dropoffLocationName || ''}"`,
+          row.estimatedFare || 0,
+          row.status,
+        ].join(','),
+      ),
+    ].join('\n')
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const link = document.createElement('a')
+    link.href = URL.createObjectURL(blob)
+    link.download = `booking_report_${new Date().toISOString().split('T')[0]}.csv`
+    link.click()
+  }
+
+  return (
+    <Box sx={{ p: 3, backgroundColor: '#121212', minHeight: '100vh', color: 'white' }}>
+      <Typography variant="h4" sx={{ mb: 3, fontWeight: 'bold' }}>
+        Booking Report
+      </Typography>
+
+      {/* Filter Bar */}
+      <Card sx={{ p: 2, mb: 3, backgroundColor: '#1e1e1e', color: 'white' }}>
+        <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} alignItems="center">
+          <TextField
+            label="Pickup Date"
+            type="date"
+            size="small"
+            InputLabelProps={{ shrink: true, style: { color: '#aaa' } }}
+            InputProps={{ style: { color: 'white', borderColor: '#444' } }}
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                '& fieldset': { borderColor: '#444' },
+                '&:hover fieldset': { borderColor: '#666' },
+              },
+              backgroundColor: '#2c2c2c',
+              borderRadius: 1,
+            }}
+          />
+
+          <FormControl size="small" sx={{ minWidth: 150 }}>
+            <InputLabel sx={{ color: '#aaa' }}>Status</InputLabel>
+            <Select
+              value={status}
+              label="Status"
+              onChange={(e) => setStatus(e.target.value)}
+              sx={{ color: 'white', '.MuiOutlinedInput-notchedOutline': { borderColor: '#444' } }}
+            >
+              <MenuItem value="all">All Status</MenuItem>
+              <MenuItem value="pending">Pending</MenuItem>
+              <MenuItem value="confirmed">Confirmed</MenuItem>
+              <MenuItem value="cancelled">Cancelled</MenuItem>
+            </Select>
+          </FormControl>
+
+          <FormControl size="small" sx={{ minWidth: 150 }}>
+            <InputLabel sx={{ color: '#aaa' }}>Trip Type</InputLabel>
+            <Select
+              value={tripType}
+              label="Trip Type"
+              onChange={(e) => setTripType(e.target.value)}
+              sx={{ color: 'white', '.MuiOutlinedInput-notchedOutline': { borderColor: '#444' } }}
+            >
+              <MenuItem value="all">All Types</MenuItem>
+              <MenuItem value="oneway">One Way</MenuItem>
+              <MenuItem value="roundtrip">Round Trip</MenuItem>
+              <MenuItem value="packages">Packages</MenuItem>
+            </Select>
+          </FormControl>
+
+          <Box sx={{ flexGrow: 1 }} />
+
+          <Button
+            variant="outlined"
+            startIcon={<DownloadIcon />}
+            onClick={handleExport}
+            sx={{
+              color: '#aaa',
+              borderColor: '#444',
+              '&:hover': { borderColor: 'white', color: 'white' },
+            }}
+          >
+            Export
+          </Button>
+
+          <IconButton onClick={handleRefresh} sx={{ color: 'white' }}>
+            <RefreshIcon />
+          </IconButton>
+        </Stack>
+      </Card>
+
+      {/* Data Table */}
+      <TableContainer component={Paper} sx={{ backgroundColor: '#1e1e1e' }}>
+        <Table sx={{ minWidth: 650 }} aria-label="booking table">
+          <TableHead>
+            <TableRow sx={{ backgroundColor: '#252525' }}>
+              <TableCell
+                sx={{
+                  color: '#aaa',
+                  fontWeight: 'bold',
+                  borderRight: '1px solid #333',
+                  borderLeft: '1px solid #333',
+                }}
+              >
+                S.NO
+              </TableCell>
+              <TableCell sx={{ color: '#aaa', fontWeight: 'bold', borderRight: '1px solid #333' }}>
+                CUSTOMER NAME
+              </TableCell>
+              <TableCell sx={{ color: '#aaa', fontWeight: 'bold', borderRight: '1px solid #333' }}>
+                PHONE
+              </TableCell>
+              <TableCell sx={{ color: '#aaa', fontWeight: 'bold', borderRight: '1px solid #333' }}>
+                TRIP TYPE
+              </TableCell>
+              <TableCell sx={{ color: '#aaa', fontWeight: 'bold', borderRight: '1px solid #333' }}>
+                VEHICLE
+              </TableCell>
+              <TableCell sx={{ color: '#aaa', fontWeight: 'bold', borderRight: '1px solid #333' }}>
+                PICKUP DATE
+              </TableCell>
+              <TableCell sx={{ color: '#aaa', fontWeight: 'bold', borderRight: '1px solid #333' }}>
+                FROM
+              </TableCell>
+              <TableCell sx={{ color: '#aaa', fontWeight: 'bold', borderRight: '1px solid #333' }}>
+                TO
+              </TableCell>
+              <TableCell
+                sx={{ color: '#aaa', fontWeight: 'bold', borderRight: '1px solid #333' }}
+                align="right"
+              >
+                AMOUNT
+              </TableCell>
+              <TableCell sx={{ color: '#aaa', fontWeight: 'bold', borderRight: '1px solid #333' }}>
+                STATUS
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {loading ? (
+              <TableRow>
+                <TableCell
+                  colSpan={10}
+                  align="center"
+                  sx={{
+                    color: 'white',
+                    py: 3,
+                    borderRight: '1px solid #333',
+                    borderLeft: '1px solid #333',
+                  }}
+                >
+                  Loading...
+                </TableCell>
+              </TableRow>
+            ) : data.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  colSpan={10}
+                  align="center"
+                  sx={{
+                    color: 'white',
+                    py: 3,
+                    borderRight: '1px solid #333',
+                    borderLeft: '1px solid #333',
+                  }}
+                >
+                  No bookings found
+                </TableCell>
+              </TableRow>
+            ) : (
+              data.map((row, index) => (
+                <TableRow
+                  key={row.id}
+                  sx={{
+                    borderColor: '#333',
+                    backgroundColor: index % 2 === 0 ? '#121212' : 'inherit',
+                    '& td, & th': {
+                      fontSize: '0.95rem',
+                      fontWeight: 'bold',
+                      borderBottom: '1px solid #333',
+                    },
+                  }}
+                >
+                  <TableCell
+                    component="th"
+                    scope="row"
+                    sx={{
+                      color: 'white',
+                      borderColor: '#333',
+                      borderRight: '1px solid #333',
+                      borderLeft: '1px solid #333',
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    {index + 1}
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      color: 'white',
+                      borderColor: '#333',
+                      borderRight: '1px solid #333',
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    <Stack>
+                      <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                        {row.customerName}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: 'grey.500', fontSize: '0.75rem' }}>
+                        {new Date(row.pickupDateTime).toLocaleString()}
+                      </Typography>
+                    </Stack>
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      color: 'white',
+                      borderColor: '#333',
+                      borderRight: '1px solid #333',
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    {row.customerPhone}
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      color: 'white',
+                      borderColor: '#333',
+                      borderRight: '1px solid #333',
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    {row.tripType}
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      color: 'white',
+                      borderColor: '#333',
+                      borderRight: '1px solid #333',
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    {typeof row.vehicle === 'object' ? row.vehicle?.name : '-'}
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      color: 'white',
+                      borderColor: '#333',
+                      borderRight: '1px solid #333',
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    {new Date(row.pickupDateTime).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      color: 'white',
+                      borderColor: '#333',
+                      borderRight: '1px solid #333',
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    {row.pickupLocationName}
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      color: 'white',
+                      borderColor: '#333',
+                      borderRight: '1px solid #333',
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    {row.dropoffLocationName || '-'}
+                  </TableCell>
+                  <TableCell
+                    align="right"
+                    sx={{
+                      color: 'white',
+                      borderColor: '#333',
+                      fontWeight: 'bold',
+                      borderRight: '1px solid #333',
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    {row.estimatedFare ? `₹${row.estimatedFare}` : '-'}
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      color: 'white',
+                      borderColor: '#333',
+                      borderRight: '1px solid #333',
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    <Chip
+                      label={row.status?.toUpperCase()}
+                      size="small"
+                      color={
+                        row.status === 'confirmed'
+                          ? 'success'
+                          : row.status === 'cancelled'
+                            ? 'error'
+                            : 'warning'
+                      }
+                      variant="filled"
+                      onClick={(e) => handleStatusClick(e, row.id)}
+                      sx={{ fontWeight: 'bold', cursor: 'pointer' }}
+                    />
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      {/* Status Update Menu */}
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleStatusClose}
+        PaperProps={{
+          style: {
+            backgroundColor: '#2c2c2c',
+            color: 'white',
+          },
+        }}
+      >
+        <MenuItem onClick={() => handleStatusUpdate('pending')}>Pending</MenuItem>
+        <MenuItem onClick={() => handleStatusUpdate('confirmed')}>Confirmed</MenuItem>
+        <MenuItem onClick={() => handleStatusUpdate('cancelled')}>Cancelled</MenuItem>
+      </Menu>
+    </Box>
+  )
+}
+
+export default BookingReport

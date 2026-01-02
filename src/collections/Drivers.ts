@@ -3,6 +3,7 @@ import type { CollectionConfig } from 'payload'
 export const Drivers: CollectionConfig = {
   slug: 'drivers',
   admin: {
+    group: 'Collection',
     useAsTitle: 'name',
   },
   fields: [

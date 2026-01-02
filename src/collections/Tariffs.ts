@@ -4,6 +4,7 @@ export const Tariffs: CollectionConfig = {
   slug: 'tariffs',
 
   admin: {
+    group: 'Collection',
     useAsTitle: 'vehicle',
   },
 
