@@ -703,15 +703,15 @@ export default function HeroSection() {
                               key={t}
                               onClick={() => field.onChange(t)}
                               sx={{
-                                px: 4, // More horizontal padding for tabs
-                                py: 2, // Taller tabs to feel substantive
-                                borderTopLeftRadius: 12, // Keep reasonable curve
+                                px: { xs: 2.5, md: 4 },
+                                py: { xs: 1.5, md: 2 },
+                                borderTopLeftRadius: 12,
                                 borderTopRightRadius: 12,
                                 cursor: 'pointer',
                                 bgcolor: isSelected ? '#ffffff' : 'transparent',
                                 color: isSelected ? '#0f172a' : '#94a3b8',
                                 fontWeight: 600,
-                                fontSize: '0.95rem',
+                                fontSize: { xs: '0.85rem', md: '0.95rem' },
                                 transition: 'all 0.2s',
                                 position: 'relative',
                                 mb: 0, // No margin bottom, sit flush
@@ -1229,7 +1229,7 @@ export default function HeroSection() {
                             variant="contained"
                             disabled={loading}
                             sx={{
-                              width: { xs: '50%', md: '25%' },
+                              width: { xs: 'auto', md: '25%' },
                               flexShrink: 0,
                               ml: 0,
                               display: 'block',
@@ -1237,8 +1237,10 @@ export default function HeroSection() {
                               color: '#fff',
                               fontWeight: '600',
                               py: 1,
+                              px: { xs: 3, md: 0 },
+                              whiteSpace: 'nowrap',
                               textTransform: 'none',
-                              fontSize: '0.9rem',
+                              fontSize: { xs: '0.85rem', md: '0.9rem' },
                               borderRadius: 2,
                               boxShadow: 'none',
                               '&:hover': {
