@@ -354,7 +354,7 @@ const BookingReport = () => {
                         {row.customerName}
                       </Typography>
                       <Typography variant="caption" sx={{ color: 'grey.500', fontSize: '0.75rem' }}>
-                        {new Date(row.pickupDateTime).toLocaleString()}
+                        {new Date(row.pickupDateTime).toLocaleDateString('en-GB')}
                       </Typography>
                     </Stack>
                   </TableCell>
