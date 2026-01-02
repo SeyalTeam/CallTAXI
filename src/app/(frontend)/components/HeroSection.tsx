@@ -537,9 +537,9 @@ export default function HeroSection() {
       id="home"
       sx={{
         position: 'relative',
-        minHeight: '100vh',
+        minHeight: '95vh',
         display: 'flex',
-        alignItems: { xs: 'flex-end', md: 'center' }, // Push form to bottom on mobile
+        alignItems: 'flex-end', // Push form to bottom
         justifyContent: 'center',
         // Premium corporate light theme background
         background: { xs: 'transparent', md: '#ffffff' },
@@ -547,7 +547,7 @@ export default function HeroSection() {
         pt: 8, // space for navbar
         overflow: { xs: 'visible', md: 'hidden' },
         mb: { xs: '-500px', md: 0 }, // Pull next section up by 500px
-        pb: { xs: '50px', md: 0 }, // Lift form up 50px
+        pb: { xs: '50px', md: '10vh' }, // 10% from bottom on desktop
       }}
     >
       {/* Background Slider */}
@@ -615,41 +615,29 @@ export default function HeroSection() {
           zIndex: 1, // Ensure content is above the canvas
         }}
       >
-        <Grid container spacing={{ xs: 4, md: 6 }} alignItems="center" justifyContent="flex-end">
+        <Grid container spacing={{ xs: 2, md: 3 }} alignItems="center" justifyContent="center">
           {/* Booking Form Card */}
-          <Grid size={{ xs: 12, md: 5 }}>
+          <Grid size={{ xs: 12, md: 10 }}>
             <Paper
-              elevation={24}
+              elevation={0}
               sx={{
-                p: { xs: 2, md: 5 },
-                borderRadius: 4,
-                bgcolor: '#fcc78a',
-                backdropFilter: 'blur(12px)',
-                boxShadow: '0 20px 40px -10px rgba(0, 0, 0, 0.1)',
-                border: '1px solid rgba(255, 255, 255, 0.5)',
+                p: 0,
+                borderRadius: 0,
+                bgcolor: 'transparent', // Transparent wrapper
+                boxShadow: 'none',
+                border: 'none',
+                overflow: 'visible',
               }}
             >
-              <Typography
-                variant="h5"
-                sx={{
-                  mb: { xs: 1.5, md: 4 },
-                  fontWeight: 700,
-                  color: '#0f172a',
-                  fontSize: { xs: '1.25rem', md: '1.5rem' },
-                }}
-              >
-                Book Your Ride
-              </Typography>
-
               {bookingSuccess ? (
-                <Box textAlign="center" py={4}>
+                <Box textAlign="center" py={4} sx={{ bgcolor: 'white', p: 4 }}>
                   <Box
                     sx={{
                       width: 80,
                       height: 80,
                       borderRadius: '50%',
-                      bgcolor: '#dcfce7', // green-100
-                      color: '#16a34a', // green-600
+                      bgcolor: '#dcfce7',
+                      color: '#16a34a',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -687,17 +675,25 @@ export default function HeroSection() {
                 </Box>
               ) : (
                 <form onSubmit={handleSubmit(onSubmit)}>
-                  {/* ... existing form content ... */}
+                  {/* Tab Bar Header */}
                   <Controller
                     name="tripType"
                     control={control}
                     render={({ field }) => (
                       <Box
                         sx={{
-                          mb: { xs: 1, md: 3 },
+                          px: 0,
+                          pt: 0,
+                          pb: 0,
                           display: 'flex',
-                          gap: 1,
-                          width: '100%',
+                          width: 'fit-content', // Only as wide as tabs
+                          gap: 0,
+                          overflowX: 'auto',
+                          bgcolor: '#1e293b',
+                          borderTopLeftRadius: 12,
+                          borderTopRightRadius: 12,
+                          scrollbarWidth: 'none',
+                          '&::-webkit-scrollbar': { display: 'none' },
                         }}
                       >
                         {['oneway', 'roundtrip', 'packages'].map((t) => {
@@ -707,22 +703,34 @@ export default function HeroSection() {
                               key={t}
                               onClick={() => field.onChange(t)}
                               sx={{
-                                flex: 1,
-                                textAlign: 'center',
-                                py: 0.75,
-                                borderRadius: 2,
+                                px: 4, // More horizontal padding for tabs
+                                py: 2, // Taller tabs to feel substantive
+                                borderTopLeftRadius: 12, // Keep reasonable curve
+                                borderTopRightRadius: 12,
                                 cursor: 'pointer',
-                                bgcolor: isSelected ? '#d97706' : '#f1f5f9',
-                                color: isSelected ? '#ffffff' : '#64748b',
-                                fontWeight: isSelected ? 600 : 500,
-                                fontSize: { xs: '0.85rem', md: '0.9rem' },
-                                border: '1px solid',
-                                borderColor: isSelected ? '#d97706' : 'transparent',
+                                bgcolor: isSelected ? '#ffffff' : 'transparent',
+                                color: isSelected ? '#0f172a' : '#94a3b8',
+                                fontWeight: 600,
+                                fontSize: '0.95rem',
                                 transition: 'all 0.2s',
-                                userSelect: 'none',
+                                position: 'relative',
+                                mb: 0, // No margin bottom, sit flush
                                 '&:hover': {
-                                  bgcolor: isSelected ? '#b45309' : '#e2e8f0',
+                                  color: isSelected ? '#0f172a' : '#ffffff',
+                                  bgcolor: isSelected ? '#ffffff' : 'rgba(255,255,255,0.05)',
                                 },
+                                ...(isSelected && {
+                                  '&::after': {
+                                    content: '""',
+                                    position: 'absolute',
+                                    bottom: 0,
+                                    left: 0,
+                                    right: 0,
+                                    height: 4, // Small overlap strip just in case
+                                    bgcolor: '#ffffff',
+                                    zIndex: 1,
+                                  },
+                                }),
                               }}
                             >
                               {t === 'oneway'
@@ -737,176 +745,48 @@ export default function HeroSection() {
                     )}
                   />
 
-                  <Grid container spacing={2}>
-                    <Grid size={{ xs: 12, md: tripType === 'packages' ? 6 : 12 }}>
-                      <Controller
-                        name="vehicle"
-                        control={control}
-                        render={({ field }) => (
-                          <FormControl fullWidth size="small">
-                            <InputLabel id="vehicle-label" sx={{ color: '#9ca3af' }}>
-                              Select Vehicle
-                            </InputLabel>
-                            <Select
-                              labelId="vehicle-label"
-                              label="Select Vehicle"
-                              {...field}
-                              sx={{
-                                bgcolor: '#f8fafc',
-                                color: '#0f172a',
-                                fontWeight: 500,
-                                fontSize: '0.9rem',
-                                '.MuiSelect-select': {
-                                  py: 1, // reduced padding
-                                },
-                                '.MuiOutlinedInput-notchedOutline': {
-                                  borderColor: '#e2e8f0',
-                                },
-                                '&:hover .MuiOutlinedInput-notchedOutline': {
-                                  borderColor: '#cbd5e1',
-                                },
-                                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                  borderColor: '#d97706',
-                                  borderWidth: 2,
-                                },
-                                '.MuiSvgIcon-root': { color: '#64748b' },
-                              }}
-                            >
-                              {vehicles.map((v) => (
-                                <MenuItem key={v.id} value={v.id}>
-                                  {v.name}
-                                </MenuItem>
-                              ))}
-                            </Select>
-                          </FormControl>
-                        )}
-                      />
-                    </Grid>
-
-                    {tripType === 'packages' && (
-                      <Grid size={{ xs: 12, md: 6 }}>
-                        <FormControl fullWidth size="small">
-                          <InputLabel id="hours-label" sx={{ color: '#9ca3af' }}>
-                            Select Duration
-                          </InputLabel>
-                          <Select
-                            labelId="hours-label"
-                            label="Select Duration"
-                            value={packageHours}
-                            onChange={(e) => setPackageHours(Number(e.target.value))}
-                            sx={{
-                              bgcolor: '#f8fafc',
-                              color: '#0f172a',
-                              fontWeight: 500,
-                              fontSize: '0.9rem',
-                              '.MuiSelect-select': { py: 1 },
-                              '.MuiOutlinedInput-notchedOutline': { borderColor: '#e2e8f0' },
-                              '&:hover .MuiOutlinedInput-notchedOutline': {
-                                borderColor: '#cbd5e1',
-                              },
-                              '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                borderColor: '#d97706',
-                                borderWidth: 2,
-                              },
-                              '.MuiSvgIcon-root': { color: '#64748b' },
-                            }}
-                          >
-                            {Array.from({ length: 12 }, (_, i) => i + 1).map((h) => (
-                              <MenuItem key={h} value={h}>
-                                {h} Hour{h > 1 ? 's' : ''}
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        </FormControl>
-                      </Grid>
-                    )}
-
-                    <Grid
-                      size={{ xs: 12, md: tripType === 'packages' ? 12 : 6 }}
-                      position="relative"
-                      ref={pickupRef}
-                    >
-                      <Controller
-                        name="pickup"
-                        control={control}
-                        render={({ field }) => (
-                          <TextField
-                            {...field}
-                            fullWidth
-                            size="small"
-                            label="Pickup Location"
-                            onChange={(e) => {
-                              field.onChange(e)
-                              handleLocationSearch(e.target.value, setPickupSuggestions)
-                            }}
-                            sx={{
-                              input: {
-                                color: '#0f172a',
-                                fontWeight: 500,
-                                fontSize: '0.9rem',
-                                py: 1, // reduced padding
-                              },
-                              label: { color: '#64748b', fontSize: '0.9rem' },
-                              '& .MuiOutlinedInput-root': {
-                                bgcolor: '#f8fafc',
-                                '& fieldset': { borderColor: '#e2e8f0' },
-                                '&:hover fieldset': { borderColor: '#cbd5e1' },
-                                '&.Mui-focused fieldset': {
-                                  borderColor: '#d97706',
-                                  borderWidth: 2,
-                                },
-                              },
-                            }}
-                          />
-                        )}
-                      />
-                      {pickupSuggestions.length > 0 && (
-                        <Paper
-                          sx={{
-                            position: 'absolute',
-                            top: '100%',
-                            left: 0,
-                            right: 0,
-                            zIndex: 10,
-                            bgcolor: '#1e293b',
-                            color: '#fff',
-                          }}
-                        >
-                          {pickupSuggestions.map((s) => (
-                            <MenuItem
-                              key={s.lat + s.lon}
-                              onClick={() =>
-                                selectLocation(s, 'pickup', setPickupSuggestions, setPickupCoords)
-                              }
-                            >
-                              {s.name}, {s.district}
-                            </MenuItem>
-                          ))}
-                        </Paper>
-                      )}
-                    </Grid>
-
-                    {tripType !== 'packages' && (
-                      <Grid size={{ xs: 12, md: 6 }} position="relative" ref={dropRef}>
+                  {/* Main Form Content (White Box) */}
+                  <Box
+                    sx={{
+                      bgcolor: '#ffffff',
+                      p: { xs: 2, md: 3 },
+                      boxShadow: '0 10px 30px -5px rgba(0, 0, 0, 0.2)',
+                      border: '1px solid #e2e8f0',
+                      borderRadius: 3,
+                      borderTopLeftRadius: 0, // Connects to the active tab (assuming first tab is active defaults? No, if RoundTrip active, visually it's weird if top-left is sharp. Ideally should be rounded if active tab is not first. But simple folder look usually has sharp corner where tab connects. Let's stick to standard radius for now essentially, maybe 0 if first tab active. For simplicity, keeping standard radius 3 usually looks fine or 0 looks "attached". Let's use 0 because the tab sits on top.)
+                      position: 'relative',
+                      zIndex: 0, // Behind tabs? No, tabs zIndex 1.
+                    }}
+                  >
+                    <Grid container spacing={1.5} alignItems="flex-start">
+                      {/* Pickup Location - First for logical flow */}
+                      <Grid
+                        size={{
+                          xs: 12,
+                          md: tripType === 'packages' ? 6 : tripType === 'roundtrip' ? 3 : 4,
+                        }}
+                        position="relative"
+                        ref={pickupRef}
+                      >
                         <Controller
-                          name="drop"
+                          name="pickup"
                           control={control}
                           render={({ field }) => (
                             <TextField
                               {...field}
                               fullWidth
                               size="small"
-                              label="Drop Location"
+                              label="Pickup Location"
                               onChange={(e) => {
                                 field.onChange(e)
-                                handleLocationSearch(e.target.value, setDropSuggestions)
+                                handleLocationSearch(e.target.value, setPickupSuggestions)
                               }}
                               sx={{
                                 input: {
                                   color: '#0f172a',
                                   fontWeight: 500,
                                   fontSize: '0.9rem',
-                                  py: 1,
+                                  py: 1, // reduced padding
                                 },
                                 label: { color: '#64748b', fontSize: '0.9rem' },
                                 '& .MuiOutlinedInput-root': {
@@ -922,7 +802,7 @@ export default function HeroSection() {
                             />
                           )}
                         />
-                        {dropSuggestions.length > 0 && (
+                        {pickupSuggestions.length > 0 && (
                           <Paper
                             sx={{
                               position: 'absolute',
@@ -930,15 +810,15 @@ export default function HeroSection() {
                               left: 0,
                               right: 0,
                               zIndex: 10,
-                              bgcolor: '#fff',
-                              color: '#000',
+                              bgcolor: '#1e293b',
+                              color: '#fff',
                             }}
                           >
-                            {dropSuggestions.map((s) => (
+                            {pickupSuggestions.map((s) => (
                               <MenuItem
                                 key={s.lat + s.lon}
                                 onClick={() =>
-                                  selectLocation(s, 'drop', setDropSuggestions, setDropCoords)
+                                  selectLocation(s, 'pickup', setPickupSuggestions, setPickupCoords)
                                 }
                               >
                                 {s.name}, {s.district}
@@ -947,58 +827,84 @@ export default function HeroSection() {
                           </Paper>
                         )}
                       </Grid>
-                    )}
 
-                    <Grid size={{ xs: 12, md: tripType === 'roundtrip' ? 6 : 12 }}>
-                      <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <Controller
-                          name="pickupDateTime"
-                          control={control}
-                          render={({ field }) => (
-                            <DateTimePicker
-                              label="Pickup Date & Time"
-                              value={field.value}
-                              onChange={field.onChange}
-                              slotProps={{
-                                textField: {
-                                  size: 'small',
-                                  fullWidth: true,
-                                  sx: {
-                                    input: {
-                                      color: '#0f172a',
-                                      fontWeight: 500,
-                                      fontSize: '0.9rem',
-                                      py: 1,
-                                    },
-                                    label: { color: '#64748b', fontSize: '0.9rem' },
-                                    '& .MuiOutlinedInput-root': {
-                                      bgcolor: '#f8fafc',
-                                      '& fieldset': { borderColor: '#e2e8f0' },
-                                      '&:hover fieldset': { borderColor: '#cbd5e1' },
-                                      '&.Mui-focused fieldset': {
-                                        borderColor: '#d97706',
-                                        borderWidth: 2,
-                                      },
-                                    },
-                                    '& .MuiSvgIcon-root': { color: '#94a3b8' },
+                      {/* Drop Location - Conditional */}
+                      {tripType !== 'packages' && (
+                        <Grid
+                          size={{ xs: 12, md: tripType === 'roundtrip' ? 3 : 4 }}
+                          position="relative"
+                          ref={dropRef}
+                        >
+                          <Controller
+                            name="drop"
+                            control={control}
+                            render={({ field }) => (
+                              <TextField
+                                {...field}
+                                fullWidth
+                                size="small"
+                                label="Drop Location"
+                                onChange={(e) => {
+                                  field.onChange(e)
+                                  handleLocationSearch(e.target.value, setDropSuggestions)
+                                }}
+                                sx={{
+                                  input: {
+                                    color: '#0f172a',
+                                    fontWeight: 500,
+                                    fontSize: '0.9rem',
+                                    py: 1,
                                   },
-                                },
+                                  label: { color: '#64748b', fontSize: '0.9rem' },
+                                  '& .MuiOutlinedInput-root': {
+                                    bgcolor: '#f8fafc',
+                                    '& fieldset': { borderColor: '#e2e8f0' },
+                                    '&:hover fieldset': { borderColor: '#cbd5e1' },
+                                    '&.Mui-focused fieldset': {
+                                      borderColor: '#d97706',
+                                      borderWidth: 2,
+                                    },
+                                  },
+                                }}
+                              />
+                            )}
+                          />
+                          {dropSuggestions.length > 0 && (
+                            <Paper
+                              sx={{
+                                position: 'absolute',
+                                top: '100%',
+                                left: 0,
+                                right: 0,
+                                zIndex: 10,
+                                bgcolor: '#fff',
+                                color: '#000',
                               }}
-                            />
+                            >
+                              {dropSuggestions.map((s) => (
+                                <MenuItem
+                                  key={s.lat + s.lon}
+                                  onClick={() =>
+                                    selectLocation(s, 'drop', setDropSuggestions, setDropCoords)
+                                  }
+                                >
+                                  {s.name}, {s.district}
+                                </MenuItem>
+                              ))}
+                            </Paper>
                           )}
-                        />
-                      </LocalizationProvider>
-                    </Grid>
+                        </Grid>
+                      )}
 
-                    {tripType === 'roundtrip' && (
-                      <Grid size={{ xs: 12, md: 6 }}>
+                      {/* Pickup Date */}
+                      <Grid size={{ xs: 12, md: 2 }}>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                           <Controller
-                            name="dropDateTime"
+                            name="pickupDateTime"
                             control={control}
                             render={({ field }) => (
                               <DateTimePicker
-                                label="Return Date & Time"
+                                label="Pickup Date"
                                 value={field.value}
                                 onChange={field.onChange}
                                 slotProps={{
@@ -1031,243 +937,355 @@ export default function HeroSection() {
                           />
                         </LocalizationProvider>
                       </Grid>
-                    )}
 
-                    <Grid size={{ xs: 12 }}>
-                      <Controller
-                        name="customerName"
-                        control={control}
-                        render={({ field }) => (
-                          <TextField
-                            {...field}
-                            fullWidth
-                            size="small"
-                            label="Your Name"
-                            sx={{
-                              input: {
-                                color: '#000',
-                                fontWeight: 500,
-                                fontSize: '0.9rem',
-                                py: 1,
-                              },
-                              label: { color: 'grey.700', fontSize: '0.9rem' },
-                              '& .MuiOutlinedInput-root': {
-                                bgcolor: '#f8fafc',
-                                '& fieldset': { borderColor: 'rgba(0,0,0,0.1)' },
-                                '&:hover fieldset': { borderColor: 'rgba(0,0,0,0.3)' },
-                                '&.Mui-focused fieldset': { borderColor: '#FFD700' },
-                              },
-                            }}
-                          />
-                        )}
-                      />
-                    </Grid>
-                    <Grid size={{ xs: 12 }}>
-                      <Controller
-                        name="customerPhone"
-                        control={control}
-                        render={({ field }) => (
-                          <TextField
-                            {...field}
-                            fullWidth
-                            size="small"
-                            label="Mobile Number"
-                            sx={{
-                              input: {
-                                color: '#0f172a',
-                                fontWeight: 500,
-                                fontSize: '0.9rem',
-                                py: 1,
-                              },
-                              label: { color: '#64748b', fontSize: '0.9rem' },
-                              '& .MuiOutlinedInput-root': {
-                                bgcolor: '#f8fafc',
-                                '& fieldset': { borderColor: '#e2e8f0' },
-                                '&:hover fieldset': { borderColor: '#cbd5e1' },
-                                '&.Mui-focused fieldset': {
-                                  borderColor: '#d97706',
-                                  borderWidth: 2,
-                                },
-                              },
-                            }}
-                          />
-                        )}
-                      />
-                    </Grid>
-                    {hasActiveCoupons && (
-                      <Grid size={{ xs: 12 }}>
-                        {/* Coupon Section */}
-                        <Box sx={{ mb: 2 }}>
-                          <Grid container spacing={1} alignItems="center">
-                            <Grid size={{ xs: appliedCoupon ? 12 : 8 }}>
-                              {appliedCoupon ? (
-                                <Box
-                                  sx={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'space-between',
-                                    bgcolor: '#dcfce7', // green-100
-                                    color: '#166534', // green-800
-                                    p: 1.5,
-                                    borderRadius: 1,
-                                    border: '1px solid #bbf7d0',
-                                  }}
-                                >
-                                  <Box>
-                                    <Typography variant="body2" fontWeight="bold">
-                                      Coupon Applied: {appliedCoupon.name}
-                                    </Typography>
-                                    <Typography variant="caption">
-                                      {appliedCoupon.percentage}% Off applied
-                                    </Typography>
-                                  </Box>
-                                  <Button
-                                    size="small"
-                                    onClick={clearCoupon}
-                                    sx={{ minWidth: 'auto', p: 0.5, color: '#166534' }}
-                                  >
-                                    ✕
-                                  </Button>
-                                </Box>
-                              ) : (
-                                <TextField
-                                  fullWidth
-                                  size="small"
-                                  placeholder="Coupon Code"
-                                  value={couponCodeInput}
-                                  onChange={(e) => setCouponCodeInput(e.target.value.toUpperCase())}
-                                  error={!!couponError}
-                                  helperText={couponError}
-                                  sx={{
-                                    input: {
-                                      color: '#0f172a',
-                                      fontWeight: 500,
-                                      fontSize: '0.9rem',
-                                      py: 1,
-                                    },
-                                    '& .MuiOutlinedInput-root': {
-                                      bgcolor: '#f8fafc',
+                      {/* Return Date - Conditional */}
+                      {tripType === 'roundtrip' && (
+                        <Grid size={{ xs: 12, md: 2 }}>
+                          <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <Controller
+                              name="dropDateTime"
+                              control={control}
+                              render={({ field }) => (
+                                <DateTimePicker
+                                  label="Return Date"
+                                  value={field.value}
+                                  onChange={field.onChange}
+                                  slotProps={{
+                                    textField: {
+                                      size: 'small',
+                                      fullWidth: true,
+                                      sx: {
+                                        input: {
+                                          color: '#0f172a',
+                                          fontWeight: 500,
+                                          fontSize: '0.9rem',
+                                          py: 1,
+                                        },
+                                        label: { color: '#64748b', fontSize: '0.9rem' },
+                                        '& .MuiOutlinedInput-root': {
+                                          bgcolor: '#f8fafc',
+                                          '& fieldset': { borderColor: '#e2e8f0' },
+                                          '&:hover fieldset': { borderColor: '#cbd5e1' },
+                                          '&.Mui-focused fieldset': {
+                                            borderColor: '#d97706',
+                                            borderWidth: 2,
+                                          },
+                                        },
+                                        '& .MuiSvgIcon-root': { color: '#94a3b8' },
+                                      },
                                     },
                                   }}
                                 />
                               )}
-                            </Grid>
-                            {!appliedCoupon && (
-                              <Grid size={{ xs: 4 }}>
-                                <Button
-                                  variant="outlined"
-                                  fullWidth
-                                  onClick={validateCoupon}
-                                  disabled={loading || !couponCodeInput}
-                                  sx={{
-                                    height: 40,
-                                    borderColor: '#d97706',
-                                    color: '#d97706',
-                                    '&:hover': {
-                                      borderColor: '#b45309',
-                                      bgcolor: '#fff7ed',
-                                    },
-                                  }}
-                                >
-                                  Apply
-                                </Button>
-                              </Grid>
-                            )}
-                          </Grid>
-                        </Box>
-                      </Grid>
-                    )}
+                            />
+                          </LocalizationProvider>
+                        </Grid>
+                      )}
 
-                    {fare && (
+                      {/* Duration - Packages Only */}
+                      {tripType === 'packages' && (
+                        <Grid size={{ xs: 12, md: 2 }}>
+                          <FormControl fullWidth size="small">
+                            <InputLabel id="hours-label" sx={{ color: '#9ca3af' }}>
+                              Duration
+                            </InputLabel>
+                            <Select
+                              labelId="hours-label"
+                              label="Duration"
+                              value={packageHours}
+                              onChange={(e) => setPackageHours(Number(e.target.value))}
+                              sx={{
+                                bgcolor: '#f8fafc',
+                                color: '#0f172a',
+                                fontWeight: 500,
+                                fontSize: '0.9rem',
+                                '.MuiSelect-select': { py: 1 },
+                                '.MuiOutlinedInput-notchedOutline': { borderColor: '#e2e8f0' },
+                                '&:hover .MuiOutlinedInput-notchedOutline': {
+                                  borderColor: '#cbd5e1',
+                                },
+                                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                  borderColor: '#d97706',
+                                  borderWidth: 2,
+                                },
+                                '.MuiSvgIcon-root': { color: '#64748b' },
+                              }}
+                            >
+                              {Array.from({ length: 12 }, (_, i) => i + 1).map((h) => (
+                                <MenuItem key={h} value={h}>
+                                  {h} Hour{h > 1 ? 's' : ''}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          </FormControl>
+                        </Grid>
+                      )}
+
+                      {/* Vehicle Selection - Moved to end of row */}
+                      <Grid size={{ xs: 12, md: 2 }}>
+                        <Controller
+                          name="vehicle"
+                          control={control}
+                          render={({ field }) => (
+                            <FormControl fullWidth size="small">
+                              <InputLabel id="vehicle-label" sx={{ color: '#9ca3af' }}>
+                                Vehicle
+                              </InputLabel>
+                              <Select
+                                labelId="vehicle-label"
+                                label="Vehicle"
+                                {...field}
+                                sx={{
+                                  bgcolor: '#f8fafc',
+                                  color: '#0f172a',
+                                  fontWeight: 500,
+                                  fontSize: '0.9rem',
+                                  '.MuiSelect-select': {
+                                    py: 1, // reduced padding
+                                  },
+                                  '.MuiOutlinedInput-notchedOutline': {
+                                    borderColor: '#e2e8f0',
+                                  },
+                                  '&:hover .MuiOutlinedInput-notchedOutline': {
+                                    borderColor: '#cbd5e1',
+                                  },
+                                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                    borderColor: '#d97706',
+                                    borderWidth: 2,
+                                  },
+                                  '.MuiSvgIcon-root': { color: '#64748b' },
+                                }}
+                              >
+                                {vehicles.map((v) => (
+                                  <MenuItem key={v.id} value={v.id}>
+                                    {v.name}
+                                  </MenuItem>
+                                ))}
+                              </Select>
+                            </FormControl>
+                          )}
+                        />
+                      </Grid>
+
+                      <Grid size={{ xs: 12, md: 6 }}>
+                        <Controller
+                          name="customerName"
+                          control={control}
+                          render={({ field }) => (
+                            <TextField
+                              {...field}
+                              fullWidth
+                              size="small"
+                              label="Your Name"
+                              sx={{
+                                input: {
+                                  color: '#000',
+                                  fontWeight: 500,
+                                  fontSize: '0.9rem',
+                                  py: 1,
+                                },
+                                label: { color: 'grey.700', fontSize: '0.9rem' },
+                                '& .MuiOutlinedInput-root': {
+                                  bgcolor: '#f8fafc',
+                                  '& fieldset': { borderColor: 'rgba(0,0,0,0.1)' },
+                                  '&:hover fieldset': { borderColor: 'rgba(0,0,0,0.3)' },
+                                  '&.Mui-focused fieldset': { borderColor: '#FFD700' },
+                                },
+                              }}
+                            />
+                          )}
+                        />
+                      </Grid>
+                      <Grid size={{ xs: 12, md: 6 }}>
+                        <Controller
+                          name="customerPhone"
+                          control={control}
+                          render={({ field }) => (
+                            <TextField
+                              {...field}
+                              fullWidth
+                              size="small"
+                              label="Mobile Number"
+                              sx={{
+                                input: {
+                                  color: '#0f172a',
+                                  fontWeight: 500,
+                                  fontSize: '0.9rem',
+                                  py: 1,
+                                },
+                                label: { color: '#64748b', fontSize: '0.9rem' },
+                                '& .MuiOutlinedInput-root': {
+                                  bgcolor: '#f8fafc',
+                                  '& fieldset': { borderColor: '#e2e8f0' },
+                                  '&:hover fieldset': { borderColor: '#cbd5e1' },
+                                  '&.Mui-focused fieldset': {
+                                    borderColor: '#d97706',
+                                    borderWidth: 2,
+                                  },
+                                },
+                              }}
+                            />
+                          )}
+                        />
+                      </Grid>
+                      {hasActiveCoupons && (
+                        <Grid size={{ xs: 12 }}>
+                          {/* Coupon Section */}
+                          <Box sx={{ mb: 2 }}>
+                            <Grid container spacing={1} alignItems="center">
+                              <Grid size={{ xs: appliedCoupon ? 12 : 8 }}>
+                                {appliedCoupon ? (
+                                  <Box
+                                    sx={{
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'space-between',
+                                      bgcolor: '#dcfce7', // green-100
+                                      color: '#166534', // green-800
+                                      p: 1.5,
+                                      borderRadius: 1,
+                                      border: '1px solid #bbf7d0',
+                                    }}
+                                  >
+                                    <Box>
+                                      <Typography variant="body2" fontWeight="bold">
+                                        Coupon Applied: {appliedCoupon.name}
+                                      </Typography>
+                                      <Typography variant="caption">
+                                        {appliedCoupon.percentage}% Off applied
+                                      </Typography>
+                                    </Box>
+                                    <Button
+                                      size="small"
+                                      onClick={clearCoupon}
+                                      sx={{ minWidth: 'auto', p: 0.5, color: '#166534' }}
+                                    >
+                                      ✕
+                                    </Button>
+                                  </Box>
+                                ) : (
+                                  <TextField
+                                    fullWidth
+                                    size="small"
+                                    placeholder="Coupon Code"
+                                    value={couponCodeInput}
+                                    onChange={(e) =>
+                                      setCouponCodeInput(e.target.value.toUpperCase())
+                                    }
+                                    error={!!couponError}
+                                    helperText={couponError}
+                                    sx={{
+                                      input: {
+                                        color: '#0f172a',
+                                        fontWeight: 500,
+                                        fontSize: '0.9rem',
+                                        py: 1,
+                                      },
+                                      '& .MuiOutlinedInput-root': {
+                                        bgcolor: '#f8fafc',
+                                      },
+                                    }}
+                                  />
+                                )}
+                              </Grid>
+                              {!appliedCoupon && (
+                                <Grid size={{ xs: 4 }}>
+                                  <Button
+                                    variant="outlined"
+                                    fullWidth
+                                    onClick={validateCoupon}
+                                    disabled={loading || !couponCodeInput}
+                                    sx={{
+                                      height: 40,
+                                      borderColor: '#d97706',
+                                      color: '#d97706',
+                                      '&:hover': {
+                                        borderColor: '#b45309',
+                                        bgcolor: '#fff7ed',
+                                      },
+                                    }}
+                                  >
+                                    Apply
+                                  </Button>
+                                </Grid>
+                              )}
+                            </Grid>
+                          </Box>
+                        </Grid>
+                      )}
+
                       <Grid size={{ xs: 12 }}>
                         <Box
                           sx={{
-                            p: 2,
-                            bgcolor: '#fff7ed', // orange/50
-                            borderRadius: 2,
-                            border: '1px solid #fed7aa', // orange/200
+                            display: 'flex',
+                            alignItems: 'center',
+                            flexWrap: 'wrap',
+                            gap: 2,
+                            mt: 2,
                           }}
                         >
-                          {discountAmount > 0 ? (
-                            <>
-                              <Box
-                                sx={{
-                                  display: 'flex',
-                                  justifyContent: 'space-between',
-                                  mb: 0.5,
-                                  color: '#64748b',
-                                  textDecoration: 'line-through',
-                                }}
-                              >
-                                <Typography variant="body2">Original Fare:</Typography>
-                                <Typography variant="body2">₹{fare}</Typography>
-                              </Box>
-                              <Box
-                                sx={{
-                                  display: 'flex',
-                                  justifyContent: 'space-between',
-                                  mb: 0.5,
-                                  color: '#16a34a',
-                                }}
-                              >
-                                <Typography variant="body2">Discount:</Typography>
-                                <Typography variant="body2">
-                                  - ₹{discountAmount.toFixed(2)}
-                                </Typography>
-                              </Box>
-                              <Box
-                                sx={{
-                                  display: 'flex',
-                                  justifyContent: 'space-between',
-                                  pt: 1,
-                                  borderTop: '1px dashed #fed7aa',
-                                }}
-                              >
-                                <Typography variant="subtitle1" color="#c2410c" fontWeight="bold">
-                                  Final Amount:
-                                </Typography>
-                                <Typography variant="subtitle1" color="#c2410c" fontWeight="bold">
-                                  ₹{(Number(fare) - discountAmount).toFixed(2)}
-                                </Typography>
-                              </Box>
-                            </>
-                          ) : (
-                            <Typography variant="subtitle1" color="#c2410c" fontWeight="bold">
-                              Estimated Share: ₹{fare}
-                            </Typography>
-                          )}
+                          <Button
+                            type="submit"
+                            variant="contained"
+                            disabled={loading}
+                            sx={{
+                              width: { xs: '50%', md: '25%' },
+                              flexShrink: 0,
+                              ml: 0,
+                              display: 'block',
+                              bgcolor: '#0f172a',
+                              color: '#fff',
+                              fontWeight: '600',
+                              py: 1,
+                              textTransform: 'none',
+                              fontSize: '0.9rem',
+                              borderRadius: 2,
+                              boxShadow: 'none',
+                              '&:hover': {
+                                bgcolor: '#334155',
+                                boxShadow: 'none',
+                              },
+                            }}
+                          >
+                            {loading ? <CircularProgress size={24} /> : 'Book Your Taxi'}
+                          </Button>
 
-                          <Typography variant="body2" color="#9ca3af" mt={0.5}>
-                            {distanceInfo}
-                          </Typography>
+                          {fare && (
+                            <Box
+                              sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 1,
+                                flexWrap: 'wrap',
+                              }}
+                            >
+                              {discountAmount > 0 ? (
+                                <>
+                                  <Typography variant="subtitle1" color="#c2410c" fontWeight="bold">
+                                    Final: ₹{(Number(fare) - discountAmount).toFixed(2)}
+                                  </Typography>
+                                  <Typography
+                                    variant="body2"
+                                    color="#94a3b8"
+                                    sx={{ textDecoration: 'line-through' }}
+                                  >
+                                    ₹{fare}
+                                  </Typography>
+                                </>
+                              ) : (
+                                <Typography variant="subtitle1" color="#c2410c" fontWeight="bold">
+                                  Estimated Share: ₹{fare}
+                                </Typography>
+                              )}
+                              <Typography variant="body2" color="#64748b">
+                                {distanceInfo}
+                              </Typography>
+                            </Box>
+                          )}
                         </Box>
                       </Grid>
-                    )}
-
-                    <Grid size={{ xs: 12 }}>
-                      <Button
-                        type="submit"
-                        fullWidth
-                        variant="contained"
-                        disabled={loading}
-                        sx={{
-                          bgcolor: 'linear-gradient(to right, #f59e0b, #d97706)',
-                          color: '#fff',
-                          fontWeight: '800',
-                          py: 1,
-                          textTransform: 'none',
-                          fontSize: '1rem',
-                          boxShadow: '0 4px 12px rgba(217, 119, 6, 0.3)',
-                          '&:hover': {
-                            bgcolor: '#b45309',
-                            boxShadow: '0 6px 16px rgba(217, 119, 6, 0.4)',
-                          },
-                        }}
-                      >
-                        {loading ? <CircularProgress size={24} /> : 'Book Now'}
-                      </Button>
                     </Grid>
-                  </Grid>
+                  </Box>
                 </form>
               )}
             </Paper>

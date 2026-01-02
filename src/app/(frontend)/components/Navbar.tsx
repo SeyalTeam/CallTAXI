@@ -1,7 +1,7 @@
 'use client'
 import React, { useState } from 'react'
 import { AppBar, Toolbar, Box, Typography, Button, IconButton, Menu, MenuItem } from '@mui/material'
-import DirectionsCarIcon from '@mui/icons-material/DirectionsCar'
+import DirectionsCarOutlinedIcon from '@mui/icons-material/DirectionsCarOutlined'
 import MenuIcon from '@mui/icons-material/Menu'
 
 export default function Navbar() {
@@ -29,12 +29,12 @@ export default function Navbar() {
         position="fixed"
         elevation={0}
         sx={{
-          background: 'rgba(0, 0, 0, 0.95)',
-          backdropFilter: 'blur(10px)',
-          borderBottom: '1px solid rgba(255,255,255,0.1)',
+          background: 'transparent',
+          boxShadow: 'none',
+          borderBottom: 'none',
         }}
       >
-        <Toolbar sx={{ justifyContent: 'space-between', py: { xs: 1.5, md: 1 } }}>
+        <Toolbar sx={{ justifyContent: 'space-between', py: { xs: 1.5, md: 2 } }}>
           <Box
             display="flex"
             alignItems="center"
@@ -42,8 +42,8 @@ export default function Navbar() {
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             sx={{ cursor: 'pointer' }}
           >
-            <DirectionsCarIcon sx={{ color: '#FFD700', fontSize: 32 }} />
-            <Typography variant="h6" fontWeight="bold" sx={{ color: '#fff', letterSpacing: 1 }}>
+            <DirectionsCarOutlinedIcon sx={{ color: '#ffffff', fontSize: 35 }} />
+            <Typography variant="h5" fontWeight="700" sx={{ color: '#fff', letterSpacing: 0.5 }}>
               KANI TAXI
             </Typography>
           </Box>
