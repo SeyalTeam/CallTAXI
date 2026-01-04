@@ -545,9 +545,10 @@ export default function HeroSection() {
         background: { xs: 'transparent', md: '#ffffff' },
         color: '#000',
         pt: 8, // space for navbar
-        overflow: { xs: 'visible', md: 'hidden' },
-        mb: { xs: '-500px', md: 0 }, // Pull next section up by 500px
+        overflow: 'visible',
+        mb: { xs: '-500px', md: '-220px' }, // Pull next section up
         pb: { xs: '50px', md: '10vh' }, // 10% from bottom on desktop
+        zIndex: 2,
       }}
     >
       {/* Background Slider */}
@@ -560,7 +561,7 @@ export default function HeroSection() {
               top: 0,
               left: 0,
               right: 0,
-              bottom: { xs: '500px', md: 0 },
+              bottom: { xs: '500px', md: '220px' },
               backgroundImage: `url(${img.url})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
@@ -588,7 +589,7 @@ export default function HeroSection() {
             top: 0,
             left: 0,
             right: 0,
-            bottom: { xs: '500px', md: 0 },
+            bottom: { xs: '500px', md: '220px' },
             backgroundImage:
               'url(https://bucghzn379yrpbdu.public.blob.vercel-storage.com/Banner/kanitaxi-hero-bg.png)',
             backgroundSize: 'cover',

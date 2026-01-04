@@ -35,9 +35,9 @@ export default function PackagesSection({ tariffs }: { tariffs: TariffDoc[] }) {
             variant="h3"
             fontWeight="800"
             gutterBottom
-            sx={{ color: '#0f172a', fontSize: { xs: '1.75rem', md: '3rem' } }}
+            sx={{ color: '#000', fontSize: { xs: '1.75rem', md: '3rem' }, fontFamily: 'inherit' }}
           >
-            Exclusive <span style={{ color: '#d97706' }}>Packages</span>
+            Exclusive Packages
           </Typography>
           <Typography
             variant="h6"
@@ -57,11 +57,11 @@ export default function PackagesSection({ tariffs }: { tariffs: TariffDoc[] }) {
             const calculatedAmount = (pkg.packages?.hours || 0) * (pkg.packages?.perHourRate || 0)
 
             return (
-              <Grid size={{ xs: 6, md: 3 }} key={pkg.id}>
+              <Grid size={{ xs: 12, md: 4 }} key={pkg.id}>
                 <Card
                   elevation={0}
                   sx={{
-                    height: '100%',
+                    height: 'auto', // Compact height
                     display: 'flex',
                     flexDirection: 'column',
                     bgcolor: '#fff',
@@ -69,103 +69,76 @@ export default function PackagesSection({ tariffs }: { tariffs: TariffDoc[] }) {
                     border: '1px solid #e2e8f0',
                     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)',
                     transition: 'all 0.3s ease',
+                    cursor: 'pointer',
                     '&:hover': {
-                      transform: 'translateY(-8px)',
-                      boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
+                      transform: 'translateY(-4px)',
+                      boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
                       borderColor: '#fed7aa',
                     },
+                  }}
+                  onClick={() => {
+                    const targetId = typeof pkg.vehicle === 'string' ? pkg.vehicle : pkg.vehicle?.id
+                    if (targetId) {
+                      const url = new URL(window.location.href)
+                      url.searchParams.set('packageVehicle', targetId)
+                      window.history.pushState({}, '', url.toString())
+                    }
+                    document.getElementById('home')?.scrollIntoView({ behavior: 'smooth' })
                   }}
                 >
                   <CardContent
                     sx={{
-                      flexGrow: 1,
                       textAlign: 'center',
-                      py: { xs: 1.5, md: 3 },
-                      px: { xs: 1, md: 2 },
+                      py: 3, // Reduced padding
+                      px: 2,
                     }}
                   >
                     <LocalOfferIcon
                       sx={{
-                        fontSize: { xs: 32, md: 40 },
+                        fontSize: 32,
                         color: '#d97706',
-                        mb: { xs: 0.5, md: 1 },
+                        mb: 1.5,
                       }}
                     />
-                    <Typography
-                      variant="h6"
-                      gutterBottom
-                      fontWeight="bold"
-                      color="#0f172a"
+
+                    {/* Compact Single Line Header: Name + Price */}
+                    <Box
                       sx={{
-                        fontSize: { xs: '0.9rem', md: '1.25rem' },
-                        mb: { xs: 0.5, md: '0.35em' },
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: 1,
+                        mb: 1,
+                        flexWrap: 'wrap',
                       }}
                     >
-                      {vName}
-                    </Typography>
-                    <Typography
-                      variant="h4"
-                      color="#d97706"
-                      fontWeight="800"
-                      my={1}
-                      sx={{ fontSize: { xs: '1.25rem', md: '2.125rem' }, my: { xs: 0.5, md: 1 } }}
-                    >
-                      ₹{calculatedAmount}
-                    </Typography>
+                      <Typography variant="h6" fontWeight="800" color="#0f172a">
+                        {vName}
+                      </Typography>
+                      <Typography variant="h5" fontWeight="800" color="#d97706">
+                        - ₹{calculatedAmount}
+                      </Typography>
+                    </Box>
+
+                    {/* Details Stacked */}
                     <Typography
                       color="#64748b"
                       variant="body2"
-                      sx={{ fontSize: { xs: '0.75rem', md: '0.875rem' } }}
+                      fontWeight="500"
+                      sx={{ fontSize: '0.9rem', mb: 0.5 }}
                     >
                       {pkg.packages?.hours} Hrs / {pkg.packages?.km} KM Package
                     </Typography>
-                    {pkg.packages?.extras && (
-                      <Typography
-                        variant="caption"
-                        color="#94a3b8"
-                        display="block"
-                        mt={0.5}
-                        sx={{ fontSize: { xs: '0.65rem', md: '0.75rem' } }}
-                      >
-                        {pkg.packages.extras}
-                      </Typography>
-                    )}
-                  </CardContent>
-                  <CardActions sx={{ justifyContent: 'center', pb: { xs: 1.5, md: 3 }, px: 1 }}>
-                    <Button
-                      variant="outlined"
-                      size="small"
-                      sx={{
-                        color: '#d97706',
-                        borderColor: '#d97706',
-                        borderWidth: 2,
-                        textTransform: 'none',
-                        fontSize: { xs: '0.7rem', md: '0.9rem' },
-                        fontWeight: 600,
-                        px: { xs: 1, md: 3 },
-                        py: { xs: 0.25, md: 0.5 },
-                        width: '100%',
-                        '&:hover': {
-                          borderColor: '#b45309',
-                          color: '#b45309',
-                          bgcolor: '#fff7ed',
-                          borderWidth: 2,
-                        },
-                      }}
-                      onClick={() => {
-                        const targetId =
-                          typeof pkg.vehicle === 'string' ? pkg.vehicle : pkg.vehicle?.id
-                        if (targetId) {
-                          const url = new URL(window.location.href)
-                          url.searchParams.set('packageVehicle', targetId)
-                          window.history.pushState({}, '', url.toString())
-                        }
-                        document.getElementById('home')?.scrollIntoView({ behavior: 'smooth' })
-                      }}
+
+                    <Typography
+                      variant="caption"
+                      color="#94a3b8"
+                      display="block"
+                      sx={{ fontSize: '0.8rem' }}
                     >
-                      Book This Package
-                    </Button>
-                  </CardActions>
+                      {pkg.packages?.extras || '0'}
+                    </Typography>
+                  </CardContent>
                 </Card>
               </Grid>
             )

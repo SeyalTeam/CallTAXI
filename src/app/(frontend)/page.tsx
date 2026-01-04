@@ -6,7 +6,7 @@ import Navbar from './components/Navbar'
 import HeroSection from './components/HeroSection'
 import AboutSection from './components/AboutSection'
 import TariffSection from './components/TariffSection'
-import PackagesSection from './components/PackagesSection'
+import ReviewsSection from './components/ReviewsSection'
 import ContactSection from './components/ContactSection'
 import Footer from './components/Footer'
 import { TariffDoc } from './types'
@@ -123,9 +123,10 @@ export default async function Page() {
 
         <Box position="relative" zIndex={1}>
           <TariffSection tariffs={tariffs} />
-          <PackagesSection tariffs={tariffs} />
         </Box>
       </Box>
+
+      <ReviewsSection />
 
       <ContactSection />
       <Footer />

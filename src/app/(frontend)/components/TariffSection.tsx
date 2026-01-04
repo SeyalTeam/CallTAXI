@@ -6,7 +6,24 @@ import { TariffDoc } from '../types'
 
 export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
   return (
-    <Box id="tariff-section" sx={{ py: 4, bgcolor: 'transparent', color: '#0f172a' }}>
+    <Box
+      id="tariff-section"
+      sx={{
+        py: 10,
+        position: 'relative',
+        overflow: 'hidden',
+        bgcolor: '#ffffff',
+        // Premium mesh gradient background
+        backgroundImage: `
+          radial-gradient(circle at 0% 0%, rgba(251, 191, 36, 0.15) 0%, transparent 50%),
+          radial-gradient(circle at 100% 100%, rgba(15, 23, 42, 0.05) 0%, transparent 50%),
+          radial-gradient(#e2e8f0 1.5px, transparent 1.5px)
+        `,
+        backgroundSize: '100% 100%, 100% 100%, 24px 24px',
+        backgroundPosition: '0 0, 0 0, 0 0',
+        color: '#0f172a',
+      }}
+    >
       <Container maxWidth="xl">
         {/* Header Section */}
         <Box textAlign="center" mb={6}>
@@ -15,12 +32,13 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
             fontWeight="800"
             gutterBottom
             sx={{
-              color: '#0f172a',
+              color: '#000',
               fontSize: { xs: '1.75rem', md: '3rem' },
               whiteSpace: 'nowrap',
+              fontFamily: 'inherit',
             }}
           >
-            Transparent <span style={{ color: '#d97706' }}>Tariffs</span>
+            Transparent Tariffs
           </Typography>
           <Typography
             variant="h6"
@@ -36,13 +54,21 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
           </Typography>
         </Box>
 
-        {/* Cards Grid */}
+        {/* Cards Scrollable Container */}
         <Box
           sx={{
-            display: { xs: 'flex', md: 'grid' },
-            flexDirection: { xs: 'column', md: 'unset' },
-            gridTemplateColumns: { md: 'repeat(5, 1fr)' }, // 5 Columns for desktop
-            gap: { xs: 2, md: 2 },
+            display: 'flex',
+            flexDirection: { xs: 'column', md: 'row' },
+            width: 'fit-content',
+            maxWidth: '100%',
+            mx: 'auto', // Centers the container if width < 100%
+            gap: 2,
+            overflowX: { md: 'auto' },
+            pb: { md: 2 },
+            scrollBehavior: 'smooth',
+            '&::-webkit-scrollbar': { height: 6 },
+            '&::-webkit-scrollbar-thumb': { bgcolor: '#cbd5e1', borderRadius: 3 },
+            '&::-webkit-scrollbar-track': { bgcolor: 'transparent' },
           }}
         >
           {tariffs.map((row, index) => {
@@ -69,8 +95,12 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
                   boxShadow:
                     '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
                   transition: 'transform 0.2s',
-                  // height: '100%', // Removed to allow aspect ratio to drive
-                  aspectRatio: { md: '1 / 1' }, // Strictly Square
+                  minHeight: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  overflow: 'hidden', // Clip corners for full-width image
+                  minWidth: { md: '240px' }, // Fix width for scrolling
+                  flexShrink: { md: 0 }, // Prevent shrinking
                   '&:hover': {
                     transform: 'translateY(-4px)',
                     boxShadow:
@@ -227,13 +257,19 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
                 >
                   <Box>
                     {/* Vehicle Image - Centered & Prominent */}
+                    {/* Vehicle Image - Full Width with Badge */}
                     <Box
                       sx={{
-                        height: '110px',
+                        height: '130px',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         mb: 2,
+                        mx: { md: -1.5 },
+                        mt: { md: -1.5 },
+                        width: { md: 'calc(100% + 24px)' },
+                        bgcolor: '#ffffff',
+                        position: 'relative',
                       }}
                     >
                       {vIcon ? (
@@ -245,18 +281,11 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
                             width: '100%',
                             height: '100%',
                             objectFit: 'contain',
-                            filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.1))',
+                            p: 2,
                           }}
                         />
                       ) : (
-                        <Box
-                          sx={{
-                            width: '100%',
-                            height: '100%',
-                            bgcolor: 'rgba(255,255,255,0.5)',
-                            borderRadius: 2,
-                          }}
-                        />
+                        <Box sx={{ width: '100%', height: '100%', bgcolor: '#f1f5f9' }} />
                       )}
                     </Box>
 
@@ -354,6 +383,56 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
                         </Typography>
                       </Typography>
                     </Box>
+                  </Box>
+
+                  {/* Package Block - Separate Row */}
+                  <Box
+                    sx={{
+                      mt: 2,
+                      p: 1,
+                      borderRadius: 2,
+                      bgcolor: '#1e1e2c',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        columnGap: 1,
+                      }}
+                    >
+                      <Typography
+                        variant="subtitle2"
+                        fontWeight="800"
+                        color="#fbbf24"
+                        sx={{ fontSize: '0.95rem' }}
+                      >
+                        Package - ₹{(row.packages?.hours || 0) * (row.packages?.perHourRate || 0)}
+                      </Typography>
+
+                      <Typography
+                        variant="caption"
+                        color="#BBC863"
+                        fontWeight="600"
+                        sx={{ fontSize: '0.85rem' }}
+                      >
+                        {row.packages?.hours} Hrs / {row.packages?.km} KM
+                      </Typography>
+                    </Box>
+
+                    {row.packages?.extras && row.packages.extras !== '0' && (
+                      <Typography
+                        variant="caption"
+                        display="block"
+                        color="#fbbf24"
+                        sx={{ fontSize: '0.75rem', mt: 0.25, fontWeight: 700 }}
+                      >
+                        Extra - {row.packages.extras}
+                      </Typography>
+                    )}
                   </Box>
                 </Box>
               </Paper>
