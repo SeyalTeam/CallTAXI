@@ -77,7 +77,7 @@ export default function ReviewsSection() {
     <Box
       id="reviews-section"
       sx={{
-        py: 6,
+        py: { xs: 2, md: 6 }, // Reduced padding on mobile
         background: '#1b1b1b',
         color: '#ffffff',
         overflow: 'hidden',
@@ -111,7 +111,7 @@ export default function ReviewsSection() {
           </Typography>
         </Box>
 
-        <Box sx={{ position: 'relative', minHeight: { xs: '300px', md: '280px' } }}>
+        <Box sx={{ position: 'relative', minHeight: { xs: '240px', md: '280px' } }}>
           <AnimatePresence mode="wait">
             <motion.div
               key={page}
