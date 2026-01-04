@@ -9,7 +9,7 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
     <Box
       id="tariff-section"
       sx={{
-        py: 10,
+        py: { xs: 5, md: 10 },
         position: 'relative',
         overflow: 'hidden',
         bgcolor: '#ffffff',
@@ -26,7 +26,7 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
     >
       <Container maxWidth="xl">
         {/* Header Section */}
-        <Box textAlign="center" mb={6}>
+        <Box textAlign="center" mb={{ xs: 3, md: 6 }}>
           <Typography
             variant="h3"
             fontWeight="800"
@@ -243,6 +243,57 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
                         /km
                       </Typography>
                     </Typography>
+                  </Box>
+
+                  {/* Row 3: Package Details (Full Width) */}
+                  <Box
+                    sx={{
+                      gridColumn: '1 / -1',
+                      mt: 1,
+                      p: 1,
+                      borderRadius: 2,
+                      bgcolor: '#1e1e2c',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: 1,
+                      }}
+                    >
+                      <Typography
+                        variant="subtitle2"
+                        fontWeight="800"
+                        color="#fbbf24"
+                        sx={{ fontSize: '0.9rem' }}
+                      >
+                        Package - ₹{(row.packages?.hours || 0) * (row.packages?.perHourRate || 0)}
+                      </Typography>
+
+                      <Typography
+                        variant="caption"
+                        color="#BBC863"
+                        fontWeight="600"
+                        sx={{ fontSize: '0.8rem' }}
+                      >
+                        {row.packages?.hours} Hrs / {row.packages?.km} KM
+                      </Typography>
+                    </Box>
+
+                    {row.packages?.extras && row.packages.extras !== '0' && (
+                      <Typography
+                        variant="caption"
+                        display="block"
+                        color="#fbbf24"
+                        sx={{ fontSize: '0.7rem', mt: 0.25, fontWeight: 700 }}
+                      >
+                        Extra - {row.packages.extras}
+                      </Typography>
+                    )}
                   </Box>
                 </Box>
 

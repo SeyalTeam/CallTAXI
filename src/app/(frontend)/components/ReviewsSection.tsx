@@ -1,16 +1,25 @@
 'use client'
 import React, { useState, useEffect } from 'react'
-import { Box, Container, Typography, Paper, Avatar } from '@mui/material'
+import { Box, Container, Typography, Paper, Avatar, useTheme, useMediaQuery } from '@mui/material'
 import StarIcon from '@mui/icons-material/Star'
 import FormatQuoteIcon from '@mui/icons-material/FormatQuote'
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline'
 import { motion, AnimatePresence } from 'framer-motion'
 
 export default function ReviewsSection() {
-  const [page, setPage] = useState(0)
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
+
+  const itemsPerPage = isMobile ? 1 : 4
   const totalItems = 12
-  const itemsPerPage = 4
   const totalPages = Math.ceil(totalItems / itemsPerPage)
+
+  const [page, setPage] = useState(0)
+
+  // Reset page when switching views to prevent out of bounds (though slice handles safely usually)
+  useEffect(() => {
+    setPage(0)
+  }, [isMobile])
 
   const reviews = [
     {
@@ -102,7 +111,7 @@ export default function ReviewsSection() {
           </Typography>
         </Box>
 
-        <Box sx={{ position: 'relative', minHeight: { xs: '450px', md: '280px' } }}>
+        <Box sx={{ position: 'relative', minHeight: { xs: '300px', md: '280px' } }}>
           <AnimatePresence mode="wait">
             <motion.div
               key={page}
@@ -233,7 +242,7 @@ export default function ReviewsSection() {
               display: 'flex',
               justifyContent: 'center',
               gap: 1.5,
-              mt: 4,
+              mt: { xs: 2, md: 4 },
             }}
           >
             {[...Array(totalPages)].map((_, i) => (
