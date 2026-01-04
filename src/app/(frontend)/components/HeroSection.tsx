@@ -544,7 +544,7 @@ export default function HeroSection() {
         // Premium corporate light theme background
         background: { xs: 'transparent', md: '#ffffff' },
         color: '#000',
-        pt: { xs: '220px', md: '25vh' }, // Pull text up so Tabs are definitely in Hero
+        pt: { xs: '220px', md: '56vh' }, // Desktop pushed further down per 40% request
         overflow: 'visible',
         mb: { xs: '-500px', md: '-220px' }, // Pull next section up
         pb: { xs: '120px', md: '10vh' }, // Restore volume for proper overlap

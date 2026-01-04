@@ -119,7 +119,7 @@ export default function AboutSection() {
                     sx={{
                       flexGrow: 1,
                       height: '2px',
-                      bgcolor: 'rgba(255,255,255,0.1)',
+                      bgcolor: 'rgba(255,255,255,0.3)', // increased visibility
                       mx: 2,
                       position: 'relative',
                       '&::after': {
@@ -130,7 +130,7 @@ export default function AboutSection() {
                         transform: 'translateY(-50%)',
                         width: 0,
                         height: 0,
-                        borderLeft: '6px solid rgba(255,255,255,0.1)',
+                        borderLeft: '6px solid rgba(255,255,255,0.3)', // increased visibility
                         borderTop: '4px solid transparent',
                         borderBottom: '4px solid transparent',
                       },
@@ -143,8 +143,8 @@ export default function AboutSection() {
                     sx={{
                       fontWeight: 900,
                       color: 'transparent',
-                      WebkitTextStroke: '1px rgba(255,255,255,0.5)',
-                      opacity: 0.5,
+                      WebkitTextStroke: '1px #cbd5e1', // Light grey for better visibility
+                      opacity: 0.8, // Increased opacity
                       fontFamily: 'monospace',
                       zIndex: 1,
                     }}
