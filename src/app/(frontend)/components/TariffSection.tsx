@@ -251,7 +251,7 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
                       mt: 1,
                       p: 1,
                       borderRadius: 2,
-                      bgcolor: '#1e1e2c',
+                      bgcolor: '#0e172a',
                       textAlign: 'center',
                     }}
                   >
@@ -441,7 +441,7 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
                       mt: 2,
                       p: 1,
                       borderRadius: 2,
-                      bgcolor: '#1e1e2c',
+                      bgcolor: '#0e172a',
                       textAlign: 'center',
                     }}
                   >

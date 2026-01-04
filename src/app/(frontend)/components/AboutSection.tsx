@@ -13,7 +13,7 @@ export default function AboutSection() {
       sx={{
         pt: { xs: '480px', md: '220px' },
         pb: 8,
-        background: 'linear-gradient(to bottom, #ffffff 0%, #f3f4f6 100%)',
+        bgcolor: '#F6FAFD',
         color: '#0f172a',
       }}
     >
@@ -78,7 +78,7 @@ export default function AboutSection() {
                   height: '100%',
                   display: 'flex',
                   flexDirection: 'column',
-                  bgcolor: '#1e1e2c', // Dark blue/black shade
+                  bgcolor: '#0e172a', // Navy Code
                   borderRadius: 4,
                   position: 'relative',
                   overflow: 'hidden',
