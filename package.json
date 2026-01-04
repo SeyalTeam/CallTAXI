@@ -30,7 +30,7 @@
     "@payloadcms/storage-vercel-blob": "^3.68.5",
     "@payloadcms/ui": "^3.68.5",
     "@react-three/drei": "^10.7.7",
-    "@react-three/fiber": "^9.4.2",
+    "@react-three/fiber": "^9.5.0",
     "@types/leaflet": "^1.9.21",
     "axios": "^1.13.1",
     "cross-env": "^7.0.3",

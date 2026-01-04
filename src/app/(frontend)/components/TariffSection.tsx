@@ -12,15 +12,14 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
         py: { xs: 5, md: 10 },
         position: 'relative',
         overflow: 'hidden',
-        bgcolor: '#ffffff',
-        // Premium mesh gradient background
+        bgcolor: '#f8fafc', // Slightly cooler white/slate base
+        // Premium soft gradient background without dots
         backgroundImage: `
-          radial-gradient(circle at 0% 0%, rgba(251, 191, 36, 0.15) 0%, transparent 50%),
-          radial-gradient(circle at 100% 100%, rgba(15, 23, 42, 0.05) 0%, transparent 50%),
-          radial-gradient(#e2e8f0 1.5px, transparent 1.5px)
+          radial-gradient(circle at 0% 0%, rgba(251, 191, 36, 0.1) 0%, transparent 60%),
+          radial-gradient(circle at 100% 100%, rgba(15, 23, 42, 0.08) 0%, transparent 60%)
         `,
-        backgroundSize: '100% 100%, 100% 100%, 24px 24px',
-        backgroundPosition: '0 0, 0 0, 0 0',
+        backgroundSize: '100% 100%',
+        backgroundPosition: '0 0',
         color: '#0f172a',
       }}
     >

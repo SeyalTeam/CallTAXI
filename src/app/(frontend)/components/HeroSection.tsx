@@ -17,7 +17,7 @@ import {
   Container,
 } from '@mui/material'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
 import axios from 'axios'
@@ -539,15 +539,15 @@ export default function HeroSection() {
         position: 'relative',
         minHeight: '95vh',
         display: 'flex',
-        alignItems: 'flex-end', // Push form to bottom
+        alignItems: 'flex-start', // Top align to prevent tab jumping
         justifyContent: 'center',
         // Premium corporate light theme background
         background: { xs: 'transparent', md: '#ffffff' },
         color: '#000',
-        pt: 8, // space for navbar
+        pt: { xs: '220px', md: '25vh' }, // Pull text up so Tabs are definitely in Hero
         overflow: 'visible',
         mb: { xs: '-500px', md: '-220px' }, // Pull next section up
-        pb: { xs: '50px', md: '10vh' }, // 10% from bottom on desktop
+        pb: { xs: '120px', md: '10vh' }, // Restore volume for proper overlap
         zIndex: 2,
       }}
     >
@@ -898,13 +898,15 @@ export default function HeroSection() {
                       )}
 
                       {/* Pickup Date */}
-                      <Grid size={{ xs: 12, md: 2 }}>
+                      {/* Pickup Date */}
+                      <Grid size={{ xs: tripType === 'roundtrip' ? 6 : 12, md: 2 }}>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                           <Controller
                             name="pickupDateTime"
                             control={control}
                             render={({ field }) => (
-                              <DateTimePicker
+                              <DatePicker
+                                format="DD/MM/YY"
                                 label="Pickup Date"
                                 value={field.value}
                                 onChange={field.onChange}
@@ -941,13 +943,14 @@ export default function HeroSection() {
 
                       {/* Return Date - Conditional */}
                       {tripType === 'roundtrip' && (
-                        <Grid size={{ xs: 12, md: 2 }}>
+                        <Grid size={{ xs: 6, md: 2 }}>
                           <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <Controller
                               name="dropDateTime"
                               control={control}
                               render={({ field }) => (
-                                <DateTimePicker
+                                <DatePicker
+                                  format="DD/MM/YY"
                                   label="Return Date"
                                   value={field.value}
                                   onChange={field.onChange}
