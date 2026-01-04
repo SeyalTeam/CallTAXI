@@ -690,7 +690,7 @@ export default function HeroSection() {
                           width: 'fit-content', // Only as wide as tabs
                           gap: 0,
                           overflowX: 'auto',
-                          bgcolor: '#1e293b',
+                          bgcolor: 'transparent',
                           borderTopLeftRadius: 12,
                           borderTopRightRadius: 12,
                           scrollbarWidth: 'none',
@@ -949,15 +949,7 @@ export default function HeroSection() {
                                         fontSize: '0.9rem',
                                         '&.MuiInputLabel-shrink': { color: '#94a3b8' },
                                       },
-                                      '& .MuiOutlinedInput-root': {
-                                        bgcolor: '#B3CFE5 !important',
-                                        '& fieldset': { borderColor: '#e2e8f0' },
-                                        '&:hover fieldset': { borderColor: '#cbd5e1' },
-                                        '&.Mui-focused fieldset': {
-                                          borderColor: '#d97706',
-                                          borderWidth: 2,
-                                        },
-                                      },
+
                                       '& .MuiSvgIcon-root': { color: '#0e172a' },
                                     },
                                   },
@@ -1002,15 +994,7 @@ export default function HeroSection() {
                                           fontSize: '0.9rem',
                                           '&.MuiInputLabel-shrink': { color: '#94a3b8' },
                                         },
-                                        '& .MuiOutlinedInput-root': {
-                                          bgcolor: '#B3CFE5 !important',
-                                          '& fieldset': { borderColor: '#e2e8f0' },
-                                          '&:hover fieldset': { borderColor: '#cbd5e1' },
-                                          '&.Mui-focused fieldset': {
-                                            borderColor: '#d97706',
-                                            borderWidth: 2,
-                                          },
-                                        },
+
                                         '& .MuiSvgIcon-root': { color: '#0e172a' },
                                       },
                                     },
