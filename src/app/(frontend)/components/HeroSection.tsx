@@ -709,16 +709,16 @@ export default function HeroSection() {
                                 borderTopLeftRadius: 12,
                                 borderTopRightRadius: 12,
                                 cursor: 'pointer',
-                                bgcolor: isSelected ? '#ffffff' : 'transparent',
-                                color: isSelected ? '#0f172a' : '#94a3b8',
+                                bgcolor: isSelected ? '#fbc123' : '#0A1931',
+                                color: isSelected ? '#0e172a' : '#ffffff',
                                 fontWeight: 600,
                                 fontSize: { xs: '0.85rem', md: '0.95rem' },
                                 transition: 'all 0.2s',
                                 position: 'relative',
                                 mb: 0, // No margin bottom, sit flush
                                 '&:hover': {
-                                  color: isSelected ? '#0f172a' : '#ffffff',
-                                  bgcolor: isSelected ? '#ffffff' : 'rgba(255,255,255,0.05)',
+                                  color: isSelected ? '#0e172a' : '#ffffff',
+                                  bgcolor: isSelected ? '#f59e0b' : '#1e293b',
                                 },
                                 ...(isSelected && {
                                   '&::after': {
@@ -728,7 +728,7 @@ export default function HeroSection() {
                                     left: 0,
                                     right: 0,
                                     height: 4, // Small overlap strip just in case
-                                    bgcolor: '#ffffff',
+                                    bgcolor: '#fbc123',
                                     zIndex: 1,
                                   },
                                 }),
@@ -749,7 +749,7 @@ export default function HeroSection() {
                   {/* Main Form Content (White Box) */}
                   <Box
                     sx={{
-                      bgcolor: '#ffffff',
+                      bgcolor: '#0e172a',
                       p: { xs: 2, md: 3 },
                       boxShadow: '0 10px 30px -5px rgba(0, 0, 0, 0.2)',
                       border: '1px solid #e2e8f0',
@@ -784,14 +784,23 @@ export default function HeroSection() {
                               }}
                               sx={{
                                 input: {
-                                  color: '#0f172a',
+                                  color: '#0e172a',
                                   fontWeight: 500,
                                   fontSize: '0.9rem',
                                   py: 1, // reduced padding
+                                  '&:-webkit-autofill': {
+                                    WebkitBoxShadow: '0 0 0 100px #B3CFE5 inset',
+                                    WebkitTextFillColor: '#0e172a',
+                                    transition: 'background-color 5000s ease-in-out 0s',
+                                  },
                                 },
-                                label: { color: '#64748b', fontSize: '0.9rem' },
+                                label: {
+                                  color: '#0e172a',
+                                  fontSize: '0.9rem',
+                                  '&.MuiInputLabel-shrink': { color: '#94a3b8' },
+                                },
                                 '& .MuiOutlinedInput-root': {
-                                  bgcolor: '#f8fafc',
+                                  bgcolor: '#B3CFE5',
                                   '& fieldset': { borderColor: '#e2e8f0' },
                                   '&:hover fieldset': { borderColor: '#cbd5e1' },
                                   '&.Mui-focused fieldset': {
@@ -851,14 +860,23 @@ export default function HeroSection() {
                                 }}
                                 sx={{
                                   input: {
-                                    color: '#0f172a',
+                                    color: '#0e172a',
                                     fontWeight: 500,
                                     fontSize: '0.9rem',
                                     py: 1,
+                                    '&:-webkit-autofill': {
+                                      WebkitBoxShadow: '0 0 0 100px #B3CFE5 inset',
+                                      WebkitTextFillColor: '#0e172a',
+                                      transition: 'background-color 5000s ease-in-out 0s',
+                                    },
                                   },
-                                  label: { color: '#64748b', fontSize: '0.9rem' },
+                                  label: {
+                                    color: '#0e172a',
+                                    fontSize: '0.9rem',
+                                    '&.MuiInputLabel-shrink': { color: '#94a3b8' },
+                                  },
                                   '& .MuiOutlinedInput-root': {
-                                    bgcolor: '#f8fafc',
+                                    bgcolor: '#B3CFE5',
                                     '& fieldset': { borderColor: '#e2e8f0' },
                                     '&:hover fieldset': { borderColor: '#cbd5e1' },
                                     '&.Mui-focused fieldset': {
@@ -915,15 +933,24 @@ export default function HeroSection() {
                                     size: 'small',
                                     fullWidth: true,
                                     sx: {
+                                      bgcolor: '#B3CFE5',
+                                      borderRadius: 1,
+                                      '& .MuiOutlinedInput-root': {
+                                        bgcolor: 'transparent',
+                                      },
                                       input: {
-                                        color: '#0f172a',
+                                        color: '#0e172a',
                                         fontWeight: 500,
                                         fontSize: '0.9rem',
                                         py: 1,
                                       },
-                                      label: { color: '#64748b', fontSize: '0.9rem' },
+                                      label: {
+                                        color: '#0e172a',
+                                        fontSize: '0.9rem',
+                                        '&.MuiInputLabel-shrink': { color: '#94a3b8' },
+                                      },
                                       '& .MuiOutlinedInput-root': {
-                                        bgcolor: '#f8fafc',
+                                        bgcolor: '#B3CFE5 !important',
                                         '& fieldset': { borderColor: '#e2e8f0' },
                                         '&:hover fieldset': { borderColor: '#cbd5e1' },
                                         '&.Mui-focused fieldset': {
@@ -931,7 +958,7 @@ export default function HeroSection() {
                                           borderWidth: 2,
                                         },
                                       },
-                                      '& .MuiSvgIcon-root': { color: '#94a3b8' },
+                                      '& .MuiSvgIcon-root': { color: '#0e172a' },
                                     },
                                   },
                                 }}
@@ -959,15 +986,24 @@ export default function HeroSection() {
                                       size: 'small',
                                       fullWidth: true,
                                       sx: {
+                                        bgcolor: '#B3CFE5',
+                                        borderRadius: 1,
+                                        '& .MuiOutlinedInput-root': {
+                                          bgcolor: 'transparent',
+                                        },
                                         input: {
-                                          color: '#0f172a',
+                                          color: '#0e172a',
                                           fontWeight: 500,
                                           fontSize: '0.9rem',
                                           py: 1,
                                         },
-                                        label: { color: '#64748b', fontSize: '0.9rem' },
+                                        label: {
+                                          color: '#0e172a',
+                                          fontSize: '0.9rem',
+                                          '&.MuiInputLabel-shrink': { color: '#94a3b8' },
+                                        },
                                         '& .MuiOutlinedInput-root': {
-                                          bgcolor: '#f8fafc',
+                                          bgcolor: '#B3CFE5 !important',
                                           '& fieldset': { borderColor: '#e2e8f0' },
                                           '&:hover fieldset': { borderColor: '#cbd5e1' },
                                           '&.Mui-focused fieldset': {
@@ -975,7 +1011,7 @@ export default function HeroSection() {
                                             borderWidth: 2,
                                           },
                                         },
-                                        '& .MuiSvgIcon-root': { color: '#94a3b8' },
+                                        '& .MuiSvgIcon-root': { color: '#0e172a' },
                                       },
                                     },
                                   }}
@@ -990,7 +1026,13 @@ export default function HeroSection() {
                       {tripType === 'packages' && (
                         <Grid size={{ xs: 12, md: 2 }}>
                           <FormControl fullWidth size="small">
-                            <InputLabel id="hours-label" sx={{ color: '#9ca3af' }}>
+                            <InputLabel
+                              id="hours-label"
+                              sx={{
+                                color: '#0e172a',
+                                '&.MuiInputLabel-shrink': { color: '#94a3b8' },
+                              }}
+                            >
                               Duration
                             </InputLabel>
                             <Select
@@ -999,8 +1041,8 @@ export default function HeroSection() {
                               value={packageHours}
                               onChange={(e) => setPackageHours(Number(e.target.value))}
                               sx={{
-                                bgcolor: '#f8fafc',
-                                color: '#0f172a',
+                                bgcolor: '#B3CFE5',
+                                color: '#0e172a',
                                 fontWeight: 500,
                                 fontSize: '0.9rem',
                                 '.MuiSelect-select': { py: 1 },
@@ -1032,7 +1074,13 @@ export default function HeroSection() {
                           control={control}
                           render={({ field }) => (
                             <FormControl fullWidth size="small">
-                              <InputLabel id="vehicle-label" sx={{ color: '#9ca3af' }}>
+                              <InputLabel
+                                id="vehicle-label"
+                                sx={{
+                                  color: '#0e172a',
+                                  '&.MuiInputLabel-shrink': { color: '#94a3b8' },
+                                }}
+                              >
                                 Vehicle
                               </InputLabel>
                               <Select
@@ -1040,8 +1088,8 @@ export default function HeroSection() {
                                 label="Vehicle"
                                 {...field}
                                 sx={{
-                                  bgcolor: '#f8fafc',
-                                  color: '#0f172a',
+                                  bgcolor: '#B3CFE5',
+                                  color: '#0e172a',
                                   fontWeight: 500,
                                   fontSize: '0.9rem',
                                   '.MuiSelect-select': {
@@ -1057,7 +1105,7 @@ export default function HeroSection() {
                                     borderColor: '#d97706',
                                     borderWidth: 2,
                                   },
-                                  '.MuiSvgIcon-root': { color: '#64748b' },
+                                  '.MuiSvgIcon-root': { color: '#0e172a' },
                                 }}
                               >
                                 {vehicles.map((v) => (
@@ -1087,10 +1135,19 @@ export default function HeroSection() {
                                   fontWeight: 500,
                                   fontSize: '0.9rem',
                                   py: 1,
+                                  '&:-webkit-autofill': {
+                                    WebkitBoxShadow: '0 0 0 100px #B3CFE5 inset',
+                                    WebkitTextFillColor: '#000',
+                                    transition: 'background-color 5000s ease-in-out 0s',
+                                  },
                                 },
-                                label: { color: 'grey.700', fontSize: '0.9rem' },
+                                label: {
+                                  color: '#0e172a',
+                                  fontSize: '0.9rem',
+                                  '&.MuiInputLabel-shrink': { color: '#94a3b8' },
+                                },
                                 '& .MuiOutlinedInput-root': {
-                                  bgcolor: '#f8fafc',
+                                  bgcolor: '#B3CFE5',
                                   '& fieldset': { borderColor: 'rgba(0,0,0,0.1)' },
                                   '&:hover fieldset': { borderColor: 'rgba(0,0,0,0.3)' },
                                   '&.Mui-focused fieldset': { borderColor: '#FFD700' },
@@ -1112,14 +1169,23 @@ export default function HeroSection() {
                               label="Mobile Number"
                               sx={{
                                 input: {
-                                  color: '#0f172a',
+                                  color: '#0e172a',
                                   fontWeight: 500,
                                   fontSize: '0.9rem',
                                   py: 1,
+                                  '&:-webkit-autofill': {
+                                    WebkitBoxShadow: '0 0 0 100px #B3CFE5 inset',
+                                    WebkitTextFillColor: '#0e172a',
+                                    transition: 'background-color 5000s ease-in-out 0s',
+                                  },
                                 },
-                                label: { color: '#64748b', fontSize: '0.9rem' },
+                                label: {
+                                  color: '#0e172a',
+                                  fontSize: '0.9rem',
+                                  '&.MuiInputLabel-shrink': { color: '#94a3b8' },
+                                },
                                 '& .MuiOutlinedInput-root': {
-                                  bgcolor: '#f8fafc',
+                                  bgcolor: '#B3CFE5',
                                   '& fieldset': { borderColor: '#e2e8f0' },
                                   '&:hover fieldset': { borderColor: '#cbd5e1' },
                                   '&.Mui-focused fieldset': {
@@ -1180,13 +1246,13 @@ export default function HeroSection() {
                                     helperText={couponError}
                                     sx={{
                                       input: {
-                                        color: '#0f172a',
+                                        color: '#0e172a',
                                         fontWeight: 500,
                                         fontSize: '0.9rem',
                                         py: 1,
                                       },
                                       '& .MuiOutlinedInput-root': {
-                                        bgcolor: '#f8fafc',
+                                        bgcolor: '#DAE0E4',
                                       },
                                     }}
                                   />
@@ -1237,8 +1303,8 @@ export default function HeroSection() {
                               flexShrink: 0,
                               ml: 0,
                               display: 'block',
-                              bgcolor: '#0f172a',
-                              color: '#fff',
+                              bgcolor: '#fbc024',
+                              color: '#000',
                               fontWeight: '600',
                               py: 1,
                               px: { xs: 3, md: 0 },
@@ -1248,7 +1314,7 @@ export default function HeroSection() {
                               borderRadius: 2,
                               boxShadow: 'none',
                               '&:hover': {
-                                bgcolor: '#334155',
+                                bgcolor: '#f59e0b',
                                 boxShadow: 'none',
                               },
                             }}
