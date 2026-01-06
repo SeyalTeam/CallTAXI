@@ -688,7 +688,7 @@ export default function HeroSection() {
                           pb: 0,
                           display: 'flex',
                           width: 'fit-content', // Only as wide as tabs
-                          gap: 0,
+                          gap: { xs: 0, md: '6px' },
                           overflowX: 'auto',
                           bgcolor: 'transparent',
                           borderTopLeftRadius: 12,
@@ -710,6 +710,8 @@ export default function HeroSection() {
                                 borderTopRightRadius: 12,
                                 cursor: 'pointer',
                                 bgcolor: isSelected ? '#fbc123' : '#0A1931',
+                                border: isSelected ? '1px solid #BDC4D4' : '1px solid transparent',
+                                borderBottom: 'none', // Connect to form
                                 color: isSelected ? '#0e172a' : '#ffffff',
                                 fontWeight: 600,
                                 fontSize: { xs: '0.85rem', md: '0.95rem' },
@@ -720,18 +722,6 @@ export default function HeroSection() {
                                   color: isSelected ? '#0e172a' : '#ffffff',
                                   bgcolor: isSelected ? '#f59e0b' : '#1e293b',
                                 },
-                                ...(isSelected && {
-                                  '&::after': {
-                                    content: '""',
-                                    position: 'absolute',
-                                    bottom: 0,
-                                    left: 0,
-                                    right: 0,
-                                    height: 4, // Small overlap strip just in case
-                                    bgcolor: '#fbc123',
-                                    zIndex: 1,
-                                  },
-                                }),
                               }}
                             >
                               {t === 'oneway'
@@ -749,10 +739,10 @@ export default function HeroSection() {
                   {/* Main Form Content (White Box) */}
                   <Box
                     sx={{
-                      bgcolor: '#0e172a',
+                      bgcolor: '#1C2E4A',
                       p: { xs: 2, md: 3 },
                       boxShadow: '0 10px 30px -5px rgba(0, 0, 0, 0.2)',
-                      border: '1px solid #e2e8f0',
+                      // border: '1px solid #e2e8f0', // Removed as per request
                       borderRadius: 3,
                       borderTopLeftRadius: 0, // Connects to the active tab (assuming first tab is active defaults? No, if RoundTrip active, visually it's weird if top-left is sharp. Ideally should be rounded if active tab is not first. But simple folder look usually has sharp corner where tab connects. Let's stick to standard radius for now essentially, maybe 0 if first tab active. For simplicity, keeping standard radius 3 usually looks fine or 0 looks "attached". Let's use 0 because the tab sits on top.)
                       position: 'relative',
@@ -784,12 +774,12 @@ export default function HeroSection() {
                               }}
                               sx={{
                                 input: {
-                                  color: '#0e172a',
+                                  color: 'rgba(14, 23, 42, 0.7)',
                                   fontWeight: 500,
                                   fontSize: '0.9rem',
                                   py: 1, // reduced padding
                                   '&:-webkit-autofill': {
-                                    WebkitBoxShadow: '0 0 0 100px #B3CFE5 inset',
+                                    WebkitBoxShadow: '0 0 0 100px #dae0e4 inset',
                                     WebkitTextFillColor: '#0e172a',
                                     transition: 'background-color 5000s ease-in-out 0s',
                                   },
@@ -800,7 +790,7 @@ export default function HeroSection() {
                                   '&.MuiInputLabel-shrink': { color: '#94a3b8' },
                                 },
                                 '& .MuiOutlinedInput-root': {
-                                  bgcolor: '#B3CFE5',
+                                  bgcolor: '#dae0e4',
                                   '& fieldset': { borderColor: '#e2e8f0' },
                                   '&:hover fieldset': { borderColor: '#cbd5e1' },
                                   '&.Mui-focused fieldset': {
@@ -860,12 +850,12 @@ export default function HeroSection() {
                                 }}
                                 sx={{
                                   input: {
-                                    color: '#0e172a',
+                                    color: 'rgba(14, 23, 42, 0.7)',
                                     fontWeight: 500,
                                     fontSize: '0.9rem',
                                     py: 1,
                                     '&:-webkit-autofill': {
-                                      WebkitBoxShadow: '0 0 0 100px #B3CFE5 inset',
+                                      WebkitBoxShadow: '0 0 0 100px #dae0e4 inset',
                                       WebkitTextFillColor: '#0e172a',
                                       transition: 'background-color 5000s ease-in-out 0s',
                                     },
@@ -876,7 +866,7 @@ export default function HeroSection() {
                                     '&.MuiInputLabel-shrink': { color: '#94a3b8' },
                                   },
                                   '& .MuiOutlinedInput-root': {
-                                    bgcolor: '#B3CFE5',
+                                    bgcolor: '#dae0e4',
                                     '& fieldset': { borderColor: '#e2e8f0' },
                                     '&:hover fieldset': { borderColor: '#cbd5e1' },
                                     '&.Mui-focused fieldset': {
@@ -933,13 +923,13 @@ export default function HeroSection() {
                                     size: 'small',
                                     fullWidth: true,
                                     sx: {
-                                      bgcolor: '#B3CFE5',
+                                      bgcolor: '#dae0e4',
                                       borderRadius: 1,
                                       '& .MuiOutlinedInput-root': {
                                         bgcolor: 'transparent',
                                       },
                                       input: {
-                                        color: '#0e172a',
+                                        color: 'rgba(14, 23, 42, 0.7)',
                                         fontWeight: 500,
                                         fontSize: '0.9rem',
                                         py: 1,
@@ -978,13 +968,13 @@ export default function HeroSection() {
                                       size: 'small',
                                       fullWidth: true,
                                       sx: {
-                                        bgcolor: '#B3CFE5',
+                                        bgcolor: '#dae0e4',
                                         borderRadius: 1,
                                         '& .MuiOutlinedInput-root': {
                                           bgcolor: 'transparent',
                                         },
                                         input: {
-                                          color: '#0e172a',
+                                          color: 'rgba(14, 23, 42, 0.7)',
                                           fontWeight: 500,
                                           fontSize: '0.9rem',
                                           py: 1,
@@ -1025,8 +1015,8 @@ export default function HeroSection() {
                               value={packageHours}
                               onChange={(e) => setPackageHours(Number(e.target.value))}
                               sx={{
-                                bgcolor: '#B3CFE5',
-                                color: '#0e172a',
+                                bgcolor: '#dae0e4',
+                                color: 'rgba(14, 23, 42, 0.7)',
                                 fontWeight: 500,
                                 fontSize: '0.9rem',
                                 '.MuiSelect-select': { py: 1 },
@@ -1072,8 +1062,8 @@ export default function HeroSection() {
                                 label="Vehicle"
                                 {...field}
                                 sx={{
-                                  bgcolor: '#B3CFE5',
-                                  color: '#0e172a',
+                                  bgcolor: '#dae0e4',
+                                  color: 'rgba(14, 23, 42, 0.7)',
                                   fontWeight: 500,
                                   fontSize: '0.9rem',
                                   '.MuiSelect-select': {
@@ -1103,7 +1093,7 @@ export default function HeroSection() {
                         />
                       </Grid>
 
-                      <Grid size={{ xs: 12, md: 6 }}>
+                      <Grid size={{ xs: 12, md: 3 }}>
                         <Controller
                           name="customerName"
                           control={control}
@@ -1115,12 +1105,12 @@ export default function HeroSection() {
                               label="Your Name"
                               sx={{
                                 input: {
-                                  color: '#000',
+                                  color: 'rgba(0, 0, 0, 0.7)',
                                   fontWeight: 500,
                                   fontSize: '0.9rem',
                                   py: 1,
                                   '&:-webkit-autofill': {
-                                    WebkitBoxShadow: '0 0 0 100px #B3CFE5 inset',
+                                    WebkitBoxShadow: '0 0 0 100px #dae0e4 inset',
                                     WebkitTextFillColor: '#000',
                                     transition: 'background-color 5000s ease-in-out 0s',
                                   },
@@ -1131,7 +1121,7 @@ export default function HeroSection() {
                                   '&.MuiInputLabel-shrink': { color: '#94a3b8' },
                                 },
                                 '& .MuiOutlinedInput-root': {
-                                  bgcolor: '#B3CFE5',
+                                  bgcolor: '#dae0e4',
                                   '& fieldset': { borderColor: 'rgba(0,0,0,0.1)' },
                                   '&:hover fieldset': { borderColor: 'rgba(0,0,0,0.3)' },
                                   '&.Mui-focused fieldset': { borderColor: '#FFD700' },
@@ -1141,7 +1131,7 @@ export default function HeroSection() {
                           )}
                         />
                       </Grid>
-                      <Grid size={{ xs: 12, md: 6 }}>
+                      <Grid size={{ xs: 12, md: 3 }}>
                         <Controller
                           name="customerPhone"
                           control={control}
@@ -1153,12 +1143,12 @@ export default function HeroSection() {
                               label="Mobile Number"
                               sx={{
                                 input: {
-                                  color: '#0e172a',
+                                  color: 'rgba(14, 23, 42, 0.7)',
                                   fontWeight: 500,
                                   fontSize: '0.9rem',
                                   py: 1,
                                   '&:-webkit-autofill': {
-                                    WebkitBoxShadow: '0 0 0 100px #B3CFE5 inset',
+                                    WebkitBoxShadow: '0 0 0 100px #dae0e4 inset',
                                     WebkitTextFillColor: '#0e172a',
                                     transition: 'background-color 5000s ease-in-out 0s',
                                   },
@@ -1169,7 +1159,7 @@ export default function HeroSection() {
                                   '&.MuiInputLabel-shrink': { color: '#94a3b8' },
                                 },
                                 '& .MuiOutlinedInput-root': {
-                                  bgcolor: '#B3CFE5',
+                                  bgcolor: '#dae0e4',
                                   '& fieldset': { borderColor: '#e2e8f0' },
                                   '&:hover fieldset': { borderColor: '#cbd5e1' },
                                   '&.Mui-focused fieldset': {
@@ -1183,9 +1173,9 @@ export default function HeroSection() {
                         />
                       </Grid>
                       {hasActiveCoupons && (
-                        <Grid size={{ xs: 12 }}>
+                        <Grid size={{ xs: 12, md: 3 }}>
                           {/* Coupon Section */}
-                          <Box sx={{ mb: 2 }}>
+                          <Box>
                             <Grid container spacing={1} alignItems="center">
                               <Grid size={{ xs: appliedCoupon ? 12 : 8 }}>
                                 {appliedCoupon ? (
@@ -1230,13 +1220,13 @@ export default function HeroSection() {
                                     helperText={couponError}
                                     sx={{
                                       input: {
-                                        color: '#0e172a',
+                                        color: 'rgba(14, 23, 42, 0.7)',
                                         fontWeight: 500,
                                         fontSize: '0.9rem',
                                         py: 1,
                                       },
                                       '& .MuiOutlinedInput-root': {
-                                        bgcolor: '#DAE0E4',
+                                        bgcolor: '#dae0e4',
                                       },
                                     }}
                                   />
@@ -1245,17 +1235,21 @@ export default function HeroSection() {
                               {!appliedCoupon && (
                                 <Grid size={{ xs: 4 }}>
                                   <Button
-                                    variant="outlined"
+                                    variant="contained"
                                     fullWidth
                                     onClick={validateCoupon}
                                     disabled={loading || !couponCodeInput}
                                     sx={{
                                       height: 40,
-                                      borderColor: '#d97706',
-                                      color: '#d97706',
+                                      bgcolor: '#fbc123',
+                                      color: '#000000',
+                                      fontWeight: 600,
                                       '&:hover': {
-                                        borderColor: '#b45309',
-                                        bgcolor: '#fff7ed',
+                                        bgcolor: '#f59e0b',
+                                      },
+                                      '&.Mui-disabled': {
+                                        bgcolor: 'rgba(255, 255, 255, 0.15)',
+                                        color: 'rgba(255, 255, 255, 0.3)',
                                       },
                                     }}
                                   >
