@@ -35,7 +35,7 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
         py: { xs: 5, md: 10 },
         position: 'relative',
         overflow: 'hidden',
-        bgcolor: '#F6FAFD',
+        bgcolor: '#f1f7f7',
         // backgroundImage removed to avoid yellow tint
         color: '#0f172a',
       }}
@@ -99,7 +99,7 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
                 const seatCount = typeof vehicle !== 'string' ? vehicle?.seatCount : null
 
                 // Common background
-                const cardBg = '#dbeceb'
+                const cardBg = '#ffffff'
 
                 return (
                   <Box
@@ -233,8 +233,8 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
                             sx={{
                               p: 0.75,
                               borderRadius: 2,
-                              bgcolor: 'rgba(255,255,255,0.6)',
-                              border: '1px solid rgba(255,255,255,0.8)',
+                              bgcolor: '#f8fafc',
+                              border: '1px solid #e2e8f0',
                             }}
                           >
                             <Typography
@@ -268,8 +268,8 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
                             sx={{
                               p: 0.75,
                               borderRadius: 2,
-                              bgcolor: 'rgba(255,255,255,0.6)',
-                              border: '1px solid rgba(255,255,255,0.8)',
+                              bgcolor: '#f8fafc',
+                              border: '1px solid #e2e8f0',
                             }}
                           >
                             <Typography
@@ -305,7 +305,7 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
                             mt: 2,
                             p: 1.5,
                             borderRadius: 2,
-                            bgcolor: '#096370', // Updated color from #1e293b
+                            bgcolor: '#1c2e4a', // Updated color from #1e293b
                             color: '#fff',
                             textAlign: 'center',
                           }}

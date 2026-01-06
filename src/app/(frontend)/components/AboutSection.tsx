@@ -13,7 +13,7 @@ export default function AboutSection() {
       sx={{
         pt: { xs: '480px', md: '220px' },
         pb: 8,
-        bgcolor: '#F6FAFD',
+        bgcolor: '#f1f7f7',
         color: '#0f172a',
       }}
     >

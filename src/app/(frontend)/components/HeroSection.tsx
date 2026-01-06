@@ -542,7 +542,7 @@ export default function HeroSection() {
         alignItems: 'flex-start', // Top align to prevent tab jumping
         justifyContent: 'center',
         // Premium corporate light theme background
-        background: { xs: 'transparent', md: '#F6FAFD' },
+        background: { xs: 'transparent', md: '#f1f7f7' },
         color: '#000',
         pt: { xs: '220px', md: '56vh' }, // Desktop pushed further down per 40% request
         overflow: 'visible',
@@ -709,9 +709,9 @@ export default function HeroSection() {
                                 borderTopLeftRadius: 12,
                                 borderTopRightRadius: 12,
                                 cursor: 'pointer',
-                                bgcolor: isSelected ? '#fbc123' : '#0A1931',
+                                bgcolor: isSelected ? '#fbc123' : '#1C2E4A',
                                 border: isSelected ? '1px solid #BDC4D4' : '1px solid transparent',
-                                borderBottom: 'none', // Connect to form
+                                // borderBottom: 'none', // Removed to add bottom line
                                 color: isSelected ? '#0e172a' : '#ffffff',
                                 fontWeight: 600,
                                 fontSize: { xs: '0.85rem', md: '0.95rem' },
