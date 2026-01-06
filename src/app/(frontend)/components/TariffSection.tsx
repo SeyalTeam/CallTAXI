@@ -5,6 +5,29 @@ import { Box, Container, Typography, Paper, Grid } from '@mui/material'
 import { TariffDoc } from '../types'
 
 export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
+  const scrollContainerRef = React.useRef<HTMLElement>(null)
+
+  React.useEffect(() => {
+    const scrollContainer = scrollContainerRef.current
+    if (!scrollContainer) return
+
+    const scrollInterval = setInterval(() => {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollContainer
+      const maxScroll = scrollWidth - clientWidth
+      const nextScroll = scrollLeft + clientWidth // Scroll by one view width (approx one card on mobile)
+
+      if (scrollLeft >= maxScroll - 10) {
+        // Reset to start if at end
+        scrollContainer.scrollTo({ left: 0, behavior: 'smooth' })
+      } else {
+        // Scroll to next
+        scrollContainer.scrollTo({ left: nextScroll, behavior: 'smooth' })
+      }
+    }, 3000) // 3 seconds interval
+
+    return () => clearInterval(scrollInterval)
+  }, [])
+
   return (
     <Box
       id="tariff-section"
@@ -51,17 +74,19 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
 
             {/* Cards Scrollable Container */}
             <Box
+              ref={scrollContainerRef}
               sx={{
                 display: 'flex',
-                flexDirection: { xs: 'column', md: 'row' },
-                gap: { xs: 2, md: 3 },
-                overflowX: { md: 'auto' },
-                pb: { md: 2 },
+                gap: 3, // Unified gap
+                overflowX: 'auto', // Scroll on all devices
+                pb: 2,
+                scrollSnapType: 'x mandatory', // Enable snap scrolling
                 // Hide scrollbar but allow scrolling
                 '&::-webkit-scrollbar': { display: 'none' },
                 scrollbarWidth: 'none', // Firefox
                 msOverflowStyle: 'none', // IE and Edge
                 scrollBehavior: 'smooth',
+                WebkitOverflowScrolling: 'touch', // Smooth scroll on iOS
               }}
             >
               {tariffs.map((row) => {
@@ -80,9 +105,9 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
                   <Box
                     key={row.id}
                     sx={{
-                      minWidth: { md: '266px' }, // Reduced by ~5% from 280px
-                      flex: { md: '0 0 22.8%' }, // Reduced by 5% from 24% (24 * 0.95 = 22.8)
-                      width: { xs: '100%', md: 'auto' },
+                      minWidth: { xs: '85vw', md: '266px' }, // Mobile: 85% width to show peek of next card
+                      flex: { xs: '0 0 85%', md: '0 0 22.8%' },
+                      scrollSnapAlign: 'center', // Snap to center
                     }}
                   >
                     <Paper
@@ -105,217 +130,14 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
                         },
                       }}
                     >
-                      {/* --- MOBILE LAYOUT (Grid) - Unchanged --- */}
+                      {/* --- UNIFIED CARD LAYOUT --- */}
                       <Box
                         sx={{
-                          display: { xs: 'grid', md: 'none' },
-                          gridTemplateColumns: '1fr 1fr 1fr',
-                          gap: 2,
-                          alignItems: 'center',
-                        }}
-                      >
-                        {/* Row 1, Col 1: Vehicle Name */}
-                        <Box sx={{ gridColumn: '1 / 2' }}>
-                          <Typography
-                            variant="h6"
-                            component="h3"
-                            sx={{
-                              fontWeight: 800,
-                              color: '#0f172a',
-                              fontSize: '1rem',
-                              lineHeight: 1.2,
-                              display: '-webkit-box',
-                              overflow: 'hidden',
-                              WebkitBoxOrient: 'vertical',
-                              WebkitLineClamp: 2,
-                            }}
-                          >
-                            {vName}
-                          </Typography>
-                          {seatCount && (
-                            <Typography
-                              component="div"
-                              sx={{ color: '#94a3b8', fontSize: '0.75rem', fontWeight: 500 }}
-                            >
-                              {seatCount} seater
-                            </Typography>
-                          )}
-                        </Box>
-
-                        {/* Row 1, Col 2: One Way Label */}
-                        <Box sx={{ gridColumn: '2 / 3', textAlign: 'center' }}>
-                          <Box
-                            sx={{
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: 0.5,
-                              bgcolor: 'rgba(16, 185, 129, 0.1)',
-                              px: 1,
-                              py: 0.5,
-                              borderRadius: 1,
-                            }}
-                          >
-                            <Typography
-                              variant="caption"
-                              color="#10b981"
-                              fontWeight={700}
-                              sx={{ fontSize: '0.7rem' }}
-                            >
-                              ↑ One Way
-                            </Typography>
-                          </Box>
-                        </Box>
-
-                        {/* Row 1, Col 3: Round Trip Label */}
-                        <Box sx={{ gridColumn: '3 / 4', textAlign: 'right' }}>
-                          <Box
-                            sx={{
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: 0.5,
-                              bgcolor: 'rgba(16, 185, 129, 0.1)',
-                              px: 1,
-                              py: 0.5,
-                              borderRadius: 1,
-                            }}
-                          >
-                            <Typography
-                              variant="caption"
-                              color="#10b981"
-                              fontWeight={700}
-                              sx={{ fontSize: '0.7rem' }}
-                            >
-                              ↓↑ Round
-                            </Typography>
-                          </Box>
-                        </Box>
-
-                        {/* Row 2, Col 1: Icon (Small) */}
-                        <Box
-                          sx={{
-                            gridColumn: '1 / 2',
-                            display: 'flex',
-                            justifyContent: 'flex-start',
-                          }}
-                        >
-                          {vIcon ? (
-                            <Box
-                              component="img"
-                              src={vIcon.url}
-                              alt={vIcon.alt}
-                              sx={{
-                                width: '90px', // Increased size
-                                height: 'auto',
-                                objectFit: 'contain',
-                              }}
-                            />
-                          ) : (
-                            <Box
-                              sx={{
-                                width: '90px',
-                                height: '45px',
-                                bgcolor: '#f1f5f9',
-                                borderRadius: 1,
-                              }}
-                            />
-                          )}
-                        </Box>
-
-                        {/* Row 2, Col 2: One Way Price */}
-                        <Box sx={{ gridColumn: '2 / 3', textAlign: 'center' }}>
-                          <Typography
-                            variant="h6"
-                            sx={{ fontWeight: 800, color: '#0f172a', fontSize: '1.25rem' }}
-                          >
-                            ₹{row.oneway?.perKmRate}
-                            <Typography
-                              component="span"
-                              sx={{ fontSize: '0.7em', color: '#64748b', fontWeight: 600 }}
-                            >
-                              /km
-                            </Typography>
-                          </Typography>
-                        </Box>
-
-                        {/* Row 2, Col 3: Round Trip Price */}
-                        <Box sx={{ gridColumn: '3 / 4', textAlign: 'right' }}>
-                          <Typography
-                            variant="h6"
-                            sx={{ fontWeight: 800, color: '#0f172a', fontSize: '1.25rem' }}
-                          >
-                            ₹{row.roundtrip?.perKmRate}
-                            <Typography
-                              component="span"
-                              sx={{ fontSize: '0.7em', color: '#64748b', fontWeight: 600 }}
-                            >
-                              /km
-                            </Typography>
-                          </Typography>
-                        </Box>
-
-                        {/* Row 3: Package Details (Full Width) */}
-                        <Box
-                          sx={{
-                            gridColumn: '1 / -1',
-                            mt: 1,
-                            p: 1.5,
-                            borderRadius: 2, // Rounded corners for button look
-                            bgcolor: '#096370', // Updated color
-                            textAlign: 'center',
-                            color: '#fff',
-                          }}
-                        >
-                          <Box
-                            sx={{
-                              display: 'flex',
-                              flexWrap: 'wrap',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              gap: 1,
-                            }}
-                          >
-                            <Typography
-                              variant="subtitle2"
-                              fontWeight="800"
-                              color="#ffffff"
-                              sx={{ fontSize: '0.9rem', whiteSpace: 'nowrap' }}
-                            >
-                              Package - ₹
-                              {(row.packages?.hours || 0) * (row.packages?.perHourRate || 0)}{' '}
-                              <Box
-                                component="span"
-                                sx={{
-                                  opacity: 0.9,
-                                  fontWeight: 600,
-                                  fontSize: '0.8rem',
-                                  color: '#cbd5e1',
-                                }}
-                              >
-                                {row.packages?.hours} Hrs / {row.packages?.km} KM
-                              </Box>
-                            </Typography>
-                          </Box>
-
-                          {row.packages?.extras && row.packages.extras !== '0' && (
-                            <Typography
-                              variant="caption"
-                              display="block"
-                              color="#fbbf24"
-                              sx={{ fontSize: '0.7rem', mt: 0.25, fontWeight: 700 }}
-                            >
-                              Extra - {row.packages.extras}
-                            </Typography>
-                          )}
-                        </Box>
-                      </Box>
-
-                      {/* --- DESKTOP LAYOUT (New Card Style) --- */}
-                      <Box
-                        sx={{
-                          display: { xs: 'none', md: 'flex' },
+                          display: 'flex',
                           flexDirection: 'column',
                           height: '100%',
                           justifyContent: 'space-between',
+                          flexGrow: 1,
                         }}
                       >
                         <Box>
