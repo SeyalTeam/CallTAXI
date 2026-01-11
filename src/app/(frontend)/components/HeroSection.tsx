@@ -15,10 +15,12 @@ import {
   CircularProgress,
   Grid,
   Container,
+  Popper,
 } from '@mui/material'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import LocationOnIcon from '@mui/icons-material/LocationOn'
 
 import axios from 'axios'
 import { FormValues, TNLocation, VehicleDoc, TariffDoc, CouponDoc } from '../types'
@@ -52,6 +54,26 @@ function chooseBestTariff(tariffs: TariffDoc[]): TariffDoc | undefined {
     return ta < tb ? 1 : -1 // latest first
   })
   return copy[0]
+}
+
+/**
+ * Helper to highlight matching text
+ */
+const HighlightedText = ({ text, highlight }: { text: string; highlight: string }) => {
+  if (!highlight.trim()) return <>{text}</>
+  // Since we filter by startsWith, we only highlight the beginning
+  if (text.toLowerCase().startsWith(highlight.toLowerCase())) {
+    const matchLength = highlight.length
+    const matchedPart = text.slice(0, matchLength)
+    const restPart = text.slice(matchLength)
+    return (
+      <span style={{ fontWeight: 400 }}>
+        <b style={{ fontWeight: 700, color: '#0f172a' }}>{matchedPart}</b>
+        {restPart}
+      </span>
+    )
+  }
+  return <>{text}</>
 }
 
 export default function HeroSection() {
@@ -232,9 +254,22 @@ export default function HeroSection() {
   // hide suggestions
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
-      if (pickupRef.current && !pickupRef.current.contains(e.target as Node))
-        setPickupSuggestions([])
-      if (dropRef.current && !dropRef.current.contains(e.target as Node)) setDropSuggestions([])
+      const target = e.target as Node
+      // Check Pickup
+      const pickupPaper = document.getElementById('pickup-suggestions-paper')
+      const isPickupClick =
+        (pickupRef.current && pickupRef.current.contains(target)) ||
+        (pickupPaper && pickupPaper.contains(target))
+
+      if (!isPickupClick) setPickupSuggestions([])
+
+      // Check Drop
+      const dropPaper = document.getElementById('drop-suggestions-paper')
+      const isDropClick =
+        (dropRef.current && dropRef.current.contains(target)) ||
+        (dropPaper && dropPaper.contains(target))
+
+      if (!isDropClick) setDropSuggestions([])
     }
     document.addEventListener('click', onClick)
     return () => document.removeEventListener('click', onClick)
@@ -266,9 +301,7 @@ export default function HeroSection() {
       setSuggestions([])
       return
     }
-    const matched = tnLocations.filter(
-      (p) => p.name.toLowerCase().includes(q) || p.district.toLowerCase().includes(q),
-    )
+    const matched = tnLocations.filter((p) => p.name.toLowerCase().startsWith(q))
     const results = matched
       .sort((a, b) => {
         const aStarts = a.name.toLowerCase().startsWith(q)
@@ -290,7 +323,8 @@ export default function HeroSection() {
     setSuggestions: (s: TNLocation[]) => void,
     setCoords: (c: { lat: string; lon: string }) => void,
   ) => {
-    setValue(fieldName, `${loc.name}, ${loc.district}`)
+    const val = loc.name === loc.district ? loc.name : `${loc.name}, ${loc.district}`
+    setValue(fieldName, val)
     setCoords({ lat: loc.lat, lon: loc.lon })
     setSuggestions([])
   }
@@ -767,6 +801,7 @@ export default function HeroSection() {
                               {...field}
                               fullWidth
                               size="small"
+                              autoComplete="off"
                               label="Pickup Location"
                               onChange={(e) => {
                                 field.onChange(e)
@@ -803,28 +838,64 @@ export default function HeroSection() {
                           )}
                         />
                         {pickupSuggestions.length > 0 && (
-                          <Paper
-                            sx={{
-                              position: 'absolute',
-                              top: '100%',
-                              left: 0,
-                              right: 0,
-                              zIndex: 10,
-                              bgcolor: '#1e293b',
-                              color: '#fff',
-                            }}
+                          <Popper
+                            open={pickupSuggestions.length > 0}
+                            anchorEl={pickupRef.current}
+                            placement="bottom-start"
+                            style={{ zIndex: 1300, width: pickupRef.current?.clientWidth }}
                           >
-                            {pickupSuggestions.map((s) => (
-                              <MenuItem
-                                key={s.lat + s.lon}
-                                onClick={() =>
-                                  selectLocation(s, 'pickup', setPickupSuggestions, setPickupCoords)
-                                }
-                              >
-                                {s.name}, {s.district}
-                              </MenuItem>
-                            ))}
-                          </Paper>
+                            <Paper
+                              id="pickup-suggestions-paper"
+                              sx={{
+                                bgcolor: '#fff',
+                                color: '#0e172a',
+                              }}
+                            >
+                              {pickupSuggestions.map((s, i) => (
+                                <MenuItem
+                                  key={s.lat + s.lon}
+                                  onClick={() =>
+                                    selectLocation(
+                                      s,
+                                      'pickup',
+                                      setPickupSuggestions,
+                                      setPickupCoords,
+                                    )
+                                  }
+                                  sx={{
+                                    borderBottom:
+                                      i === pickupSuggestions.length - 1
+                                        ? 'none'
+                                        : '1px solid #cbd5e1',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    whiteSpace: 'normal', // Allow wrap
+                                    py: 1.5,
+                                  }}
+                                >
+                                  <LocationOnIcon
+                                    sx={{ color: '#94a3b8', mr: 2, fontSize: '1.2rem' }}
+                                  />
+                                  <Box>
+                                    <Typography variant="body2" color="#334155">
+                                      <HighlightedText text={s.name} highlight={watch('pickup')} />
+                                      {s.name !== s.district && (
+                                        <span
+                                          style={{
+                                            color: '#64748b',
+                                            fontSize: '0.85em',
+                                            marginLeft: '6px',
+                                          }}
+                                        >
+                                          {s.district}
+                                        </span>
+                                      )}
+                                    </Typography>
+                                  </Box>
+                                </MenuItem>
+                              ))}
+                            </Paper>
+                          </Popper>
                         )}
                       </Grid>
 
@@ -843,6 +914,7 @@ export default function HeroSection() {
                                 {...field}
                                 fullWidth
                                 size="small"
+                                autoComplete="off"
                                 label="Drop Location"
                                 onChange={(e) => {
                                   field.onChange(e)
@@ -879,28 +951,59 @@ export default function HeroSection() {
                             )}
                           />
                           {dropSuggestions.length > 0 && (
-                            <Paper
-                              sx={{
-                                position: 'absolute',
-                                top: '100%',
-                                left: 0,
-                                right: 0,
-                                zIndex: 10,
-                                bgcolor: '#fff',
-                                color: '#000',
-                              }}
+                            <Popper
+                              open={dropSuggestions.length > 0}
+                              anchorEl={dropRef.current}
+                              placement="bottom-start"
+                              style={{ zIndex: 1300, width: dropRef.current?.clientWidth }}
                             >
-                              {dropSuggestions.map((s) => (
-                                <MenuItem
-                                  key={s.lat + s.lon}
-                                  onClick={() =>
-                                    selectLocation(s, 'drop', setDropSuggestions, setDropCoords)
-                                  }
-                                >
-                                  {s.name}, {s.district}
-                                </MenuItem>
-                              ))}
-                            </Paper>
+                              <Paper
+                                id="drop-suggestions-paper"
+                                sx={{
+                                  bgcolor: '#fff',
+                                  color: '#0e172a',
+                                }}
+                              >
+                                {dropSuggestions.map((s, i) => (
+                                  <MenuItem
+                                    key={s.lat + s.lon}
+                                    onClick={() =>
+                                      selectLocation(s, 'drop', setDropSuggestions, setDropCoords)
+                                    }
+                                    sx={{
+                                      borderBottom:
+                                        i === dropSuggestions.length - 1
+                                          ? 'none'
+                                          : '1px solid #cbd5e1',
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      whiteSpace: 'normal',
+                                      py: 1.5,
+                                    }}
+                                  >
+                                    <LocationOnIcon
+                                      sx={{ color: '#94a3b8', mr: 2, fontSize: '1.2rem' }}
+                                    />
+                                    <Box>
+                                      <Typography variant="body2" color="#334155">
+                                        <HighlightedText text={s.name} highlight={watch('drop')} />
+                                        {s.name !== s.district && (
+                                          <span
+                                            style={{
+                                              color: '#64748b',
+                                              fontSize: '0.85em',
+                                              marginLeft: '6px',
+                                            }}
+                                          >
+                                            {s.district}
+                                          </span>
+                                        )}
+                                      </Typography>
+                                    </Box>
+                                  </MenuItem>
+                                ))}
+                              </Paper>
+                            </Popper>
                           )}
                         </Grid>
                       )}
