@@ -105,6 +105,7 @@ export default function HeroSection() {
   const [distanceInfo, setDistanceInfo] = useState<string>('')
   const [fare, setFare] = useState<string | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
+  const [isCalculating, setIsCalculating] = useState<boolean>(false)
 
   // Coupon State
   const [couponCodeInput, setCouponCodeInput] = useState('')
@@ -333,7 +334,7 @@ export default function HeroSection() {
     if (!pickupCoords) return
     if (tripType !== 'packages' && !dropCoords) return
 
-    setLoading(true)
+    setIsCalculating(true)
     try {
       let distanceKm = 0
       let durationMin = 0
@@ -365,7 +366,7 @@ export default function HeroSection() {
           setDistanceInfo('')
           setFare(null)
         }
-        setLoading(false)
+        setIsCalculating(false)
         return
       }
 
@@ -409,7 +410,7 @@ export default function HeroSection() {
       console.error(e)
       setFare(null)
     } finally {
-      setLoading(false)
+      setIsCalculating(false)
     }
   }
 
@@ -1431,7 +1432,7 @@ export default function HeroSection() {
                             {loading ? <CircularProgress size={24} /> : 'Book Your Taxi'}
                           </Button>
 
-                          {fare && (
+                          {fare && selectedVehicleId && (
                             <Box
                               sx={{
                                 display: 'flex',
@@ -1442,8 +1443,11 @@ export default function HeroSection() {
                             >
                               {discountAmount > 0 ? (
                                 <>
-                                  <Typography variant="subtitle1" color="#c2410c" fontWeight="bold">
-                                    Final: ₹{(Number(fare) - discountAmount).toFixed(2)}
+                                  <Typography variant="subtitle1" color="#fff" fontWeight="bold">
+                                    Final:{' '}
+                                    <span style={{ color: '#fbc024' }}>
+                                      ₹{(Number(fare) - discountAmount).toFixed(2)}
+                                    </span>
                                   </Typography>
                                   <Typography
                                     variant="body2"
@@ -1454,8 +1458,8 @@ export default function HeroSection() {
                                   </Typography>
                                 </>
                               ) : (
-                                <Typography variant="subtitle1" color="#c2410c" fontWeight="bold">
-                                  Estimated Share: ₹{fare}
+                                <Typography variant="subtitle1" color="#fff" fontWeight="bold">
+                                  Estimated Share: <span style={{ color: '#fbc024' }}>₹{fare}</span>
                                 </Typography>
                               )}
                               <Typography variant="body2" color="#64748b">

@@ -78,7 +78,7 @@ export default function ReviewsSection() {
       id="reviews-section"
       sx={{
         py: { xs: 2, md: 6 }, // Reduced padding on mobile
-        background: '#1b1b1b',
+        background: '#060d1c',
         color: '#ffffff',
         overflow: 'hidden',
       }}
@@ -136,7 +136,7 @@ export default function ReviewsSection() {
                     minWidth: { md: '280px' },
                     display: 'flex',
                     flexDirection: 'column',
-                    bgcolor: '#222222',
+                    bgcolor: '#112240',
                     borderRadius: 4,
                     position: 'relative',
                     transition: 'transform 0.3s ease',
@@ -202,7 +202,7 @@ export default function ReviewsSection() {
                       sx={{
                         width: 48,
                         height: 48,
-                        bgcolor: '#1b1b1b',
+                        bgcolor: '#060d1c',
                         border: '2px solid #fbbf24',
                       }}
                     >
