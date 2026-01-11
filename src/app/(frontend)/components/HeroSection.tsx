@@ -722,8 +722,8 @@ export default function HeroSection() {
                           pt: 0,
                           pb: 0,
                           display: 'flex',
-                          width: '100%',
-                          gap: { xs: 0, md: '6px' },
+                          width: 'fit-content', // Only as wide as tabs
+                          gap: { xs: '4px', md: '6px' },
                           overflowX: 'auto',
                           bgcolor: 'transparent',
                           borderTopLeftRadius: 12,
@@ -739,9 +739,9 @@ export default function HeroSection() {
                               key={t}
                               onClick={() => field.onChange(t)}
                               sx={{
-                                flex: 1,
-                                px: { xs: 1, md: 4 },
+                                px: { xs: 1.5, md: 4 },
                                 py: { xs: 1.5, md: 2 },
+                                whiteSpace: 'nowrap',
                                 borderTopLeftRadius: 12,
                                 borderTopRightRadius: 12,
                                 cursor: 'pointer',
@@ -754,8 +754,6 @@ export default function HeroSection() {
                                 transition: 'all 0.2s',
                                 position: 'relative',
                                 mb: 0, // No margin bottom, sit flush
-                                whiteSpace: 'nowrap',
-                                textAlign: 'center',
                                 '&:hover': {
                                   color: isSelected ? '#0e172a' : '#ffffff',
                                   bgcolor: isSelected ? '#f59e0b' : '#1e293b',

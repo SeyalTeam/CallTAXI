@@ -200,13 +200,13 @@ export default function ReviewsSection() {
                   >
                     <Avatar
                       sx={{
-                        width: 48,
-                        height: 48,
+                        width: 40,
+                        height: 40,
                         bgcolor: '#060d1c',
                         border: '2px solid #fbbf24',
                       }}
                     >
-                      <PersonOutlineIcon sx={{ color: '#fbbf24', fontSize: 24 }} />
+                      <PersonOutlineIcon sx={{ color: '#fbbf24', fontSize: 20 }} />
                     </Avatar>
                     <Box>
                       <Typography
@@ -218,17 +218,6 @@ export default function ReviewsSection() {
                         }}
                       >
                         {item.name}
-                      </Typography>
-                      <Typography
-                        variant="caption"
-                        sx={{
-                          color: '#fbbf24',
-                          fontWeight: 600,
-                          textTransform: 'uppercase',
-                          letterSpacing: 1,
-                        }}
-                      >
-                        Customer
                       </Typography>
                     </Box>
                   </Box>
