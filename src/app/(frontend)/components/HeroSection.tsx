@@ -24,10 +24,6 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import LocationOnIcon from '@mui/icons-material/LocationOn'
-import TrendingFlatIcon from '@mui/icons-material/TrendingFlat'
-import SwapHorizIcon from '@mui/icons-material/SwapHoriz'
-import AccessTimeIcon from '@mui/icons-material/AccessTime'
-import AddLocationAltIcon from '@mui/icons-material/AddLocationAlt'
 
 import axios from 'axios'
 import { FormValues, TNLocation, VehicleDoc, TariffDoc, CouponDoc } from '../types'
@@ -290,7 +286,8 @@ export default function HeroSection() {
   useEffect(() => {
     if (
       (tripType === 'packages' && pickupCoords && tariffs.length > 0) ||
-      (pickupCoords && dropCoords && tariffs.length > 0)
+      (pickupCoords && dropCoords && tariffs.length > 0) ||
+      (tripType === 'multilocation' && tourLocations.length >= 2 && tariffs.length > 0)
     ) {
       void calculateRouteAndFare()
     }
@@ -304,6 +301,7 @@ export default function HeroSection() {
     pickupDateTime,
     dropDateTime,
     packageHours,
+    tourLocations, // Added tourLocations dependency
   ])
 
   const handleLocationSearch = (text: string, setSuggestions: (s: TNLocation[]) => void) => {
@@ -338,16 +336,14 @@ export default function HeroSection() {
 
     // Multi-Location Logic
     if (tripType === 'multilocation' && fieldName === 'pickup') {
-      // Add to list if not already there (or allow duplicates for stops? let's allow for now)
       setTourLocations((prev) => [...prev, loc])
-
-      // Clear input to allow adding next
       setValue('pickup', '')
       setSuggestions([])
+      handleLocationSearch('', setPickupSuggestions)
 
-      // If it's the first location, set it as the pickup coords for distance calcs if needed
+      // If it's the first location, set it as the pickup coords
       if (tourLocations.length === 0) {
-        setCoords({ lat: loc.lat, lon: loc.lon })
+        setPickupCoords({ lat: loc.lat, lon: loc.lon })
       }
       return
     }
@@ -365,12 +361,17 @@ export default function HeroSection() {
     if (!pickupCoords) return
     if (tripType !== 'packages' && tripType !== 'multilocation' && !dropCoords) return
 
+    // For Tour: Need at least one stop (pickup + 1 stop) or just rely on manual calc?
+    // Let's assume Tour needs at least 2 points (using tourLocations) to calc distance
+    if (tripType === 'multilocation' && tourLocations.length < 2) return
+
     setIsCalculating(true)
     try {
       let distanceKm = 0
       let durationMin = 0
 
       if (tripType !== 'packages' && tripType !== 'multilocation' && dropCoords) {
+        // Standard Oneway/Roundtrip
         const osrm = `https://router.project-osrm.org/route/v1/driving/${pickupCoords.lon},${pickupCoords.lat};${dropCoords.lon},${dropCoords.lat}?overview=false`
         const res = await axios.get(osrm)
         const route = res.data.routes?.[0]
@@ -378,6 +379,31 @@ export default function HeroSection() {
           distanceKm = route.distance / 1000
           durationMin = route.duration / 60
         }
+      } else if (tripType === 'multilocation' && tourLocations.length >= 2) {
+        // Multi-Location Distance Calc: Sum of segments
+        // P1 -> P2 -> P3 ...
+        let totalDist = 0
+        let totalDur = 0
+
+        // Loop through locations pair by pair
+        for (let i = 0; i < tourLocations.length - 1; i++) {
+          const start = tourLocations[i]
+          const end = tourLocations[i + 1]
+          const osrm = `https://router.project-osrm.org/route/v1/driving/${start.lon},${start.lat};${end.lon},${end.lat}?overview=false`
+          try {
+            const res = await axios.get(osrm)
+            const route = res.data.routes?.[0]
+            if (route) {
+              totalDist += route.distance
+              totalDur += route.duration
+            }
+          } catch (e) {
+            console.error('Segment calc failed', e)
+          }
+        }
+
+        distanceKm = totalDist / 1000
+        durationMin = totalDur / 60
       }
 
       const matching = tariffs.filter((t) => getVehicleIdFromTariff(t) === selectedVehicleId)
@@ -417,7 +443,11 @@ export default function HeroSection() {
       let rate = 0
       let bata = 0
       let minDistance = 130
-      const group = tripType === 'roundtrip' ? chosen?.roundtrip : chosen?.oneway
+      // Treat Multi-Location as Round Trip for pricing per user request
+      const group =
+        tripType === 'roundtrip' || tripType === 'multilocation'
+          ? chosen?.roundtrip
+          : chosen?.oneway
 
       if (group) {
         rate = group.perKmRate
@@ -428,10 +458,25 @@ export default function HeroSection() {
       let billDist = distanceKm
       if (distanceKm < minDistance) billDist = minDistance
 
+      // Special case: Tour uses Round Trip pricing model if available
+      // Or falls back to Oneway if Roundtrip not defined?
+      // User said: "use round trip based"
+      // If tripType is MultiLocation, we likely used chosen.roundtrip above if we map it to that group
+      // But lines 420 checks 'roundtrip' string.
+      // Let's adjust group selection:
+      /* 
+         const group = tripType === 'roundtrip' || tripType === 'multilocation' ? chosen?.roundtrip : chosen?.oneway
+      */
+
+      // Let's correct lines 417-426 block (target below)
+
       let total = billDist * rate + bata
 
       // Multiply by days for roundtrip
-      if (tripType === 'roundtrip') {
+      // Multiply by days for roundtrip
+      // For Tour, we might not have days input. Default 1?
+      // Or if checking dates? Tour currently has only Pickup Date.
+      if (tripType === 'roundtrip' || tripType === 'multilocation') {
         total = total * days
       }
 
@@ -763,80 +808,113 @@ export default function HeroSection() {
                     render={({ field }) => (
                       <Box
                         sx={{
-                          px: 0,
-                          pt: 0,
-                          pb: 0,
+                          px: { xs: 1, md: 0 }, // Removed md padding to align with left edge completely? Or keep standard? Usually md:2 or 3 is good. Let's keep md:0 to align with input edge if inputs have padding, OR md:0 if the parent container has padding. The parent container has padding. So px:0 might be best for left alignment.
+                          // The User's screenshot shows the cards centered. If I want left align, I should match the input field's start.
+                          // The input fields are inside a Box with p: {xs: 2, md: 3}.
+                          // The tab container is *above* that.
+                          // If I want visual alignment, I might need px: {xs: 1, md: 0} and justifyContent: 'flex-start'.
+                          py: 2,
                           display: 'flex',
-                          width: 'fit-content', // Only as wide as tabs
-                          gap: { xs: '4px', md: '6px' },
+                          width: '100%',
+                          gap: { xs: 1, md: 2 },
                           overflowX: 'auto',
                           bgcolor: 'transparent',
-                          borderTopLeftRadius: 12,
-                          borderTopRightRadius: 12,
                           scrollbarWidth: 'none',
                           '&::-webkit-scrollbar': { display: 'none' },
+                          justifyContent: { xs: 'space-between', md: 'flex-start' }, // Left align on desktop
                         }}
                       >
-                        {['oneway', 'roundtrip', 'packages', 'multilocation'].map((t) => {
-                          const isSelected = field.value === t
+                        {[
+                          {
+                            id: 'oneway',
+                            label: 'One Way',
+                            img: '/assets/tabs/tab_icon_oneway_taxi_1768130636829.png',
+                          },
+                          {
+                            id: 'roundtrip',
+                            label: 'Round Trip',
+                            img: '/assets/tabs/tab_icon_roundtrip_luggage_1768130650587.png',
+                          },
+                          {
+                            id: 'packages',
+                            label: 'Packages',
+                            img: '/assets/tabs/tab_icon_packages_clock_1768130665696.png',
+                          },
+                          {
+                            id: 'multilocation',
+                            label: 'Tour',
+                            img: '/assets/tabs/tab_icon_tour_map_1768130689319.png',
+                          },
+                        ].map((item) => {
+                          const isSelected = field.value === item.id
                           return (
                             <Box
-                              key={t}
-                              onClick={() => field.onChange(t)}
+                              key={item.id}
+                              onClick={() => field.onChange(item.id)}
                               sx={{
-                                px: { xs: 1, md: 4 },
-                                py: { xs: 0.3, md: 1.2 },
-                                whiteSpace: 'nowrap',
-                                borderTopLeftRadius: 12,
-                                borderTopRightRadius: 12,
-                                cursor: 'pointer',
-                                bgcolor: isSelected ? '#fbc123' : '#1C2E4A',
-                                border: isSelected ? '1px solid #BDC4D4' : '1px solid transparent',
-                                color: isSelected ? '#0e172a' : '#ffffff',
-                                fontWeight: 600,
-                                fontSize: { xs: '0.7rem', md: '0.95rem' },
-                                transition: 'all 0.2s',
-                                position: 'relative',
-                                mb: 0,
+                                width: { xs: '23%', md: '80px' }, // Reduced further (~96 -> 80)
+                                minWidth: 0,
+                                height: { xs: 75, md: 80 },
+                                p: { xs: 0.5, md: 0.75 },
                                 display: 'flex',
                                 flexDirection: 'column',
                                 alignItems: 'center',
-                                justifyContent: 'center',
-                                gap: { xs: 0.25, md: 0.5 },
+                                justifyContent: 'space-between',
+                                borderRadius: 3,
+                                cursor: 'pointer',
+                                bgcolor: isSelected ? '#fff9db' : '#fff',
+                                border: isSelected ? '2px solid #fbc024' : '1px solid #cbd5e1',
+                                boxShadow: isSelected
+                                  ? '0 4px 12px rgba(251, 193, 36, 0.3)'
+                                  : '0 2px 4px rgba(0,0,0,0.1)',
+                                transition: 'all 0.2s ease',
+                                flexShrink: 0,
                                 '&:hover': {
-                                  color: isSelected ? '#0e172a' : '#ffffff',
-                                  bgcolor: isSelected ? '#f59e0b' : '#1e293b',
+                                  borderColor: '#fbc024',
+                                  transform: 'translateY(-2px)',
                                 },
                               }}
                             >
-                              {/* Icons */}
-                              {t === 'oneway' && (
-                                <TrendingFlatIcon
-                                  sx={{ fontSize: { xs: '1.2rem', md: '1.5rem' } }}
+                              <Box
+                                sx={{
+                                  flex: 1,
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  width: '100%',
+                                  overflow: 'hidden',
+                                }}
+                              >
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img
+                                  src={item.img}
+                                  alt={item.label}
+                                  style={{
+                                    maxWidth: '90%',
+                                    maxHeight: '90%',
+                                    objectFit: 'contain',
+                                    display: 'block',
+                                  }}
                                 />
-                              )}
-                              {t === 'roundtrip' && (
-                                <SwapHorizIcon sx={{ fontSize: { xs: '1.2rem', md: '1.5rem' } }} />
-                              )}
-                              {t === 'packages' && (
-                                <AccessTimeIcon sx={{ fontSize: { xs: '1.1rem', md: '1.5rem' } }} />
-                              )}
-                              {t === 'multilocation' && (
-                                <AddLocationAltIcon
-                                  sx={{ fontSize: { xs: '1.1rem', md: '1.5rem' } }}
-                                />
-                              )}
-
-                              {/* Text */}
-                              <Box>
-                                {t === 'oneway'
-                                  ? 'One Way'
-                                  : t === 'roundtrip'
-                                    ? 'Round Trip'
-                                    : t === 'packages'
-                                      ? 'Packages'
-                                      : 'Tour'}
                               </Box>
+
+                              <Typography
+                                variant="body2"
+                                sx={{
+                                  color: '#0f172a',
+                                  fontWeight: isSelected ? 700 : 500,
+                                  fontSize: { xs: '0.65rem', md: '0.75rem' }, // Reduced font size
+                                  letterSpacing: 0.1,
+                                  textAlign: 'center',
+                                  lineHeight: 1.1,
+                                  whiteSpace: 'nowrap',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  width: '100%',
+                                }}
+                              >
+                                {item.label}
+                              </Typography>
                             </Box>
                           )
                         })}
@@ -997,7 +1075,10 @@ export default function HeroSection() {
                       {/* Drop Location - Conditional */}
                       {tripType !== 'packages' && tripType !== 'multilocation' && (
                         <Grid
-                          size={{ xs: 12, md: tripType === 'roundtrip' ? 3 : 4 }}
+                          size={{
+                            xs: 12,
+                            md: tripType === 'roundtrip' ? 3 : 4,
+                          }}
                           position="relative"
                         >
                           <Controller
@@ -1481,43 +1562,69 @@ export default function HeroSection() {
                       </Grid>
 
                       {tripType === 'multilocation' && (
-                        <Grid size={{ xs: 12, md: 3 }}>
-                          <Button
-                            type="submit"
-                            variant="contained"
-                            disabled={loading}
-                            fullWidth
-                            sx={{
-                              height: 40,
-                              bgcolor: '#fbc123',
-                              color: '#000000',
-                              fontWeight: 700,
-                              fontSize: '1rem',
-                              textTransform: 'none',
-                              boxShadow: '0 4px 14px 0 rgba(251, 193, 35, 0.4)',
-                              transition: 'all 0.2s',
-                              borderRadius: 1.5,
-                              '&:hover': {
-                                bgcolor: '#f59e0b',
-                                transform: 'translateY(-1px)',
-                                boxShadow: '0 6px 20px 0 rgba(251, 193, 35, 0.5)',
-                              },
-                              '&:active': {
-                                transform: 'translateY(0)',
-                              },
-                              '&.Mui-disabled': {
-                                bgcolor: 'rgba(255, 255, 255, 0.15)',
-                                color: 'rgba(255, 255, 255, 0.3)',
-                              },
-                            }}
-                          >
-                            {loading ? (
-                              <CircularProgress size={24} color="inherit" />
-                            ) : (
-                              'Book Your Taxi'
+                        <>
+                          <Grid size={{ xs: 12, md: 2 }} sx={{ alignSelf: 'center' }}>
+                            <Button
+                              type="submit"
+                              variant="contained"
+                              disabled={loading}
+                              sx={{
+                                width: { xs: 'auto', md: '100%' },
+                                px: { xs: 4, md: 0 },
+                                bgcolor: '#fbc024',
+                                color: '#000',
+                                fontWeight: '600',
+                                py: 1,
+                                whiteSpace: 'nowrap',
+                                textTransform: 'none',
+                                fontSize: { xs: '0.85rem', md: '0.9rem' },
+                                borderRadius: 2,
+                                boxShadow: 'none',
+                                '&:hover': {
+                                  bgcolor: '#f59e0b',
+                                  boxShadow: 'none',
+                                },
+                              }}
+                            >
+                              {loading ? <CircularProgress size={24} /> : 'Book Your Taxi'}
+                            </Button>
+                          </Grid>
+                          {/* Fare Info Display for Tour */}
+                          <Grid size={{ xs: 12, md: 4 }} sx={{ alignSelf: 'center' }}>
+                            {fare && (
+                              <Box
+                                sx={{
+                                  display: 'flex',
+                                  alignItems: 'baseline', // Changed to baseline for better text alignment
+                                  height: '100%',
+                                  gap: 1, // Reduced gap slightly
+                                  pl: { md: 2 },
+                                }}
+                              >
+                                <Typography
+                                  variant="subtitle1"
+                                  color="#fff"
+                                  fontWeight="bold"
+                                  sx={{ lineHeight: 1.2 }}
+                                >
+                                  <span style={{ color: '#fbc024', fontSize: '1.25em' }}>
+                                    ₹{fare}
+                                  </span>
+                                  <span
+                                    style={{
+                                      fontSize: '0.9em',
+                                      color: '#94a3b8',
+                                      fontWeight: 400,
+                                      marginLeft: '8px',
+                                    }}
+                                  >
+                                    {distanceInfo}
+                                  </span>
+                                </Typography>
+                              </Box>
                             )}
-                          </Button>
-                        </Grid>
+                          </Grid>
+                        </>
                       )}
 
                       {hasActiveCoupons && tripType !== 'multilocation' && (
@@ -1692,13 +1799,25 @@ export default function HeroSection() {
 
                     {/* Stepper for Tour Locations */}
                     {tripType === 'multilocation' && tourLocations.length > 0 && (
-                      <Box sx={{ width: '100%', mt: 3, px: 1, overflowX: 'auto' }}>
+                      <Box
+                        sx={{
+                          width: '100%',
+                          mt: 3,
+                          px: 1,
+                          overflowX: 'auto',
+                          scrollbarWidth: 'none', // Firefox
+                          '&::-webkit-scrollbar': { display: 'none' }, // Chrome/Safari
+                        }}
+                      >
                         <Stepper
                           alternativeLabel
                           activeStep={tourLocations.length}
                           sx={{
                             justifyContent: 'flex-start',
-                            '& .MuiStep-root': { flex: '0 0 auto', minWidth: '120px' },
+                            '& .MuiStep-root': {
+                              flex: '0 0 auto',
+                              minWidth: { xs: '100px', md: '120px' },
+                            },
                             '& .MuiStepConnector-root': {
                               left: 'calc(-50% + 16px)',
                               right: 'calc(50% + 16px)',
