@@ -17,8 +17,6 @@ import {
   Container,
   Popper,
   Stepper,
-  Step,
-  StepLabel,
   StepConnector,
 } from '@mui/material'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
@@ -128,9 +126,8 @@ export default function HeroSection() {
   const [distanceInfo, setDistanceInfo] = useState<string>('')
   const [fare, setFare] = useState<string | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
-  const [isCalculating, setIsCalculating] = useState<boolean>(false)
 
-  // Tour / Multi-Location State
+  const [_isCalculating, setIsCalculating] = useState<boolean>(false)
   const [tourLocations, setTourLocations] = useState<TNLocation[]>([])
 
   // Coupon State
@@ -1994,12 +1991,7 @@ export default function HeroSection() {
                                       {distStr}
                                     </Typography>
                                     <Box
-                                      sx={{
-                                        width: '100%',
-                                        height: '1px',
-                                        bgcolor: '#475569',
-                                        width: '100%',
-                                      }}
+                                      sx={{ width: '100%', height: '1px', bgcolor: '#475569' }}
                                     />
                                     <Typography
                                       variant="caption"
