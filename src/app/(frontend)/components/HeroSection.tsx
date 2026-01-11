@@ -16,11 +16,18 @@ import {
   Grid,
   Container,
   Popper,
+  Stepper,
+  Step,
+  StepLabel,
 } from '@mui/material'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import LocationOnIcon from '@mui/icons-material/LocationOn'
+import TrendingFlatIcon from '@mui/icons-material/TrendingFlat'
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz'
+import AccessTimeIcon from '@mui/icons-material/AccessTime'
+import AddLocationAltIcon from '@mui/icons-material/AddLocationAlt'
 
 import axios from 'axios'
 import { FormValues, TNLocation, VehicleDoc, TariffDoc, CouponDoc } from '../types'
@@ -106,6 +113,9 @@ export default function HeroSection() {
   const [fare, setFare] = useState<string | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
   const [isCalculating, setIsCalculating] = useState<boolean>(false)
+
+  // Tour / Multi-Location State
+  const [tourLocations, setTourLocations] = useState<TNLocation[]>([])
 
   // Coupon State
   const [couponCodeInput, setCouponCodeInput] = useState('')
@@ -325,21 +335,42 @@ export default function HeroSection() {
     setCoords: (c: { lat: string; lon: string }) => void,
   ) => {
     const val = loc.name === loc.district ? loc.name : `${loc.name}, ${loc.district}`
+
+    // Multi-Location Logic
+    if (tripType === 'multilocation' && fieldName === 'pickup') {
+      // Add to list if not already there (or allow duplicates for stops? let's allow for now)
+      setTourLocations((prev) => [...prev, loc])
+
+      // Clear input to allow adding next
+      setValue('pickup', '')
+      setSuggestions([])
+
+      // If it's the first location, set it as the pickup coords for distance calcs if needed
+      if (tourLocations.length === 0) {
+        setCoords({ lat: loc.lat, lon: loc.lon })
+      }
+      return
+    }
+
     setValue(fieldName, val)
     setCoords({ lat: loc.lat, lon: loc.lon })
     setSuggestions([])
   }
 
+  const removeTourLocation = (index: number) => {
+    setTourLocations((prev) => prev.filter((_, i) => i !== index))
+  }
+
   async function calculateRouteAndFare() {
     if (!pickupCoords) return
-    if (tripType !== 'packages' && !dropCoords) return
+    if (tripType !== 'packages' && tripType !== 'multilocation' && !dropCoords) return
 
     setIsCalculating(true)
     try {
       let distanceKm = 0
       let durationMin = 0
 
-      if (tripType !== 'packages' && dropCoords) {
+      if (tripType !== 'packages' && tripType !== 'multilocation' && dropCoords) {
         const osrm = `https://router.project-osrm.org/route/v1/driving/${pickupCoords.lon},${pickupCoords.lat};${dropCoords.lon},${dropCoords.lat}?overview=false`
         const res = await axios.get(osrm)
         const route = res.data.routes?.[0]
@@ -533,11 +564,12 @@ export default function HeroSection() {
         ? [Number(pickupCoords.lon), Number(pickupCoords.lat)]
         : undefined,
       dropoffLocation:
-        data.tripType !== 'packages' && dropCoords
+        data.tripType !== 'packages' && data.tripType !== 'multilocation' && dropCoords
           ? [Number(dropCoords.lon), Number(dropCoords.lat)]
           : undefined,
       pickupLocationName: data.pickup,
-      dropoffLocationName: data.tripType !== 'packages' ? data.drop : undefined,
+      dropoffLocationName:
+        data.tripType !== 'packages' && data.tripType !== 'multilocation' ? data.drop : undefined,
       pickupDateTime: data.pickupDateTime?.toISOString(),
       dropDateTime: data.tripType === 'roundtrip' ? data.dropDateTime?.toISOString() : undefined,
       estimatedFare: fare ? Number(fare) : undefined,
@@ -547,7 +579,20 @@ export default function HeroSection() {
       notes:
         data.tripType === 'packages'
           ? `${data.pickup} (${packageHours} Hrs Package)`
-          : `${data.pickup} to ${data.drop}`,
+          : data.tripType === 'multilocation'
+            ? `Tour: ${tourLocations.map((l) => l.name).join(' -> ')}`
+            : `${data.pickup} to ${data.drop}`,
+    }
+
+    // Validation for Tour
+    if (data.tripType === 'multilocation' && tourLocations.length === 0) {
+      alert('Please add at least one location for your tour.')
+      return
+    }
+    // Override pickup for Tour logic if needed
+    if (data.tripType === 'multilocation' && tourLocations.length > 0) {
+      payload.pickupLocationName = tourLocations[0].name
+      payload.pickupLocation = [Number(tourLocations[0].lon), Number(tourLocations[0].lat)]
     }
 
     try {
@@ -732,39 +777,66 @@ export default function HeroSection() {
                           '&::-webkit-scrollbar': { display: 'none' },
                         }}
                       >
-                        {['oneway', 'roundtrip', 'packages'].map((t) => {
+                        {['oneway', 'roundtrip', 'packages', 'multilocation'].map((t) => {
                           const isSelected = field.value === t
                           return (
                             <Box
                               key={t}
                               onClick={() => field.onChange(t)}
                               sx={{
-                                px: { xs: 1.5, md: 4 },
-                                py: { xs: 1.5, md: 2 },
+                                px: { xs: 1, md: 4 },
+                                py: { xs: 0.3, md: 1.2 },
                                 whiteSpace: 'nowrap',
                                 borderTopLeftRadius: 12,
                                 borderTopRightRadius: 12,
                                 cursor: 'pointer',
                                 bgcolor: isSelected ? '#fbc123' : '#1C2E4A',
                                 border: isSelected ? '1px solid #BDC4D4' : '1px solid transparent',
-                                // borderBottom: 'none', // Removed to add bottom line
                                 color: isSelected ? '#0e172a' : '#ffffff',
                                 fontWeight: 600,
-                                fontSize: { xs: '0.85rem', md: '0.95rem' },
+                                fontSize: { xs: '0.7rem', md: '0.95rem' },
                                 transition: 'all 0.2s',
                                 position: 'relative',
-                                mb: 0, // No margin bottom, sit flush
+                                mb: 0,
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: { xs: 0.25, md: 0.5 },
                                 '&:hover': {
                                   color: isSelected ? '#0e172a' : '#ffffff',
                                   bgcolor: isSelected ? '#f59e0b' : '#1e293b',
                                 },
                               }}
                             >
-                              {t === 'oneway'
-                                ? 'One Way'
-                                : t === 'roundtrip'
-                                  ? 'Round Trip'
-                                  : 'Packages'}
+                              {/* Icons */}
+                              {t === 'oneway' && (
+                                <TrendingFlatIcon
+                                  sx={{ fontSize: { xs: '1.2rem', md: '1.5rem' } }}
+                                />
+                              )}
+                              {t === 'roundtrip' && (
+                                <SwapHorizIcon sx={{ fontSize: { xs: '1.2rem', md: '1.5rem' } }} />
+                              )}
+                              {t === 'packages' && (
+                                <AccessTimeIcon sx={{ fontSize: { xs: '1.1rem', md: '1.5rem' } }} />
+                              )}
+                              {t === 'multilocation' && (
+                                <AddLocationAltIcon
+                                  sx={{ fontSize: { xs: '1.1rem', md: '1.5rem' } }}
+                                />
+                              )}
+
+                              {/* Text */}
+                              <Box>
+                                {t === 'oneway'
+                                  ? 'One Way'
+                                  : t === 'roundtrip'
+                                    ? 'Round Trip'
+                                    : t === 'packages'
+                                      ? 'Packages'
+                                      : 'Tour'}
+                              </Box>
                             </Box>
                           )
                         })}
@@ -790,7 +862,14 @@ export default function HeroSection() {
                       <Grid
                         size={{
                           xs: 12,
-                          md: tripType === 'packages' ? 6 : tripType === 'roundtrip' ? 3 : 4,
+                          md:
+                            tripType === 'packages'
+                              ? 6
+                              : tripType === 'roundtrip'
+                                ? 3
+                                : tripType === 'multilocation'
+                                  ? 3
+                                  : 4,
                         }}
                         position="relative"
                         ref={pickupRef}
@@ -916,11 +995,10 @@ export default function HeroSection() {
                       </Grid>
 
                       {/* Drop Location - Conditional */}
-                      {tripType !== 'packages' && (
+                      {tripType !== 'packages' && tripType !== 'multilocation' && (
                         <Grid
                           size={{ xs: 12, md: tripType === 'roundtrip' ? 3 : 4 }}
                           position="relative"
-                          ref={dropRef}
                         >
                           <Controller
                             name="drop"
@@ -1040,7 +1118,13 @@ export default function HeroSection() {
 
                       {/* Pickup Date */}
                       {/* Pickup Date */}
-                      <Grid size={{ xs: tripType === 'roundtrip' ? 6 : 12, md: 2 }}>
+                      {/* Pickup Date */}
+                      <Grid
+                        size={{
+                          xs: tripType === 'roundtrip' ? 6 : 12,
+                          md: tripType === 'multilocation' ? 2 : 2,
+                        }}
+                      >
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                           <Controller
                             name="pickupDateTime"
@@ -1174,8 +1258,8 @@ export default function HeroSection() {
                         </Grid>
                       )}
 
-                      {/* Vehicle Selection - Moved to end of row */}
-                      <Grid size={{ xs: 12, md: 2 }}>
+                      {/* Vehicle Selection - Moved to end of row for others, integrated for multilocation */}
+                      <Grid size={{ xs: 12, md: tripType === 'multilocation' ? 3 : 2 }}>
                         <Controller
                           name="vehicle"
                           control={control}
@@ -1226,88 +1310,9 @@ export default function HeroSection() {
                         />
                       </Grid>
 
-                      <Grid size={{ xs: 12, md: 3 }}>
-                        <Controller
-                          name="customerName"
-                          control={control}
-                          render={({ field }) => (
-                            <TextField
-                              {...field}
-                              fullWidth
-                              size="small"
-                              label="Your Name"
-                              sx={{
-                                input: {
-                                  color: 'rgba(0, 0, 0, 0.7)',
-                                  fontWeight: 500,
-                                  fontSize: '0.9rem',
-                                  py: 1,
-                                  '&:-webkit-autofill': {
-                                    WebkitBoxShadow: '0 0 0 100px #dae0e4 inset',
-                                    WebkitTextFillColor: '#000',
-                                    transition: 'background-color 5000s ease-in-out 0s',
-                                  },
-                                },
-                                label: {
-                                  color: '#0e172a',
-                                  fontSize: '0.9rem',
-                                  '&.MuiInputLabel-shrink': { color: '#94a3b8' },
-                                },
-                                '& .MuiOutlinedInput-root': {
-                                  bgcolor: '#dae0e4',
-                                  '& fieldset': { borderColor: 'rgba(0,0,0,0.1)' },
-                                  '&:hover fieldset': { borderColor: 'rgba(0,0,0,0.3)' },
-                                  '&.Mui-focused fieldset': { borderColor: '#FFD700' },
-                                },
-                              }}
-                            />
-                          )}
-                        />
-                      </Grid>
-                      <Grid size={{ xs: 12, md: 3 }}>
-                        <Controller
-                          name="customerPhone"
-                          control={control}
-                          render={({ field }) => (
-                            <TextField
-                              {...field}
-                              fullWidth
-                              size="small"
-                              label="Mobile Number"
-                              sx={{
-                                input: {
-                                  color: 'rgba(14, 23, 42, 0.7)',
-                                  fontWeight: 500,
-                                  fontSize: '0.9rem',
-                                  py: 1,
-                                  '&:-webkit-autofill': {
-                                    WebkitBoxShadow: '0 0 0 100px #dae0e4 inset',
-                                    WebkitTextFillColor: '#0e172a',
-                                    transition: 'background-color 5000s ease-in-out 0s',
-                                  },
-                                },
-                                label: {
-                                  color: '#0e172a',
-                                  fontSize: '0.9rem',
-                                  '&.MuiInputLabel-shrink': { color: '#94a3b8' },
-                                },
-                                '& .MuiOutlinedInput-root': {
-                                  bgcolor: '#dae0e4',
-                                  '& fieldset': { borderColor: '#e2e8f0' },
-                                  '&:hover fieldset': { borderColor: '#cbd5e1' },
-                                  '&.Mui-focused fieldset': {
-                                    borderColor: '#d97706',
-                                    borderWidth: 2,
-                                  },
-                                },
-                              }}
-                            />
-                          )}
-                        />
-                      </Grid>
-                      {hasActiveCoupons && (
+                      {hasActiveCoupons && tripType === 'multilocation' && (
                         <Grid size={{ xs: 12, md: 3 }}>
-                          {/* Coupon Section */}
+                          {/* Coupon Section (Multilocation Only) */}
                           <Box>
                             <Grid container spacing={1} alignItems="center">
                               <Grid size={{ xs: appliedCoupon ? 12 : 8 }}>
@@ -1395,7 +1400,220 @@ export default function HeroSection() {
                         </Grid>
                       )}
 
-                      <Grid size={{ xs: 12 }}>
+                      <Grid size={{ xs: 12, md: tripType === 'multilocation' ? 3 : 3 }}>
+                        <Controller
+                          name="customerName"
+                          control={control}
+                          render={({ field }) => (
+                            <TextField
+                              {...field}
+                              fullWidth
+                              size="small"
+                              label="Your Name"
+                              sx={{
+                                input: {
+                                  color: 'rgba(0, 0, 0, 0.7)',
+                                  fontWeight: 500,
+                                  fontSize: '0.9rem',
+                                  py: 1,
+                                  '&:-webkit-autofill': {
+                                    WebkitBoxShadow: '0 0 0 100px #dae0e4 inset',
+                                    WebkitTextFillColor: '#000',
+                                    transition: 'background-color 5000s ease-in-out 0s',
+                                  },
+                                },
+                                label: {
+                                  color: '#0e172a',
+                                  fontSize: '0.9rem',
+                                  '&.MuiInputLabel-shrink': { color: '#94a3b8' },
+                                },
+                                '& .MuiOutlinedInput-root': {
+                                  bgcolor: '#dae0e4',
+                                  '& fieldset': { borderColor: 'rgba(0,0,0,0.1)' },
+                                  '&:hover fieldset': { borderColor: 'rgba(0,0,0,0.3)' },
+                                  '&.Mui-focused fieldset': { borderColor: '#FFD700' },
+                                },
+                              }}
+                            />
+                          )}
+                        />
+                      </Grid>
+                      <Grid size={{ xs: 12, md: tripType === 'multilocation' ? 3 : 3 }}>
+                        <Controller
+                          name="customerPhone"
+                          control={control}
+                          render={({ field }) => (
+                            <TextField
+                              {...field}
+                              fullWidth
+                              size="small"
+                              label="Mobile Number"
+                              sx={{
+                                input: {
+                                  color: 'rgba(14, 23, 42, 0.7)',
+                                  fontWeight: 500,
+                                  fontSize: '0.9rem',
+                                  py: 1,
+                                  '&:-webkit-autofill': {
+                                    WebkitBoxShadow: '0 0 0 100px #dae0e4 inset',
+                                    WebkitTextFillColor: '#0e172a',
+                                    transition: 'background-color 5000s ease-in-out 0s',
+                                  },
+                                },
+                                label: {
+                                  color: '#0e172a',
+                                  fontSize: '0.9rem',
+                                  '&.MuiInputLabel-shrink': { color: '#94a3b8' },
+                                },
+                                '& .MuiOutlinedInput-root': {
+                                  bgcolor: '#dae0e4',
+                                  '& fieldset': { borderColor: '#e2e8f0' },
+                                  '&:hover fieldset': { borderColor: '#cbd5e1' },
+                                  '&.Mui-focused fieldset': {
+                                    borderColor: '#d97706',
+                                    borderWidth: 2,
+                                  },
+                                },
+                              }}
+                            />
+                          )}
+                        />
+                      </Grid>
+
+                      {tripType === 'multilocation' && (
+                        <Grid size={{ xs: 12, md: 3 }}>
+                          <Button
+                            type="submit"
+                            variant="contained"
+                            disabled={loading}
+                            fullWidth
+                            sx={{
+                              height: 40,
+                              bgcolor: '#fbc123',
+                              color: '#000000',
+                              fontWeight: 700,
+                              fontSize: '1rem',
+                              textTransform: 'none',
+                              boxShadow: '0 4px 14px 0 rgba(251, 193, 35, 0.4)',
+                              transition: 'all 0.2s',
+                              borderRadius: 1.5,
+                              '&:hover': {
+                                bgcolor: '#f59e0b',
+                                transform: 'translateY(-1px)',
+                                boxShadow: '0 6px 20px 0 rgba(251, 193, 35, 0.5)',
+                              },
+                              '&:active': {
+                                transform: 'translateY(0)',
+                              },
+                              '&.Mui-disabled': {
+                                bgcolor: 'rgba(255, 255, 255, 0.15)',
+                                color: 'rgba(255, 255, 255, 0.3)',
+                              },
+                            }}
+                          >
+                            {loading ? (
+                              <CircularProgress size={24} color="inherit" />
+                            ) : (
+                              'Book Your Taxi'
+                            )}
+                          </Button>
+                        </Grid>
+                      )}
+
+                      {hasActiveCoupons && tripType !== 'multilocation' && (
+                        <Grid size={{ xs: 12, md: 3 }}>
+                          {/* Coupon Section (Other Types) */}
+                          <Box>
+                            <Grid container spacing={1} alignItems="center">
+                              <Grid size={{ xs: appliedCoupon ? 12 : 8 }}>
+                                {appliedCoupon ? (
+                                  <Box
+                                    sx={{
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'space-between',
+                                      bgcolor: '#dcfce7', // green-100
+                                      color: '#166534', // green-800
+                                      p: 1.5,
+                                      borderRadius: 1,
+                                      border: '1px solid #bbf7d0',
+                                    }}
+                                  >
+                                    <Box>
+                                      <Typography variant="body2" fontWeight="bold">
+                                        Coupon Applied: {appliedCoupon.name}
+                                      </Typography>
+                                      <Typography variant="caption">
+                                        {appliedCoupon.percentage}% Off applied
+                                      </Typography>
+                                    </Box>
+                                    <Button
+                                      size="small"
+                                      onClick={clearCoupon}
+                                      sx={{ minWidth: 'auto', p: 0.5, color: '#166534' }}
+                                    >
+                                      ✕
+                                    </Button>
+                                  </Box>
+                                ) : (
+                                  <TextField
+                                    fullWidth
+                                    size="small"
+                                    placeholder="Coupon Code"
+                                    value={couponCodeInput}
+                                    onChange={(e) =>
+                                      setCouponCodeInput(e.target.value.toUpperCase())
+                                    }
+                                    error={!!couponError}
+                                    helperText={couponError}
+                                    sx={{
+                                      input: {
+                                        color: 'rgba(14, 23, 42, 0.7)',
+                                        fontWeight: 500,
+                                        fontSize: '0.9rem',
+                                        py: 1,
+                                      },
+                                      '& .MuiOutlinedInput-root': {
+                                        bgcolor: '#dae0e4',
+                                      },
+                                    }}
+                                  />
+                                )}
+                              </Grid>
+                              {!appliedCoupon && (
+                                <Grid size={{ xs: 4 }}>
+                                  <Button
+                                    variant="contained"
+                                    fullWidth
+                                    onClick={validateCoupon}
+                                    disabled={loading || !couponCodeInput}
+                                    sx={{
+                                      height: 40,
+                                      bgcolor: '#fbc123',
+                                      color: '#000000',
+                                      fontWeight: 600,
+                                      '&:hover': {
+                                        bgcolor: '#f59e0b',
+                                      },
+                                      '&.Mui-disabled': {
+                                        bgcolor: 'rgba(255, 255, 255, 0.15)',
+                                        color: 'rgba(255, 255, 255, 0.3)',
+                                      },
+                                    }}
+                                  >
+                                    Apply
+                                  </Button>
+                                </Grid>
+                              )}
+                            </Grid>
+                          </Box>
+                        </Grid>
+                      )}
+
+                      <Grid
+                        size={{ xs: 12 }}
+                        sx={{ display: tripType === 'multilocation' ? 'none' : 'block' }}
+                      >
                         <Box
                           sx={{
                             display: 'flex',
@@ -1471,6 +1689,57 @@ export default function HeroSection() {
                         </Box>
                       </Grid>
                     </Grid>
+
+                    {/* Stepper for Tour Locations */}
+                    {tripType === 'multilocation' && tourLocations.length > 0 && (
+                      <Box sx={{ width: '100%', mt: 3, px: 1, overflowX: 'auto' }}>
+                        <Stepper
+                          alternativeLabel
+                          activeStep={tourLocations.length}
+                          sx={{
+                            justifyContent: 'flex-start',
+                            '& .MuiStep-root': { flex: '0 0 auto', minWidth: '120px' },
+                            '& .MuiStepConnector-root': {
+                              left: 'calc(-50% + 16px)',
+                              right: 'calc(50% + 16px)',
+                            },
+                          }}
+                        >
+                          {tourLocations.map((loc, index) => (
+                            <Step key={index} completed>
+                              <StepLabel
+                                StepIconComponent={() => (
+                                  <Box
+                                    sx={{
+                                      bgcolor: '#fbc123',
+                                      borderRadius: '50%',
+                                      width: 32,
+                                      height: 32,
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'center',
+                                      color: '#000',
+                                      cursor: 'pointer',
+                                      '&:hover': { bgcolor: '#f59e0b' },
+                                    }}
+                                    onClick={() => removeTourLocation(index)}
+                                  >
+                                    <LocationOnIcon sx={{ fontSize: '1.2rem' }} />
+                                  </Box>
+                                )}
+                              >
+                                <Typography
+                                  variant="caption"
+                                  sx={{ color: '#fff', fontWeight: 500 }}
+                                >
+                                  {loc.name}
+                                </Typography>
+                              </StepLabel>
+                            </Step>
+                          ))}
+                        </Stepper>
+                      </Box>
+                    )}
                   </Box>
                 </form>
               )}
