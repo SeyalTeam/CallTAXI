@@ -325,7 +325,7 @@ export interface Booking {
   customerPhone: string;
   customer?: (string | null) | Customer;
   vehicle: string | Vehicle;
-  tripType: 'oneway' | 'roundtrip' | 'packages';
+  tripType: 'oneway' | 'roundtrip' | 'packages' | 'multilocation';
   /**
    * @minItems 2
    * @maxItems 2
@@ -338,6 +338,17 @@ export interface Booking {
    */
   dropoffLocation?: [number, number] | null;
   dropoffLocationName?: string | null;
+  tourLocations?:
+    | {
+        name: string;
+        /**
+         * @minItems 2
+         * @maxItems 2
+         */
+        point: [number, number];
+        id?: string | null;
+      }[]
+    | null;
   pickupDateTime: string;
   dropDateTime?: string | null;
   estimatedFare?: number | null;
@@ -658,6 +669,13 @@ export interface BookingsSelect<T extends boolean = true> {
   pickupLocationName?: T;
   dropoffLocation?: T;
   dropoffLocationName?: T;
+  tourLocations?:
+    | T
+    | {
+        name?: T;
+        point?: T;
+        id?: T;
+      };
   pickupDateTime?: T;
   dropDateTime?: T;
   estimatedFare?: T;

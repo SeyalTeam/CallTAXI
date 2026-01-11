@@ -63,7 +63,7 @@ export const Bookings: CollectionConfig = {
     {
       name: 'tripType',
       type: 'select',
-      options: ['oneway', 'roundtrip', 'packages'],
+      options: ['oneway', 'roundtrip', 'packages', 'multilocation'],
       required: true,
     },
 
@@ -72,6 +72,19 @@ export const Bookings: CollectionConfig = {
 
     { name: 'dropoffLocation', type: 'point', required: false },
     { name: 'dropoffLocationName', type: 'text', required: false },
+
+    // Tour Locations
+    {
+      name: 'tourLocations',
+      type: 'array',
+      fields: [
+        { name: 'name', type: 'text', required: true },
+        { name: 'point', type: 'point', required: true },
+      ],
+      admin: {
+        condition: (data) => data.tripType === 'multilocation',
+      },
+    },
 
     {
       name: 'pickupDateTime',

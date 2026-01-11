@@ -19,6 +19,7 @@ import {
   Stepper,
   Step,
   StepLabel,
+  StepConnector,
 } from '@mui/material'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
@@ -57,6 +58,25 @@ function chooseBestTariff(tariffs: TariffDoc[]): TariffDoc | undefined {
     return ta < tb ? 1 : -1 // latest first
   })
   return copy[0]
+}
+
+/**
+ * Helper to calculate distance
+ */
+const getDistanceFromLatLonInKm = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+  const R = 6371 // Radius of the earth in km
+  const dLat = deg2rad(lat2 - lat1)
+  const dLon = deg2rad(lon2 - lon1)
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2)
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+  const d = R * c // Distance in km
+  return d
+}
+
+const deg2rad = (deg: number) => {
+  return deg * (Math.PI / 180)
 }
 
 /**
@@ -407,6 +427,19 @@ export default function HeroSection() {
       }
 
       const matching = tariffs.filter((t) => getVehicleIdFromTariff(t) === selectedVehicleId)
+
+      // FIX: Only calculate tariff if a vehicle is selected
+      if (!selectedVehicleId) {
+        if (distanceKm > 0) {
+          setDistanceInfo(`${distanceKm.toFixed(2)} km • ${Math.round(durationMin)} min`)
+        } else {
+          setDistanceInfo('')
+        }
+        setFare(null)
+        setIsCalculating(false)
+        return
+      }
+
       const chosen = chooseBestTariff(matching.length > 0 ? matching : tariffs)
 
       if (tripType === 'packages') {
@@ -621,11 +654,21 @@ export default function HeroSection() {
       couponCode: appliedCoupon?.name,
       discountAmount: discountAmount || undefined,
       status: 'pending',
+      // Map tour locations if applicable
+      tourLocations:
+        data.tripType === 'multilocation'
+          ? tourLocations.map((l) => ({
+              name: l.name,
+              point: [Number(l.lon), Number(l.lat)],
+            }))
+          : undefined,
       notes:
         data.tripType === 'packages'
           ? `${data.pickup} (${packageHours} Hrs Package)`
           : data.tripType === 'multilocation'
-            ? `Tour: ${tourLocations.map((l) => l.name).join(' -> ')}`
+            ? `Tour: ${tourLocations.map((l) => l.name).join(' -> ')} ${
+                distanceInfo ? `(Distance: ${distanceInfo})` : ''
+              }`
             : `${data.pickup} to ${data.drop}`,
     }
 
@@ -850,7 +893,34 @@ export default function HeroSection() {
                           return (
                             <Box
                               key={item.id}
-                              onClick={() => field.onChange(item.id)}
+                              onClick={() => {
+                                // Reset state on tab switch to avoid confusion
+                                field.onChange(item.id)
+                                setValue('pickup', '')
+                                setValue('drop', '')
+                                setValue('vehicle', '')
+                                setPickupCoords(null)
+                                setDropCoords(null)
+                                setFare(null)
+                                setDistanceInfo('')
+                                // If switching away from Tour, clear tour locations?
+                                // Or if switching TO Tour, clear them?
+                                // User said: "choosed tour location its reflecting in othere tab"
+                                // This implies Tour locations might be affecting other tabs or vice versa.
+                                // Best to clear Tour locations when switching OUT of Tour.
+                                if (
+                                  field.value === 'multilocation' &&
+                                  item.id !== 'multilocation'
+                                ) {
+                                  setTourLocations([])
+                                }
+                                // Also clear if switching INTO Tour to start fresh?
+                                // User might want to keep if they accidentally switched?
+                                // Let's clear to be safe and avoid "reflection" issues.
+                                if (item.id === 'multilocation') {
+                                  setTourLocations([])
+                                }
+                              }}
                               sx={{
                                 width: { xs: '23%', md: '80px' }, // Reduced further (~96 -> 80)
                                 minWidth: 0,
@@ -940,14 +1010,7 @@ export default function HeroSection() {
                       <Grid
                         size={{
                           xs: 12,
-                          md:
-                            tripType === 'packages'
-                              ? 6
-                              : tripType === 'roundtrip'
-                                ? 3
-                                : tripType === 'multilocation'
-                                  ? 3
-                                  : 4,
+                          md: tripType === 'multilocation' ? 3 : 3, // All standardized to 3
                         }}
                         position="relative"
                         ref={pickupRef}
@@ -961,7 +1024,11 @@ export default function HeroSection() {
                               fullWidth
                               size="small"
                               autoComplete="off"
-                              label="Pickup Location"
+                              label={
+                                tripType === 'multilocation' && tourLocations.length > 0
+                                  ? 'Next Location'
+                                  : 'Pickup Location'
+                              }
                               onChange={(e) => {
                                 field.onChange(e)
                                 handleLocationSearch(e.target.value, setPickupSuggestions)
@@ -1077,9 +1144,10 @@ export default function HeroSection() {
                         <Grid
                           size={{
                             xs: 12,
-                            md: tripType === 'roundtrip' ? 3 : 4,
+                            md: 3, // Standardized to 3 matching Pickup
                           }}
                           position="relative"
+                          ref={dropRef}
                         >
                           <Controller
                             name="drop"
@@ -1203,7 +1271,7 @@ export default function HeroSection() {
                       <Grid
                         size={{
                           xs: tripType === 'roundtrip' ? 6 : 12,
-                          md: tripType === 'multilocation' ? 2 : 2,
+                          md: tripType === 'roundtrip' ? 2 : 3, // 3 for OneWay/Pack/Tour, 2 for RoundTrip
                         }}
                       >
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -1296,7 +1364,7 @@ export default function HeroSection() {
 
                       {/* Duration - Packages Only */}
                       {tripType === 'packages' && (
-                        <Grid size={{ xs: 12, md: 2 }}>
+                        <Grid size={{ xs: 12, md: 3 }}>
                           <FormControl fullWidth size="small">
                             <InputLabel
                               id="hours-label"
@@ -1340,7 +1408,7 @@ export default function HeroSection() {
                       )}
 
                       {/* Vehicle Selection - Moved to end of row for others, integrated for multilocation */}
-                      <Grid size={{ xs: 12, md: tripType === 'multilocation' ? 3 : 2 }}>
+                      <Grid size={{ xs: 12, md: tripType === 'roundtrip' ? 2 : 3 }}>
                         <Controller
                           name="vehicle"
                           control={control}
@@ -1812,23 +1880,64 @@ export default function HeroSection() {
                         <Stepper
                           alternativeLabel
                           activeStep={tourLocations.length}
+                          connector={<StepConnector sx={{ display: 'none' }} />} // Hide default connector to use custom logic or styled one? Actually, we need to CUSTOMIZE the connector.
+                          // Wait, to put text ON the connector, we can use the `StepConnector` with a custom component or styled.
+                          // Easier approach: Just render the connector normally but use CSS to add content? Content from where?
+                          // Better approach: Use a custom connector component that takes the distance as a prop?
+                          // Stepper `connector` prop applies to ALL. We need individual distances.
+                          // Limitation: `connector` prop is generic.
+                          // Alternative: Render the line manually between steps?
+                          // Let's try to override the StepConnector for each step? No, it's one prop.
+                          // Workaround: We can render the distance label as part of the StepLabel or absolute position it?
+                          // Actually, we can use the `Step` children or `StepLabel` to render a line to the right?
+                          // Let's try this: Render a straight horizontal Box between items manually instead of MUI Stepper?
+                          // Or stick to MUI Stepper and overlay the distance?
+                          // Let's manually map and render items to have full control.
+                        />
+                        {/* Manual Stepper Implementation for Custom Connector Content */}
+                        <Box
                           sx={{
+                            display: 'flex',
+                            alignItems: 'flex-start',
                             justifyContent: 'flex-start',
-                            '& .MuiStep-root': {
-                              flex: '0 0 auto',
-                              minWidth: { xs: '100px', md: '120px' },
-                            },
-                            '& .MuiStepConnector-root': {
-                              left: 'calc(-50% + 16px)',
-                              right: 'calc(50% + 16px)',
-                            },
+                            minWidth: 'min-content',
                           }}
                         >
-                          {tourLocations.map((loc, index) => (
-                            <Step key={index} completed>
-                              <StepLabel
-                                StepIconComponent={() => (
+                          {tourLocations.map((loc, index) => {
+                            const nextLoc = tourLocations[index + 1]
+                            let distStr = ''
+                            let timeStr = ''
+                            if (nextLoc) {
+                              const d = getDistanceFromLatLonInKm(
+                                Number(loc.lat),
+                                Number(loc.lon),
+                                Number(nextLoc.lat),
+                                Number(nextLoc.lon),
+                              )
+                              // Estimate time: assume 50 km/h avg speed
+                              const speed = 50
+                              const hours = d / speed
+                              const h = Math.floor(hours)
+                              const m = Math.round((hours - h) * 60)
+                              timeStr = h > 0 ? `${h} hr ${m > 0 ? `${m} min` : ''}` : `${m} min`
+
+                              distStr = `${d.toFixed(0)} km`
+                            }
+
+                            return (
+                              <React.Fragment key={index}>
+                                {/* Step Item */}
+                                <Box
+                                  sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    minWidth: { xs: 80, md: 100 },
+                                    zIndex: 1,
+                                  }}
+                                >
                                   <Box
+                                    onClick={() => removeTourLocation(index)}
                                     sx={{
                                       bgcolor: '#fbc123',
                                       borderRadius: '50%',
@@ -1840,23 +1949,70 @@ export default function HeroSection() {
                                       color: '#000',
                                       cursor: 'pointer',
                                       '&:hover': { bgcolor: '#f59e0b' },
+                                      mb: 1,
                                     }}
-                                    onClick={() => removeTourLocation(index)}
                                   >
                                     <LocationOnIcon sx={{ fontSize: '1.2rem' }} />
                                   </Box>
+                                  <Typography
+                                    variant="caption"
+                                    sx={{
+                                      color: '#fff',
+                                      fontWeight: 500,
+                                      textAlign: 'center',
+                                      maxWidth: 100,
+                                    }}
+                                  >
+                                    {loc.name}
+                                  </Typography>
+                                </Box>
+
+                                {/* Connector with Distance (if not last) */}
+                                {index < tourLocations.length - 1 && (
+                                  <Box
+                                    sx={{
+                                      display: 'flex',
+                                      flexDirection: 'column',
+                                      alignItems: 'center',
+                                      justifyContent: 'center',
+                                      minWidth: { xs: 100, md: 130 }, // Fixed width for equal spacing
+                                      width: { xs: 100, md: 130 }, // Enforce fixed width
+                                      mt: 1.5,
+                                      mx: -1,
+                                      zIndex: 0,
+                                    }}
+                                  >
+                                    <Typography
+                                      variant="caption"
+                                      sx={{
+                                        color: '#94a3b8',
+                                        mb: 0.2,
+                                        fontSize: '0.75rem',
+                                        fontWeight: 500,
+                                      }}
+                                    >
+                                      {distStr}
+                                    </Typography>
+                                    <Box
+                                      sx={{
+                                        width: '100%',
+                                        height: '1px',
+                                        bgcolor: '#475569',
+                                        width: '100%',
+                                      }}
+                                    />
+                                    <Typography
+                                      variant="caption"
+                                      sx={{ color: '#64748b', mt: 0.2, fontSize: '0.7rem' }}
+                                    >
+                                      {timeStr}
+                                    </Typography>
+                                  </Box>
                                 )}
-                              >
-                                <Typography
-                                  variant="caption"
-                                  sx={{ color: '#fff', fontWeight: 500 }}
-                                >
-                                  {loc.name}
-                                </Typography>
-                              </StepLabel>
-                            </Step>
-                          ))}
-                        </Stepper>
+                              </React.Fragment>
+                            )
+                          })}
+                        </Box>
                       </Box>
                     )}
                   </Box>
