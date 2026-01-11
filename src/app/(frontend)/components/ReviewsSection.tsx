@@ -23,45 +23,45 @@ export default function ReviewsSection() {
 
   const reviews = [
     {
-      name: 'Happy Customer',
+      name: 'Senthil Kumar',
       text: 'Great service! The drivers are very professional and the cars are always clean and comfortable.',
     },
     {
-      name: 'Satisfied Client',
+      name: 'Lakshmi Priya',
       text: 'Reliable and punctual. I always use Kani Call Taxi for my business trips.',
     },
     {
-      name: 'Professional Traveler',
+      name: 'Karthik Raja',
       text: 'Exceptional experience. The booking process was smooth and the ride was very comfortable.',
     },
     {
-      name: 'Regular User',
+      name: 'Anitha',
       text: 'Highly recommend! Best taxi service in the city with very competitive rates.',
     },
     {
-      name: 'Business Exec',
+      name: 'Saravanan',
       text: 'Efficient and professional. The drivers know the city well and are always on time.',
     },
     {
-      name: 'Tourist',
+      name: 'Meena',
       text: 'The best way to get around! Friendly drivers and well-maintained vehicles.',
     },
     {
-      name: 'Commuter',
+      name: 'Balaji',
       text: 'Consistent and dependable. Kani Call Taxi is my go-to for daily commuting.',
     },
-    { name: 'Family Traveler', text: 'Perfect for families! Spacious cars and very safe driving.' },
-    { name: 'Quick Trip', text: 'Fast and easy. The app is great for quick bookings on the go.' },
+    { name: 'Kavitha', text: 'Perfect for families! Spacious cars and very safe driving.' },
+    { name: 'Vignesh', text: 'Fast and easy. The app is great for quick bookings on the go.' },
     {
-      name: 'Long Drive',
+      name: 'Deepa',
       text: 'Very comfortable for long journeys. The seats are great and the AC is cold.',
     },
     {
-      name: 'Late Night',
+      name: 'Muthu',
       text: 'Safest late-night option. I feel very secure traveling with their verified drivers.',
     },
     {
-      name: 'Airport Pick-up',
+      name: 'Revathi',
       text: 'Always on time for airport runs. Never had to wait even once.',
     },
   ]
