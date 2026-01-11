@@ -869,27 +869,41 @@ export default function HeroSection() {
                                         : '1px solid #cbd5e1',
                                     display: 'flex',
                                     alignItems: 'center',
-                                    whiteSpace: 'normal', // Allow wrap
+                                    whiteSpace: 'nowrap',
                                     py: 1.5,
+                                    overflow: 'hidden',
                                   }}
                                 >
                                   <LocationOnIcon
-                                    sx={{ color: '#94a3b8', mr: 2, fontSize: '1.2rem' }}
+                                    sx={{
+                                      color: '#94a3b8',
+                                      mr: 2,
+                                      fontSize: '1.2rem',
+                                      flexShrink: 0,
+                                    }}
                                   />
-                                  <Box>
-                                    <Typography variant="body2" color="#334155">
+                                  <Box sx={{ minWidth: 0, flex: 1 }}>
+                                    <Typography
+                                      variant="body2"
+                                      color="#334155"
+                                      sx={{
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        whiteSpace: 'nowrap',
+                                      }}
+                                    >
                                       <HighlightedText text={s.name} highlight={watch('pickup')} />
-                                      {s.name !== s.district && (
-                                        <span
-                                          style={{
-                                            color: '#64748b',
-                                            fontSize: '0.85em',
-                                            marginLeft: '6px',
-                                          }}
-                                        >
-                                          {s.district}
-                                        </span>
-                                      )}
+                                      <span
+                                        style={{
+                                          color: '#64748b',
+                                          fontSize: '0.85em',
+                                          marginLeft: '6px',
+                                        }}
+                                      >
+                                        {s.name !== s.district
+                                          ? `${s.district}, Tamil Nadu`
+                                          : 'Tamil Nadu'}
+                                      </span>
                                     </Typography>
                                   </Box>
                                 </MenuItem>
@@ -977,27 +991,41 @@ export default function HeroSection() {
                                           : '1px solid #cbd5e1',
                                       display: 'flex',
                                       alignItems: 'center',
-                                      whiteSpace: 'normal',
+                                      whiteSpace: 'nowrap',
                                       py: 1.5,
+                                      overflow: 'hidden',
                                     }}
                                   >
                                     <LocationOnIcon
-                                      sx={{ color: '#94a3b8', mr: 2, fontSize: '1.2rem' }}
+                                      sx={{
+                                        color: '#94a3b8',
+                                        mr: 2,
+                                        fontSize: '1.2rem',
+                                        flexShrink: 0,
+                                      }}
                                     />
-                                    <Box>
-                                      <Typography variant="body2" color="#334155">
+                                    <Box sx={{ minWidth: 0, flex: 1 }}>
+                                      <Typography
+                                        variant="body2"
+                                        color="#334155"
+                                        sx={{
+                                          overflow: 'hidden',
+                                          textOverflow: 'ellipsis',
+                                          whiteSpace: 'nowrap',
+                                        }}
+                                      >
                                         <HighlightedText text={s.name} highlight={watch('drop')} />
-                                        {s.name !== s.district && (
-                                          <span
-                                            style={{
-                                              color: '#64748b',
-                                              fontSize: '0.85em',
-                                              marginLeft: '6px',
-                                            }}
-                                          >
-                                            {s.district}
-                                          </span>
-                                        )}
+                                        <span
+                                          style={{
+                                            color: '#64748b',
+                                            fontSize: '0.85em',
+                                            marginLeft: '6px',
+                                          }}
+                                        >
+                                          {s.name !== s.district
+                                            ? `${s.district}, Tamil Nadu`
+                                            : 'Tamil Nadu'}
+                                        </span>
                                       </Typography>
                                     </Box>
                                   </MenuItem>
