@@ -458,26 +458,25 @@ export default function HeroSection() {
       }
 
       let days = 1
-      if (tripType === 'roundtrip' && pickupDateTime && dropDateTime) {
+      if (
+        (tripType === 'roundtrip' || tripType === 'multilocation') &&
+        pickupDateTime &&
+        dropDateTime
+      ) {
         const start = pickupDateTime.startOf('day')
         const end = dropDateTime.startOf('day')
         const diff = end.diff(start, 'day') + 1 // inclusive
         days = diff > 0 ? diff : 1
       }
 
-      if (tripType === 'roundtrip') {
-        distanceKm *= 2
-        durationMin *= 2
-      }
-
       let rate = 0
       let bata = 0
       let minDistance = 130
-      // Treat Multi-Location as Round Trip for pricing per user request
-      const group =
-        tripType === 'roundtrip' || tripType === 'multilocation'
-          ? chosen?.roundtrip
-          : chosen?.oneway
+
+      // Determine Tariff Group
+      // Force 'roundtrip' group for multilocation to ensure "like round trip" pricing
+      const useRoundTripLogic = tripType === 'roundtrip' || tripType === 'multilocation'
+      const group = useRoundTripLogic ? chosen?.roundtrip : chosen?.oneway
 
       if (group) {
         rate = group.perKmRate
@@ -485,29 +484,28 @@ export default function HeroSection() {
         if (group.minDistance) minDistance = group.minDistance
       }
 
+      // Distance Adjustment for Round Trip Logic
+      // Round Trip: A->B implies A->B->A (Doubled)
+      // Tour: A->B->C implies A->B->C->A (Doubled) if we want "Round Trip" pricing behavior
+      if (useRoundTripLogic) {
+        distanceKm *= 2
+        durationMin *= 2
+      }
+
+      // Check Minimum Distance Rule
       let billDist = distanceKm
       if (distanceKm < minDistance) billDist = minDistance
 
-      // Special case: Tour uses Round Trip pricing model if available
-      // Or falls back to Oneway if Roundtrip not defined?
-      // User said: "use round trip based"
-      // If tripType is MultiLocation, we likely used chosen.roundtrip above if we map it to that group
-      // But lines 420 checks 'roundtrip' string.
-      // Let's adjust group selection:
-      /* 
-         const group = tripType === 'roundtrip' || tripType === 'multilocation' ? chosen?.roundtrip : chosen?.oneway
-      */
-
-      // Let's correct lines 417-426 block (target below)
-
+      // Calculate Total Fare
+      // Current Logic (from existing codebase): (Dist * Rate + Bata) * Days
+      // This logic produces the "High Price" (~20k) the user expects for Round Trip.
+      // We explicitly apply it to Tour as well.
       let total = billDist * rate + bata
 
-      // Multiply by days for roundtrip
-      // Multiply by days for roundtrip
-      // For Tour, we might not have days input. Default 1?
-      // Or if checking dates? Tour currently has only Pickup Date.
-      if (tripType === 'roundtrip' || tripType === 'multilocation') {
-        total = total * days
+      if (useRoundTripLogic) {
+        // Ensure days is at least 1
+        const billingDays = days > 0 ? days : 1
+        total = total * billingDays
       }
 
       setDistanceInfo(`${distanceKm.toFixed(2)} km • ${Math.round(durationMin)} min`)
@@ -646,7 +644,10 @@ export default function HeroSection() {
       dropoffLocationName:
         data.tripType !== 'packages' && data.tripType !== 'multilocation' ? data.drop : undefined,
       pickupDateTime: data.pickupDateTime?.toISOString(),
-      dropDateTime: data.tripType === 'roundtrip' ? data.dropDateTime?.toISOString() : undefined,
+      dropDateTime:
+        data.tripType === 'roundtrip' || data.tripType === 'multilocation'
+          ? data.dropDateTime?.toISOString()
+          : undefined,
       estimatedFare: fare ? Number(fare) : undefined,
       couponCode: appliedCoupon?.name,
       discountAmount: discountAmount || undefined,
@@ -692,6 +693,12 @@ export default function HeroSection() {
       setDropCoords(null)
       setFare(null)
       setDistanceInfo('')
+
+      // Clear Coupon State
+      setCouponCodeInput('')
+      setAppliedCoupon(null)
+      setCouponError(null)
+      setDiscountAmount(0)
     } catch (_e) {
       alert('Booking failed. Please try again.')
     }
@@ -1007,7 +1014,7 @@ export default function HeroSection() {
                       <Grid
                         size={{
                           xs: 12,
-                          md: tripType === 'multilocation' ? 3 : 3, // All standardized to 3
+                          md: tripType === 'multilocation' ? 6 : 3, // 6 for Tour, 3 for others
                         }}
                         position="relative"
                         ref={pickupRef}
@@ -1267,8 +1274,8 @@ export default function HeroSection() {
                       {/* Pickup Date */}
                       <Grid
                         size={{
-                          xs: tripType === 'roundtrip' ? 6 : 12,
-                          md: tripType === 'roundtrip' ? 2 : 3, // 3 for OneWay/Pack/Tour, 2 for RoundTrip
+                          xs: tripType === 'roundtrip' || tripType === 'multilocation' ? 6 : 12,
+                          md: tripType === 'roundtrip' || tripType === 'multilocation' ? 2 : 3, // 3 for OneWay/Pack, 2 for RoundTrip/Tour
                         }}
                       >
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -1314,7 +1321,7 @@ export default function HeroSection() {
                       </Grid>
 
                       {/* Return Date - Conditional */}
-                      {tripType === 'roundtrip' && (
+                      {(tripType === 'roundtrip' || tripType === 'multilocation') && (
                         <Grid size={{ xs: 6, md: 2 }}>
                           <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <Controller
@@ -1405,7 +1412,12 @@ export default function HeroSection() {
                       )}
 
                       {/* Vehicle Selection - Moved to end of row for others, integrated for multilocation */}
-                      <Grid size={{ xs: 12, md: tripType === 'roundtrip' ? 2 : 3 }}>
+                      <Grid
+                        size={{
+                          xs: 12,
+                          md: tripType === 'roundtrip' || tripType === 'multilocation' ? 2 : 3,
+                        }}
+                      >
                         <Controller
                           name="vehicle"
                           control={control}
