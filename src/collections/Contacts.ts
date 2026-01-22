@@ -5,6 +5,7 @@ export const Contacts: CollectionConfig = {
   admin: {
     useAsTitle: 'name',
     defaultColumns: ['name', 'phone', 'inquiryType', 'createdAt'],
+    group: 'Collection',
   },
   access: {
     create: () => true, // Allow anyone to submit the contact form
