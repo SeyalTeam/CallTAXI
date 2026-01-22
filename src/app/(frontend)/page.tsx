@@ -9,6 +9,7 @@ import TariffSection from './components/TariffSection'
 import ReviewsSection from './components/ReviewsSection'
 import ContactSection from './components/ContactSection'
 import Footer from './components/Footer'
+import PartnerSection from './components/PartnerSection'
 import { TariffDoc } from './types'
 
 export const dynamic = 'force-dynamic'
@@ -127,6 +128,8 @@ export default async function Page() {
       </Box>
 
       <ReviewsSection />
+
+      <PartnerSection />
 
       <ContactSection />
       <Footer />

@@ -1,121 +1,340 @@
+'use client'
+
 import React from 'react'
-import { Box, Container, Grid, Typography, Button, TextField } from '@mui/material'
-import PhoneIcon from '@mui/icons-material/Phone'
-import EmailIcon from '@mui/icons-material/Email'
-import LocationOnIcon from '@mui/icons-material/LocationOn'
+import { Box, Button, Container, Grid, TextField, Typography } from '@mui/material'
+import HeadsetMicIcon from '@mui/icons-material/HeadsetMic'
+import MailOutlineIcon from '@mui/icons-material/MailOutline'
 
 export default function ContactSection() {
+  const [inquiryType, setInquiryType] = React.useState<'default' | 'partner' | 'driver'>('default')
+  const [formData, setFormData] = React.useState({
+    name: '',
+    phone: '',
+    message: '',
+  })
+
+  React.useEffect(() => {
+    const handlePartnerInquiry = () => {
+      setInquiryType('partner')
+      const element = document.getElementById('contact-section')
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' })
+      }
+    }
+
+    const handleDriverInquiry = () => {
+      setInquiryType('driver')
+      const element = document.getElementById('contact-section')
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' })
+      }
+    }
+
+    const triggerPartner = () => handlePartnerInquiry()
+    const triggerDriver = () => handleDriverInquiry()
+
+    window.addEventListener('triggerPartnerInquiry', triggerPartner)
+    window.addEventListener('triggerDriverInquiry', triggerDriver)
+
+    return () => {
+      window.removeEventListener('triggerPartnerInquiry', triggerPartner)
+      window.removeEventListener('triggerDriverInquiry', triggerDriver)
+    }
+  }, [])
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    })
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    const payload = {
+      ...formData,
+      inquiryType: inquiryType === 'default' ? 'customer' : inquiryType,
+    }
+    console.log('Sending payload:', payload)
+
+    try {
+      const res = await fetch('/api/contacts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      })
+
+      if (res.ok) {
+        alert('Message sent successfully!')
+        setFormData({ name: '', phone: '', message: '' })
+        setInquiryType('default')
+      } else {
+        const errorData = await res.json()
+        console.error('Server error:', errorData)
+
+        let errorMessage = 'Failed to send message.'
+        if (errorData.errors && Array.isArray(errorData.errors)) {
+          errorMessage +=
+            ' ' + errorData.errors.map((err: { message: string }) => err.message).join(', ')
+        } else if (errorData.message) {
+          errorMessage += ' ' + errorData.message
+        }
+
+        alert(errorMessage)
+      }
+    } catch (error) {
+      console.error('Error sending message:', error)
+      alert('An error occurred. Please try again.')
+    }
+  }
+
+  const getHeading = () => {
+    switch (inquiryType) {
+      case 'partner':
+        return 'Partner with Kani Taxi'
+      case 'driver':
+        return 'Drive for Kani Taxi'
+      default:
+        return 'Get in touch with us'
+    }
+  }
+
+  const getDescription = () => {
+    switch (inquiryType) {
+      case 'partner':
+        return 'Join our network! Fill in your details below to attach your vehicle and start earning with us.'
+      case 'driver':
+        return 'Join our team! Fill in your details below to become a driver and earn a steady income.'
+      default:
+        return 'Do you have a question? A complaint? Or need any help to choose the right vehicle from Kani Taxi? We are here to help you.'
+    }
+  }
+
   return (
-    <Box id="contact-section" sx={{ py: 10, bgcolor: '#000', color: '#fff' }}>
-      <Container maxWidth="lg">
-        <Box textAlign="center" mb={6}>
-          <Typography
-            variant="h3"
-            fontWeight="bold"
-            gutterBottom
-            sx={{ color: '#FFD700', fontSize: { xs: '2rem', md: '3rem' } }}
-          >
-            Contact Us
-          </Typography>
-          <Typography variant="h6" color="grey.400" maxWidth="600px" mx="auto">
-            Have questions? Reach out to us anytime.
-          </Typography>
+    <Box id="contact-section" sx={{ py: { xs: 6, md: 10 }, bgcolor: '#f1f7f7' }}>
+      <Container maxWidth="xl">
+        <Box
+          sx={{
+            bgcolor: '#0e172a', // Deep dark blue as requested
+            color: '#fff',
+            borderRadius: { xs: 4, md: 8 },
+            p: { xs: 4, md: 5 },
+            position: 'relative',
+            overflow: 'hidden',
+          }}
+        >
+          <Grid container spacing={6} alignItems="center">
+            {/* Left Side: Contact Content */}
+            <Grid size={{ xs: 12, md: 6 }}>
+              <Box sx={{ maxWidth: '500px' }}>
+                <Typography
+                  variant="h3"
+                  sx={{
+                    fontWeight: 800,
+                    mb: 1, // Reduced margin
+                    fontSize: { xs: '1.5rem', md: '2.2rem' }, // Reduced font size to fit one line
+                    whiteSpace: 'nowrap', // Force one line
+                    color: inquiryType !== 'default' ? '#fbbf24' : 'inherit',
+                  }}
+                >
+                  {getHeading()}
+                </Typography>
+                <Typography
+                  variant="body1"
+                  sx={{
+                    color: '#bae6fe',
+                    mb: 2, // Reduced margin
+                    fontSize: '0.9rem', // Slightly smaller text
+                    lineHeight: 1.5,
+                  }}
+                >
+                  {getDescription()}
+                </Typography>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    gap: 3,
+                    mt: 3,
+                    alignItems: 'center',
+                  }}
+                >
+                  <Box display="flex" alignItems="center" gap={1.5}>
+                    <Box
+                      sx={{
+                        width: 36,
+                        height: 36,
+                        borderRadius: '50%',
+                        bgcolor: 'rgba(255,255,255,0.1)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <HeadsetMicIcon fontSize="small" sx={{ fontSize: '1.2rem' }} />
+                    </Box>
+                    <Box>
+                      <Typography
+                        variant="caption"
+                        display="block"
+                        sx={{ opacity: 0.7, lineHeight: 1 }}
+                      >
+                        Hotline
+                      </Typography>
+                      <Typography variant="body2" fontWeight="600">
+                        +91 94881 04888
+                      </Typography>
+                    </Box>
+                  </Box>
+
+                  <Box display="flex" alignItems="center" gap={1.5}>
+                    <Box
+                      sx={{
+                        width: 36,
+                        height: 36,
+                        borderRadius: '50%',
+                        bgcolor: 'rgba(255,255,255,0.1)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <MailOutlineIcon fontSize="small" sx={{ fontSize: '1.2rem' }} />
+                    </Box>
+                    <Box>
+                      <Typography
+                        variant="caption"
+                        display="block"
+                        sx={{ opacity: 0.7, lineHeight: 1 }}
+                      >
+                        Email
+                      </Typography>
+                      <Typography variant="body2" fontWeight="600">
+                        kanitaxi5555@gmail.com
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Box>
+              </Box>
+            </Grid>
+
+            {/* Right Side: Form */}
+            <Grid size={{ xs: 12, md: 6 }}>
+              <Box
+                component="form"
+                onSubmit={handleSubmit}
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 2, // Reduced gap
+                }}
+              >
+                <Grid container spacing={2}>
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <TextField
+                      name="name"
+                      placeholder="Name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      required
+                      fullWidth
+                      variant="outlined"
+                      size="small" // Small size input
+                      sx={{
+                        '& .MuiOutlinedInput-root': {
+                          borderRadius: 3,
+                          bgcolor: 'rgba(255,255,255,0.1)',
+                          color: '#fff',
+                          '& fieldset': { border: 'none' },
+                          '&:hover fieldset': { border: 'none' },
+                          '&.Mui-focused fieldset': { border: '1px solid rgba(255,255,255,0.3)' },
+                        },
+                        input: {
+                          '&::placeholder': { color: 'rgba(255,255,255,0.5)', opacity: 1 },
+                        },
+                      }}
+                    />
+                  </Grid>
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <TextField
+                      name="phone"
+                      placeholder="Phone"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      required
+                      fullWidth
+                      variant="outlined"
+                      size="small" // Small size input
+                      sx={{
+                        '& .MuiOutlinedInput-root': {
+                          borderRadius: 3,
+                          bgcolor: 'rgba(255,255,255,0.1)',
+                          color: '#fff',
+                          '& fieldset': { border: 'none' },
+                          '&:hover fieldset': { border: 'none' },
+                          '&.Mui-focused fieldset': { border: '1px solid rgba(255,255,255,0.3)' },
+                        },
+                        input: {
+                          '&::placeholder': { color: 'rgba(255,255,255,0.5)', opacity: 1 },
+                        },
+                      }}
+                    />
+                  </Grid>
+                  <Grid size={{ xs: 12 }}>
+                    <TextField
+                      name="message"
+                      placeholder="Message"
+                      value={formData.message}
+                      onChange={handleChange}
+                      multiline
+                      rows={2} // Reduced rows
+                      fullWidth
+                      variant="outlined"
+                      sx={{
+                        '& .MuiOutlinedInput-root': {
+                          borderRadius: 3,
+                          bgcolor: 'rgba(255,255,255,0.1)',
+                          color: '#fff',
+                          '& fieldset': { border: 'none' },
+                          '&:hover fieldset': { border: 'none' },
+                          '&.Mui-focused fieldset': { border: '1px solid rgba(255,255,255,0.3)' },
+                        },
+                        textarea: {
+                          '&::placeholder': { color: 'rgba(255,255,255,0.5)', opacity: 1 },
+                        },
+                      }}
+                    />
+                  </Grid>
+                </Grid>
+
+                <Button
+                  type="submit"
+                  variant="contained"
+                  sx={{
+                    bgcolor: '#bae6fd', // Light blue/cyan pop
+                    color: '#0f172a',
+                    borderRadius: 3,
+                    py: 1, // Reduced padding
+                    fontWeight: 700,
+                    textTransform: 'none',
+                    fontSize: '0.9rem', // Slightly smaller font
+                    alignSelf: 'flex-start',
+                    boxShadow: 'none',
+                    px: 4, // Reduced horizontal padding
+                    '&:hover': {
+                      bgcolor: '#7dd3fc',
+                      boxShadow: 'none',
+                    },
+                  }}
+                >
+                  Submit
+                </Button>
+              </Box>
+            </Grid>
+          </Grid>
         </Box>
-
-        <Grid container spacing={{ xs: 4, md: 8 }}>
-          <Grid size={{ xs: 12, md: 6 }}>
-            <Typography
-              variant="h5"
-              fontWeight="bold"
-              gutterBottom
-              sx={{ fontSize: { xs: '1.25rem', md: '1.5rem' } }}
-            >
-              Get in Touch
-            </Typography>
-            <Box display="flex" alignItems="center" gap={2} mb={2} mt={2}>
-              <PhoneIcon sx={{ color: '#FFD700', fontSize: '1.25rem' }} />
-              <Typography sx={{ fontSize: '0.9rem' }}>+91 94881 04888</Typography>
-            </Box>
-            <Box display="flex" alignItems="center" gap={2} mb={2}>
-              <EmailIcon sx={{ color: '#FFD700', fontSize: '1.25rem' }} />
-              <Typography sx={{ fontSize: '0.9rem' }}>kanitaxi5555@gmail.com</Typography>
-            </Box>
-            <Box display="flex" alignItems="center" gap={2} mb={3}>
-              <LocationOnIcon sx={{ color: '#FFD700', fontSize: '1.25rem' }} />
-              <Typography sx={{ fontSize: '0.9rem' }}>
-                33 Chetti street subramaniyapuram sawyerpuram Thoothukudi 628251
-              </Typography>
-            </Box>
-          </Grid>
-
-          <Grid size={{ xs: 12, md: 6 }}>
-            <form>
-              <Grid container spacing={2}>
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <TextField
-                    label="Name"
-                    fullWidth
-                    size="small"
-                    sx={{
-                      input: { color: '#fff', fontSize: '0.9rem', py: 1 },
-                      label: { color: 'grey.500', fontSize: '0.9rem' },
-                      fieldset: { borderColor: '#333' },
-                      '&:hover fieldset': { borderColor: '#555' },
-                      '& .MuiOutlinedInput-root.Mui-focused fieldset': { borderColor: '#FFD700' },
-                    }}
-                  />
-                </Grid>
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <TextField
-                    label="Email"
-                    fullWidth
-                    size="small"
-                    sx={{
-                      input: { color: '#fff', fontSize: '0.9rem', py: 1 },
-                      label: { color: 'grey.500', fontSize: '0.9rem' },
-                      fieldset: { borderColor: '#333' },
-                      '&:hover fieldset': { borderColor: '#555' },
-                      '& .MuiOutlinedInput-root.Mui-focused fieldset': { borderColor: '#FFD700' },
-                    }}
-                  />
-                </Grid>
-                <Grid size={{ xs: 12 }}>
-                  <TextField
-                    label="Message"
-                    multiline
-                    rows={4}
-                    fullWidth
-                    size="small"
-                    sx={{
-                      textarea: { color: '#fff', fontSize: '0.9rem' },
-                      label: { color: 'grey.500', fontSize: '0.9rem' },
-                      fieldset: { borderColor: '#333' },
-                      '&:hover fieldset': { borderColor: '#555' },
-                      '& .MuiOutlinedInput-root.Mui-focused fieldset': { borderColor: '#FFD700' },
-                    }}
-                  />
-                </Grid>
-                <Grid size={{ xs: 12 }}>
-                  <Button
-                    variant="contained"
-                    size="medium"
-                    fullWidth
-                    sx={{
-                      bgcolor: '#FFD700',
-                      color: '#000',
-                      fontWeight: 'bold',
-                      fontSize: '0.9rem',
-                      py: 1,
-                      '&:hover': { bgcolor: '#FACC15' },
-                    }}
-                  >
-                    Send Message
-                  </Button>
-                </Grid>
-              </Grid>
-            </form>
-          </Grid>
-        </Grid>
       </Container>
     </Box>
   )

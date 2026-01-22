@@ -78,6 +78,7 @@ export interface Config {
     'vehicle-images': VehicleImage;
     'vehicle-icons': VehicleIcon;
     'slider-images': SliderImage;
+    contacts: Contact;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -100,6 +101,7 @@ export interface Config {
     'vehicle-images': VehicleImagesSelect<false> | VehicleImagesSelect<true>;
     'vehicle-icons': VehicleIconsSelect<false> | VehicleIconsSelect<true>;
     'slider-images': SliderImagesSelect<false> | SliderImagesSelect<true>;
+    contacts: ContactsSelect<false> | ContactsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -437,6 +439,19 @@ export interface SliderImage {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contacts".
+ */
+export interface Contact {
+  id: string;
+  name: string;
+  phone: string;
+  message?: string | null;
+  inquiryType: 'customer' | 'partner' | 'driver';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -502,6 +517,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'slider-images';
         value: string | SliderImage;
+      } | null)
+    | ({
+        relationTo: 'contacts';
+        value: string | Contact;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -819,6 +838,18 @@ export interface SliderImagesSelect<T extends boolean = true> {
               filename?: T;
             };
       };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contacts_select".
+ */
+export interface ContactsSelect<T extends boolean = true> {
+  name?: T;
+  phone?: T;
+  message?: T;
+  inquiryType?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

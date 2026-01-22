@@ -32,7 +32,8 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
     <Box
       id="tariff-section"
       sx={{
-        py: { xs: 5, md: 10 },
+        pt: { xs: 5, md: 10 },
+        pb: 0,
         position: 'relative',
         overflow: 'hidden',
         bgcolor: '#f1f7f7',

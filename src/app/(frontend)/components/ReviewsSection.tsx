@@ -86,22 +86,22 @@ export default function ReviewsSection() {
     <Box
       id="reviews-section"
       sx={{
-        py: { xs: 2, md: 6 }, // Reduced padding on mobile
-        background: '#060d1c',
-        color: '#ffffff',
+        py: { xs: 6, md: 10 },
+        background: '#f1f7f7',
+        color: '#0f172a',
         overflow: 'hidden',
       }}
     >
       <Container maxWidth="xl">
         <Grid container justifyContent="center">
           <Grid size={{ xs: 12, md: 10 }}>
-            <Box textAlign="center" mb={4}>
+            <Box textAlign="center" mb={2}>
               <Typography
                 variant="h3"
                 fontWeight="800"
                 gutterBottom
                 sx={{
-                  color: '#ffffff',
+                  color: '#000',
                   fontSize: { xs: '1.75rem', md: '3rem' },
                   fontFamily: 'inherit',
                 }}
@@ -110,7 +110,7 @@ export default function ReviewsSection() {
               </Typography>
               <Typography
                 variant="h6"
-                color="#9ca3af"
+                color="#64748b"
                 mx="auto"
                 fontWeight="400"
                 sx={{
@@ -149,7 +149,7 @@ export default function ReviewsSection() {
                           minWidth: { md: '280px' },
                           display: 'flex',
                           flexDirection: 'column',
-                          bgcolor: '#112240',
+                          bgcolor: '#E0E0E0',
                           borderRadius: 4,
                           position: 'relative',
                           transition: 'transform 0.3s ease',
@@ -157,7 +157,7 @@ export default function ReviewsSection() {
                           minHeight: '220px',
                           '&:hover': {
                             transform: 'translateY(-5px)',
-                            boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+                            boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
                           },
                         }}
                       >
@@ -192,7 +192,7 @@ export default function ReviewsSection() {
                           <Typography
                             variant="body1"
                             sx={{
-                              color: '#9ca3af',
+                              color: '#000000',
                               lineHeight: 1.6,
                               fontSize: '0.875rem',
                               fontWeight: 400,
@@ -215,7 +215,7 @@ export default function ReviewsSection() {
                             sx={{
                               width: 40,
                               height: 40,
-                              bgcolor: '#060d1c',
+                              bgcolor: '#f1f7f7',
                               border: '2px solid #fbbf24',
                             }}
                           >
@@ -226,7 +226,7 @@ export default function ReviewsSection() {
                               variant="subtitle1"
                               sx={{
                                 fontWeight: 700,
-                                color: '#ffffff',
+                                color: '#0f172a',
                                 fontSize: '1rem',
                               }}
                             >
@@ -244,7 +244,7 @@ export default function ReviewsSection() {
                   display: 'flex',
                   justifyContent: 'center',
                   gap: 1.5,
-                  mt: { xs: 2, md: 4 },
+                  mt: { xs: 1, md: 2 },
                 }}
               >
                 {[...Array(totalPages)].map((_, i) => (

@@ -1468,6 +1468,86 @@ export default function HeroSection() {
                         />
                       </Grid>
 
+                      <Grid size={{ xs: 12, md: tripType === 'multilocation' ? 3 : 3 }}>
+                        <Controller
+                          name="customerName"
+                          control={control}
+                          render={({ field }) => (
+                            <TextField
+                              {...field}
+                              fullWidth
+                              size="small"
+                              label="Your Name"
+                              sx={{
+                                input: {
+                                  color: 'rgba(0, 0, 0, 0.7)',
+                                  fontWeight: 500,
+                                  fontSize: '0.9rem',
+                                  py: 1,
+                                  '&:-webkit-autofill': {
+                                    WebkitBoxShadow: '0 0 0 100px #dae0e4 inset',
+                                    WebkitTextFillColor: '#000',
+                                    transition: 'background-color 5000s ease-in-out 0s',
+                                  },
+                                },
+                                label: {
+                                  color: '#0e172a',
+                                  fontSize: '0.9rem',
+                                  '&.MuiInputLabel-shrink': { color: '#94a3b8' },
+                                },
+                                '& .MuiOutlinedInput-root': {
+                                  bgcolor: '#dae0e4',
+                                  '& fieldset': { borderColor: 'rgba(0,0,0,0.1)' },
+                                  '&:hover fieldset': { borderColor: 'rgba(0,0,0,0.3)' },
+                                  '&.Mui-focused fieldset': { borderColor: '#FFD700' },
+                                },
+                              }}
+                            />
+                          )}
+                        />
+                      </Grid>
+                      <Grid size={{ xs: 12, md: tripType === 'multilocation' ? 3 : 3 }}>
+                        <Controller
+                          name="customerPhone"
+                          control={control}
+                          render={({ field }) => (
+                            <TextField
+                              {...field}
+                              fullWidth
+                              size="small"
+                              label="Mobile Number"
+                              sx={{
+                                input: {
+                                  color: 'rgba(14, 23, 42, 0.7)',
+                                  fontWeight: 500,
+                                  fontSize: '0.9rem',
+                                  py: 1,
+                                  '&:-webkit-autofill': {
+                                    WebkitBoxShadow: '0 0 0 100px #dae0e4 inset',
+                                    WebkitTextFillColor: '#0e172a',
+                                    transition: 'background-color 5000s ease-in-out 0s',
+                                  },
+                                },
+                                label: {
+                                  color: '#0e172a',
+                                  fontSize: '0.9rem',
+                                  '&.MuiInputLabel-shrink': { color: '#94a3b8' },
+                                },
+                                '& .MuiOutlinedInput-root': {
+                                  bgcolor: '#dae0e4',
+                                  '& fieldset': { borderColor: '#e2e8f0' },
+                                  '&:hover fieldset': { borderColor: '#cbd5e1' },
+                                  '&.Mui-focused fieldset': {
+                                    borderColor: '#d97706',
+                                    borderWidth: 2,
+                                  },
+                                },
+                              }}
+                            />
+                          )}
+                        />
+                      </Grid>
+
                       {hasActiveCoupons && tripType === 'multilocation' && (
                         <Grid size={{ xs: 12, md: 3 }}>
                           {/* Coupon Section (Multilocation Only) */}
@@ -1557,86 +1637,6 @@ export default function HeroSection() {
                           </Box>
                         </Grid>
                       )}
-
-                      <Grid size={{ xs: 12, md: tripType === 'multilocation' ? 3 : 3 }}>
-                        <Controller
-                          name="customerName"
-                          control={control}
-                          render={({ field }) => (
-                            <TextField
-                              {...field}
-                              fullWidth
-                              size="small"
-                              label="Your Name"
-                              sx={{
-                                input: {
-                                  color: 'rgba(0, 0, 0, 0.7)',
-                                  fontWeight: 500,
-                                  fontSize: '0.9rem',
-                                  py: 1,
-                                  '&:-webkit-autofill': {
-                                    WebkitBoxShadow: '0 0 0 100px #dae0e4 inset',
-                                    WebkitTextFillColor: '#000',
-                                    transition: 'background-color 5000s ease-in-out 0s',
-                                  },
-                                },
-                                label: {
-                                  color: '#0e172a',
-                                  fontSize: '0.9rem',
-                                  '&.MuiInputLabel-shrink': { color: '#94a3b8' },
-                                },
-                                '& .MuiOutlinedInput-root': {
-                                  bgcolor: '#dae0e4',
-                                  '& fieldset': { borderColor: 'rgba(0,0,0,0.1)' },
-                                  '&:hover fieldset': { borderColor: 'rgba(0,0,0,0.3)' },
-                                  '&.Mui-focused fieldset': { borderColor: '#FFD700' },
-                                },
-                              }}
-                            />
-                          )}
-                        />
-                      </Grid>
-                      <Grid size={{ xs: 12, md: tripType === 'multilocation' ? 3 : 3 }}>
-                        <Controller
-                          name="customerPhone"
-                          control={control}
-                          render={({ field }) => (
-                            <TextField
-                              {...field}
-                              fullWidth
-                              size="small"
-                              label="Mobile Number"
-                              sx={{
-                                input: {
-                                  color: 'rgba(14, 23, 42, 0.7)',
-                                  fontWeight: 500,
-                                  fontSize: '0.9rem',
-                                  py: 1,
-                                  '&:-webkit-autofill': {
-                                    WebkitBoxShadow: '0 0 0 100px #dae0e4 inset',
-                                    WebkitTextFillColor: '#0e172a',
-                                    transition: 'background-color 5000s ease-in-out 0s',
-                                  },
-                                },
-                                label: {
-                                  color: '#0e172a',
-                                  fontSize: '0.9rem',
-                                  '&.MuiInputLabel-shrink': { color: '#94a3b8' },
-                                },
-                                '& .MuiOutlinedInput-root': {
-                                  bgcolor: '#dae0e4',
-                                  '& fieldset': { borderColor: '#e2e8f0' },
-                                  '&:hover fieldset': { borderColor: '#cbd5e1' },
-                                  '&.Mui-focused fieldset': {
-                                    borderColor: '#d97706',
-                                    borderWidth: 2,
-                                  },
-                                },
-                              }}
-                            />
-                          )}
-                        />
-                      </Grid>
 
                       {tripType === 'multilocation' && (
                         <>

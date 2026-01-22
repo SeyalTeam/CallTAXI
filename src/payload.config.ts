@@ -17,6 +17,7 @@ import { BookingReport } from './globals/BookingReport'
 import { Customers } from './collections/Customers'
 import { Coupons } from './collections/Coupons'
 import { SliderImages } from './collections/SliderImages'
+import { Contacts } from './collections/Contacts'
 import { getBookingReport } from './endpoints/getBookingReport'
 import { getCustomerReport } from './endpoints/getCustomerReport'
 import { CustomerReport } from './globals/CustomerReport'
@@ -61,6 +62,7 @@ export default buildConfig({
     VehicleImages,
     VehicleIcons,
     SliderImages,
+    Contacts,
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',

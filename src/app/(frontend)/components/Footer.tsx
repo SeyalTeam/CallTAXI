@@ -3,7 +3,11 @@
 import React, { useEffect, useState } from 'react'
 import PhoneIcon from '@mui/icons-material/Phone'
 import WhatsAppIcon from '@mui/icons-material/WhatsApp'
-import { Box, Container, Typography } from '@mui/material'
+import FacebookIcon from '@mui/icons-material/Facebook'
+import InstagramIcon from '@mui/icons-material/Instagram'
+import XIcon from '@mui/icons-material/X'
+import YouTubeIcon from '@mui/icons-material/YouTube'
+import { Box, Container, Typography, Grid, IconButton } from '@mui/material'
 
 export default function Footer() {
   const [showSticky, setShowSticky] = useState(false)
@@ -26,28 +30,196 @@ export default function Footer() {
   }, [])
 
   return (
-    <>
-      <Box
-        sx={{
-          bgcolor: '#000',
-          color: '#fff',
-          py: 4,
-          borderTop: '1px solid #333',
-          pb: 4,
-        }}
-      >
-        <Container maxWidth="lg">
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-            flexWrap="wrap"
-            gap={2}
-          >
-            <Typography variant="h6" color="#FFD700" fontWeight="bold">
-              Kani Taxi
+    <Box
+      component="footer"
+      sx={{ bgcolor: '#ffffff', color: '#000000', borderTop: '1px solid #e5e7eb' }}
+    >
+      {/* Top Footer Section - Links */}
+      <Container maxWidth="xl" sx={{ py: 8 }}>
+        <Grid container spacing={4}>
+          {/* Column 1: Services */}
+          <Grid size={{ xs: 6, md: 2 }}>
+            <Typography variant="subtitle1" fontWeight="700" gutterBottom sx={{ mb: 2.5 }}>
+              Our Services
             </Typography>
-            <Typography variant="body2">© {new Date().getFullYear()} Kani Taxi.</Typography>
+            <Box display="flex" flexDirection="column" gap={1.5}>
+              {[
+                'One Way Drop',
+                'Round Trip',
+                'Airport Transfer',
+                'Tour Packages',
+                'Wedding Events',
+              ].map((item) => (
+                <Typography
+                  key={item}
+                  variant="body2"
+                  fontWeight="500"
+                  sx={{
+                    cursor: 'pointer',
+                    color: '#333333',
+                    textDecoration: 'none',
+                    '&:hover': { color: '#000000' },
+                  }}
+                >
+                  {item}
+                </Typography>
+              ))}
+            </Box>
+          </Grid>
+
+          {/* Column 2: Our Cabs */}
+          <Grid size={{ xs: 6, md: 2 }}>
+            <Typography variant="subtitle1" fontWeight="700" gutterBottom sx={{ mb: 2.5 }}>
+              Our Cabs
+            </Typography>
+            <Box display="flex" flexDirection="column" gap={1.5}>
+              {['Etios', 'Swift Dzire', 'Innova', 'Innova Crysta', 'Xylo', 'Tempo Traveller'].map(
+                (item) => (
+                  <Typography
+                    key={item}
+                    variant="body2"
+                    fontWeight="500"
+                    sx={{
+                      cursor: 'pointer',
+                      color: '#333333',
+                      textDecoration: 'none',
+                      '&:hover': { color: '#000000' },
+                    }}
+                  >
+                    {item}
+                  </Typography>
+                ),
+              )}
+            </Box>
+          </Grid>
+
+          {/* Column 3: Menu */}
+          <Grid size={{ xs: 6, md: 2 }}>
+            <Typography variant="subtitle1" fontWeight="700" gutterBottom sx={{ mb: 2.5 }}>
+              Menu
+            </Typography>
+            <Box display="flex" flexDirection="column" gap={1.5}>
+              {[
+                { label: 'Booking', id: 'home' },
+                { label: 'About Us', id: 'about-section' },
+                { label: 'Tariffs', id: 'tariff-section' },
+                { label: 'Packages', id: 'packages-section' },
+                { label: 'Contact', id: 'contact-section' },
+              ].map((item) => (
+                <Typography
+                  key={item.label}
+                  variant="body2"
+                  onClick={() =>
+                    document
+                      .getElementById(item.id)
+                      ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                  }
+                  fontWeight="500"
+                  sx={{
+                    cursor: 'pointer',
+                    color: '#333333',
+                    textDecoration: 'none',
+                    '&:hover': { color: '#000000' },
+                  }}
+                >
+                  {item.label}
+                </Typography>
+              ))}
+            </Box>
+          </Grid>
+
+          {/* Column 4: Information */}
+          <Grid size={{ xs: 6, md: 3 }}>
+            <Typography variant="subtitle1" fontWeight="700" gutterBottom sx={{ mb: 2.5 }}>
+              Information
+            </Typography>
+            <Box display="flex" flexDirection="column" gap={1.5}>
+              {[
+                'Cancellation Policy',
+                'Method of Payment',
+                'Privacy Policy',
+                'Terms & Conditions',
+              ].map((item) => (
+                <Typography
+                  key={item}
+                  variant="body2"
+                  fontWeight="500"
+                  sx={{
+                    cursor: 'pointer',
+                    color: '#333333',
+                    textDecoration: 'none',
+                    '&:hover': { color: '#000000' },
+                  }}
+                >
+                  {item}
+                </Typography>
+              ))}
+            </Box>
+          </Grid>
+
+          {/* Column 5: Download App */}
+          <Grid size={{ xs: 6, md: 3 }}>
+            <Typography variant="subtitle1" fontWeight="700" gutterBottom sx={{ mb: 2.5 }}>
+              Download our Apps
+            </Typography>
+            <Box display="flex" flexDirection="column" gap={2}>
+              <Box
+                component="img"
+                src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg"
+                alt="App Store"
+                sx={{ width: '135px', cursor: 'pointer', '&:hover': { opacity: 0.8 } }}
+              />
+              <Box
+                component="img"
+                src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
+                alt="Google Play"
+                sx={{ width: '135px', cursor: 'pointer', '&:hover': { opacity: 0.8 } }}
+              />
+
+              {/* Social Media Icons */}
+              <Box display="flex" gap={1} mt={1}>
+                {[
+                  { icon: FacebookIcon, label: 'Facebook' },
+                  { icon: InstagramIcon, label: 'Instagram' },
+                  { icon: XIcon, label: 'X' },
+                  { icon: YouTubeIcon, label: 'YouTube' },
+                ].map((social, idx) => (
+                  <IconButton
+                    key={idx}
+                    size="small"
+                    sx={{
+                      color: '#333333',
+                      bgcolor: '#f3f4f6',
+                      '&:hover': { bgcolor: '#e5e7eb', color: '#000000' },
+                    }}
+                  >
+                    <social.icon fontSize="small" />
+                  </IconButton>
+                ))}
+              </Box>
+            </Box>
+          </Grid>
+        </Grid>
+      </Container>
+
+      {/* Bottom Footer Bar */}
+      <Box sx={{ bgcolor: '#0f172a', color: '#fff', py: 2 }}>
+        <Container maxWidth="xl">
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: 2,
+            }}
+          >
+            <Typography variant="caption" sx={{ opacity: 0.7 }}>
+              © {new Date().getFullYear()} Kani Taxi. All rights reserved.
+            </Typography>
+            <Typography variant="caption" sx={{ opacity: 0.7 }}>
+              Powered by Seyal
+            </Typography>
           </Box>
         </Container>
       </Box>
@@ -115,6 +287,6 @@ export default function Footer() {
           </Box>
         </Box>
       )}
-    </>
+    </Box>
   )
 }
