@@ -17,12 +17,12 @@ export default function PartnerSection() {
     background: '#ffffff',
     boxShadow: '0 10px 40px -10px rgba(0,0,0,0.08)',
     transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
-    border: '1px solid #d32f2f',
+    border: '1px solid #0e172a',
     overflow: 'hidden',
     position: 'relative',
     '&:hover': {
       transform: 'translateY(-8px)',
-      boxShadow: '0 20px 40px -10px rgba(211, 47, 47, 0.15)', // Light red glow on hover
+      boxShadow: '0 20px 40px -10px rgba(14, 23, 42, 0.15)', // Dark blue slight glow
     },
   }
 
@@ -92,14 +92,14 @@ export default function PartnerSection() {
                     width: 100,
                     height: 100,
                     borderRadius: '50%',
-                    bgcolor: '#ffebee', // Very light red
+                    bgcolor: '#bae6fe', // Light blue
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     flexShrink: 0,
                   }}
                 >
-                  <LocalTaxiIcon sx={{ fontSize: 50, color: '#d32f2f' }} />
+                  <LocalTaxiIcon sx={{ fontSize: 50, color: '#0e172a' }} />
                 </Box>
 
                 <Box sx={{ textAlign: { xs: 'center', sm: 'left' } }}>
@@ -123,7 +123,7 @@ export default function PartnerSection() {
                     endIcon={<ArrowForwardIcon />}
                     onClick={handlePartnerClick}
                     sx={{
-                      bgcolor: '#d32f2f',
+                      bgcolor: '#0e172a',
                       color: '#fff',
                       borderRadius: 3,
                       px: 4,
@@ -131,10 +131,10 @@ export default function PartnerSection() {
                       textTransform: 'none',
                       fontSize: '1rem',
                       fontWeight: 600,
-                      boxShadow: '0 4px 14px 0 rgba(211, 47, 47, 0.39)',
+                      boxShadow: 'none',
                       '&:hover': {
-                        bgcolor: '#b71c1c',
-                        boxShadow: '0 6px 20px rgba(211, 47, 47, 0.23)',
+                        bgcolor: '#1e293b',
+                        boxShadow: 'none',
                       },
                     }}
                   >
@@ -164,14 +164,14 @@ export default function PartnerSection() {
                     width: 100,
                     height: 100,
                     borderRadius: '50%',
-                    bgcolor: '#ffebee',
+                    bgcolor: '#bae6fe', // Light blue
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     flexShrink: 0,
                   }}
                 >
-                  <PersonIcon sx={{ fontSize: 50, color: '#d32f2f' }} />
+                  <PersonIcon sx={{ fontSize: 50, color: '#0e172a' }} />
                 </Box>
 
                 <Box sx={{ textAlign: { xs: 'center', sm: 'left' } }}>
@@ -194,7 +194,7 @@ export default function PartnerSection() {
                     endIcon={<ArrowForwardIcon />}
                     onClick={handleDriverClick}
                     sx={{
-                      bgcolor: '#d32f2f',
+                      bgcolor: '#0e172a',
                       color: '#fff',
                       borderRadius: 3,
                       px: 4,
@@ -202,10 +202,10 @@ export default function PartnerSection() {
                       textTransform: 'none',
                       fontSize: '1rem',
                       fontWeight: 600,
-                      boxShadow: '0 4px 14px 0 rgba(211, 47, 47, 0.39)',
+                      boxShadow: 'none',
                       '&:hover': {
-                        bgcolor: '#b71c1c',
-                        boxShadow: '0 6px 20px rgba(211, 47, 47, 0.23)',
+                        bgcolor: '#1e293b',
+                        boxShadow: 'none',
                       },
                     }}
                   >
