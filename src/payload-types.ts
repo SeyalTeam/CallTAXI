@@ -356,6 +356,7 @@ export interface Booking {
   estimatedFare?: number | null;
   couponCode?: string | null;
   discountAmount?: number | null;
+  distanceKm?: number | null;
   status?: ('pending' | 'confirmed' | 'cancelled') | null;
   notes?: string | null;
   updatedAt: string;
@@ -700,6 +701,7 @@ export interface BookingsSelect<T extends boolean = true> {
   estimatedFare?: T;
   couponCode?: T;
   discountAmount?: T;
+  distanceKm?: T;
   status?: T;
   notes?: T;
   updatedAt?: T;

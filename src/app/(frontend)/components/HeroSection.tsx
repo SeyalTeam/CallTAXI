@@ -124,6 +124,7 @@ export default function HeroSection() {
   const [dropCoords, setDropCoords] = useState<{ lat: string; lon: string } | null>(null)
   const [tariffs, setTariffs] = useState<TariffDoc[]>([])
   const [distanceInfo, setDistanceInfo] = useState<string>('')
+  const [calculatedDistance, setCalculatedDistance] = useState<number | null>(null)
   const [fare, setFare] = useState<string | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
 
@@ -429,8 +430,10 @@ export default function HeroSection() {
       if (!selectedVehicleId) {
         if (distanceKm > 0) {
           setDistanceInfo(`${distanceKm.toFixed(2)} km • ${Math.round(durationMin)} min`)
+          setCalculatedDistance(distanceKm)
         } else {
           setDistanceInfo('')
+          setCalculatedDistance(null)
         }
         setFare(null)
         setIsCalculating(false)
@@ -448,9 +451,11 @@ export default function HeroSection() {
           setDistanceInfo(
             `Package: ${hrs} Hrs / ${allowedKm} km\nExtra: ₹${chosen.packages.extraHourRate}/hr, ₹${chosen.packages.extraKmRate}/km`,
           )
+          setCalculatedDistance(allowedKm)
           setFare((amount + chosen.packages.bata).toFixed(2))
         } else {
           setDistanceInfo('')
+          setCalculatedDistance(null)
           setFare(null)
         }
         setIsCalculating(false)
@@ -509,10 +514,12 @@ export default function HeroSection() {
       }
 
       setDistanceInfo(`${distanceKm.toFixed(2)} km • ${Math.round(durationMin)} min`)
+      setCalculatedDistance(distanceKm)
       setFare(Math.round(total).toString())
     } catch (e) {
       console.error(e)
       setFare(null)
+      setCalculatedDistance(null)
     } finally {
       setIsCalculating(false)
     }
@@ -649,7 +656,7 @@ export default function HeroSection() {
           ? data.dropDateTime?.toISOString()
           : undefined,
       estimatedFare: fare ? Number(fare) : undefined,
-      distanceKm: distanceInfo ? Number(distanceInfo.split(' ')[0]) : undefined,
+      distanceKm: calculatedDistance || undefined,
       couponCode: appliedCoupon?.name,
       discountAmount: discountAmount || undefined,
       status: 'pending',
@@ -694,6 +701,7 @@ export default function HeroSection() {
       setDropCoords(null)
       setFare(null)
       setDistanceInfo('')
+      setCalculatedDistance(null)
 
       // Clear Coupon State
       setCouponCodeInput('')
