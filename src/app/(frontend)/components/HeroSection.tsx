@@ -649,6 +649,7 @@ export default function HeroSection() {
           ? data.dropDateTime?.toISOString()
           : undefined,
       estimatedFare: fare ? Number(fare) : undefined,
+      distanceKm: distanceInfo ? Number(distanceInfo.split(' ')[0]) : undefined,
       couponCode: appliedCoupon?.name,
       discountAmount: discountAmount || undefined,
       status: 'pending',

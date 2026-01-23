@@ -12,6 +12,7 @@ export const Bookings: CollectionConfig = {
       'pickupLocationName',
       'dropoffLocationName',
       'estimatedFare',
+      'distanceKm',
       'status',
     ],
   },
@@ -109,6 +110,7 @@ export const Bookings: CollectionConfig = {
     { name: 'estimatedFare', type: 'number', required: false },
     { name: 'couponCode', type: 'text', required: false },
     { name: 'discountAmount', type: 'number', required: false },
+    { name: 'distanceKm', type: 'number', required: false },
     {
       name: 'status',
       type: 'select',
