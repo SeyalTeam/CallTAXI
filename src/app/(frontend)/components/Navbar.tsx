@@ -28,12 +28,13 @@ export default function Navbar() {
   const menuItems = [
     { label: 'Booking', id: 'home' },
     { label: 'About', id: 'about-section' },
-    { label: 'Tariffs', id: 'tariff-section' },
+    { label: 'Tariff', id: 'tariff-section' },
     { label: 'Packages', id: 'packages-section' },
     { label: 'Contact', id: 'contact-section' },
   ]
 
   // Dynamic values based on transparency
+  const textColor = scrolled ? '#0f172a' : '#ffffff'
   const iconColor = scrolled ? '#0f172a' : '#ffffff'
   const logoColor = scrolled ? '#0f172a' : '#ffffff'
   const navItemColor = scrolled ? '#475569' : '#e2e8f0'

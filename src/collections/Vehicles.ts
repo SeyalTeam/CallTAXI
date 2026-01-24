@@ -119,15 +119,9 @@ export const Vehicles: CollectionConfig = {
     },
   ],
   access: {
-    /**
-     * ✅ Make Vehicles PUBLIC for Creating
-     */
-    create: () => true,
+    create: ({ req: { user } }) => user?.role === 'superadmin' || user?.role === 'admin',
     read: () => true, // Public access for read
-    /**
-     * ✅ Make Vehicles PUBLIC for Updating
-     */
-    update: () => true,
+    update: ({ req: { user } }) => user?.role === 'superadmin' || user?.role === 'admin',
     delete: ({ req: { user } }) => user?.role === 'superadmin',
   },
 }
