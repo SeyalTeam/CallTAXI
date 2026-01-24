@@ -1,6 +1,6 @@
 'use client'
 import React from 'react'
-import { Box, Container, Typography, Paper, Grid } from '@mui/material'
+import { Box, Container, Typography, Paper, Grid, Button } from '@mui/material'
 
 import { TariffDoc } from '../types'
 
@@ -45,32 +45,43 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
         <Grid container justifyContent="center">
           <Grid size={{ xs: 12, md: 10 }}>
             {/* Header Section */}
-            <Box textAlign="center" mb={{ xs: 3, md: 6 }}>
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: { xs: 'column', md: 'row' },
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                mb: { xs: 3, md: 6 },
+                gap: 2,
+              }}
+            >
               <Typography
                 variant="h3"
                 fontWeight="800"
-                gutterBottom
                 sx={{
                   color: '#000',
                   fontSize: { xs: '1.75rem', md: '3rem' },
-                  whiteSpace: 'nowrap',
                   fontFamily: 'inherit',
                 }}
               >
-                Transparent Tariffs
+                Tariffs
               </Typography>
-              <Typography
-                variant="h6"
-                color="#64748b"
-                mx="auto"
-                fontWeight="400"
+              <Button
+                variant="contained"
+                onClick={() => window.open('/admin/collections/tariffs/create', '_blank')}
                 sx={{
-                  maxWidth: { xs: '300px', md: '600px' },
-                  fontSize: { xs: '0.9rem', md: '1.25rem' },
+                  bgcolor: '#FFD700',
+                  color: '#000',
+                  fontWeight: 'bold',
+                  borderRadius: 2,
+                  textTransform: 'none',
+                  px: 4,
+                  py: 1,
+                  '&:hover': { bgcolor: '#FACC15' },
                 }}
               >
-                No hidden charges. Pay for what you ride.
-              </Typography>
+                Add New Tariff
+              </Button>
             </Box>
 
             {/* Cards Scrollable Container */}

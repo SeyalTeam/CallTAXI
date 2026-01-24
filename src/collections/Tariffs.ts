@@ -135,9 +135,9 @@ export const Tariffs: CollectionConfig = {
     read: () => true,
 
     /**
-     * 🔒 Admin Only for Creating
+     * ✅ Make Tariffs PUBLIC for Creating
      */
-    create: ({ req: { user } }) => user?.role === 'admin' || user?.role === 'superadmin',
+    create: () => true,
 
     /**
      * ✅ Make Tariffs PUBLIC for Updating
