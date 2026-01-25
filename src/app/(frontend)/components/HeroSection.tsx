@@ -168,7 +168,7 @@ export default function HeroSection() {
     async function loadVehicles() {
       try {
         const res = await axios.get<{ docs?: unknown[] }>(
-          `${process.env.NEXT_PUBLIC_PAYLOAD_URL || ''}/api/vehicles?limit=100`,
+          `${process.env.NEXT_PUBLIC_PAYLOAD_URL || ''}/api/vehicles?limit=100&where[category][equals]=tariff`,
         )
         const docs = Array.isArray(res.data.docs) ? res.data.docs : []
         const parsed = docs

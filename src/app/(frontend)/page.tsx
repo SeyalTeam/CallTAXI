@@ -74,17 +74,26 @@ export default async function Page() {
   })
 
   // Normalize data for client components
-  const tariffs = tariffsRes.docs.map((doc) => {
-    return {
-      id: doc.id,
-      vehicle: doc.vehicle,
-      oneway: doc.oneway,
-      roundtrip: doc.roundtrip,
-      packages: doc.packages,
-      createdAt: doc.createdAt,
-      updatedAt: doc.updatedAt,
-    } as TariffDoc
-  })
+  const tariffs = tariffsRes.docs
+    .filter((doc) => {
+      const vehicle = doc.vehicle
+      if (typeof vehicle === 'object' && vehicle !== null) {
+        // @ts-expect-error - vehicle will have category due to depth: 2
+        return vehicle.category === 'tariff'
+      }
+      return false
+    })
+    .map((doc) => {
+      return {
+        id: doc.id,
+        vehicle: doc.vehicle,
+        oneway: doc.oneway,
+        roundtrip: doc.roundtrip,
+        packages: doc.packages,
+        createdAt: doc.createdAt,
+        updatedAt: doc.updatedAt,
+      } as TariffDoc
+    })
 
   return (
     <main style={{ backgroundColor: '#0f172a', minHeight: '100vh' }}>

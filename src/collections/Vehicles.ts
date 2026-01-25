@@ -117,6 +117,22 @@ export const Vehicles: CollectionConfig = {
       relationTo: 'vehicle-icons',
       required: false, // Changed from true
     },
+    {
+      name: 'category',
+      type: 'select',
+      defaultValue: 'tariff',
+      required: true,
+      options: [
+        {
+          label: 'Tariff',
+          value: 'tariff',
+        },
+        {
+          label: 'Attachment',
+          value: 'attachment',
+        },
+      ],
+    },
   ],
   access: {
     create: ({ req: { user } }) => user?.role === 'superadmin' || user?.role === 'admin',

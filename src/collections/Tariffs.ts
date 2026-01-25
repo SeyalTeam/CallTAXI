@@ -15,6 +15,14 @@ export const Tariffs: CollectionConfig = {
       relationTo: 'vehicles',
       required: true,
       unique: true,
+      filterOptions: ({ relationTo }) => {
+        if (relationTo === 'vehicles') {
+          return {
+            category: { equals: 'tariff' },
+          }
+        }
+        return true
+      },
     },
     {
       type: 'group',

@@ -256,6 +256,7 @@ export interface Vehicle {
   lastFc: string;
   image?: (string | null) | VehicleImage;
   icon?: (string | null) | VehicleIcon;
+  category: 'tariff' | 'attachment';
   updatedAt: string;
   createdAt: string;
 }
@@ -672,6 +673,7 @@ export interface VehiclesSelect<T extends boolean = true> {
   lastFc?: T;
   image?: T;
   icon?: T;
+  category?: T;
   updatedAt?: T;
   createdAt?: T;
 }
