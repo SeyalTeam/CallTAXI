@@ -140,9 +140,9 @@ export const Tariffs: CollectionConfig = {
     create: ({ req: { user } }) => user?.role === 'admin' || user?.role === 'superadmin',
 
     /**
-     * ✅ Make Tariffs PUBLIC for Updating
+     * 🔒 Admin Only for Updating
      */
-    update: () => true,
+    update: ({ req: { user } }) => user?.role === 'admin' || user?.role === 'superadmin',
 
     /**
      * 🔒 Only Superadmin can delete
