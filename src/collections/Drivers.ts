@@ -56,25 +56,9 @@ export const Drivers: CollectionConfig = {
     },
   ],
   access: {
-    // Assuming ties to Users collection; customize based on roles
-    create: ({ req: { user } }) => user?.role === 'superadmin' || user?.role === 'admin',
-    read: ({ req: { user } }) => {
-      if (user?.role === 'superadmin' || user?.role === 'admin' || user?.role === 'accounts') {
-        return true
-      }
-      if (user?.role === 'driver') {
-        return { id: { equals: user.id } } // Drivers see own data only
-      }
-      return false
-    },
-    update: ({ req: { user }, id }) => {
-      if (user?.role === 'superadmin') return true
-      if (user?.role === 'admin') return false // Read-only for admins
-      if (user?.role === 'driver') {
-        return { id: { equals: user.id } }
-      }
-      return false
-    },
+    create: () => true,
+    read: () => true,
+    update: () => true,
     delete: ({ req: { user } }) => user?.role === 'superadmin',
   },
 }
