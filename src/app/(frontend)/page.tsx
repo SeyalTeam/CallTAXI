@@ -78,7 +78,6 @@ export default async function Page() {
     .filter((doc) => {
       const vehicle = doc.vehicle
       if (typeof vehicle === 'object' && vehicle !== null) {
-        // @ts-expect-error - vehicle will have category due to depth: 2
         return vehicle.category === 'tariff'
       }
       return false
