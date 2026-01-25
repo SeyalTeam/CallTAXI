@@ -67,6 +67,15 @@ export const Bookings: CollectionConfig = {
       options: ['oneway', 'roundtrip', 'packages', 'multilocation'],
       required: true,
     },
+    {
+      name: 'driver',
+      type: 'relationship',
+      relationTo: 'drivers',
+      required: false,
+      admin: {
+        position: 'sidebar',
+      },
+    },
 
     { name: 'pickupLocation', type: 'point', required: true },
     { name: 'pickupLocationName', type: 'text', required: true },

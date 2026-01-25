@@ -37,11 +37,18 @@ interface Booking {
   dropoffLocationName?: string
   estimatedFare?: number
   status: string
+  driver?: { id: string; name: string } | string
+}
+
+interface Driver {
+  id: string
+  name: string
 }
 
 const BookingReport = () => {
   const [data, setData] = useState<Booking[]>([])
   const [loading, setLoading] = useState(false)
+  const [drivers, setDrivers] = useState<Driver[]>([])
 
   // Filters
   const [date, setDate] = useState('')
@@ -52,14 +59,28 @@ const BookingReport = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null)
 
+  // Driver Update State
+  const [driverAnchorEl, setDriverAnchorEl] = useState<null | HTMLElement>(null)
+  const [selectedDriverBookingId, setSelectedDriverBookingId] = useState<string | null>(null)
+
   const handleStatusClick = (event: React.MouseEvent<HTMLElement>, id: string) => {
     setAnchorEl(event.currentTarget)
     setSelectedBookingId(id)
   }
 
+  const handleDriverClick = (event: React.MouseEvent<HTMLElement>, id: string) => {
+    setDriverAnchorEl(event.currentTarget)
+    setSelectedDriverBookingId(id)
+  }
+
   const handleStatusClose = () => {
     setAnchorEl(null)
     setSelectedBookingId(null)
+  }
+
+  const handleDriverClose = () => {
+    setDriverAnchorEl(null)
+    setSelectedDriverBookingId(null)
   }
 
   const handleStatusUpdate = async (newStatus: string) => {
@@ -85,6 +106,31 @@ const BookingReport = () => {
     }
   }
 
+  const handleDriverUpdate = async (driverId: string, driverName: string) => {
+    if (!selectedDriverBookingId) return
+
+    // Optimistic update
+    setData((prev) =>
+      prev.map((b) =>
+        b.id === selectedDriverBookingId ? { ...b, driver: { id: driverId, name: driverName } } : b,
+      ),
+    )
+    handleDriverClose()
+
+    try {
+      await fetch(`/api/bookings/${selectedDriverBookingId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ driver: driverId }),
+      })
+    } catch (error) {
+      console.error('Failed to update driver:', error)
+      fetchData() // Revert/sync on error
+    }
+  }
+
   const fetchData = useCallback(async () => {
     setLoading(true)
     try {
@@ -97,13 +143,22 @@ const BookingReport = () => {
 
       const url = `/api/get-booking-report?${queryParams.toString()}`
 
-      const res = await fetch(url)
-      const json = await res.json()
-      if (json.docs) {
-        setData(json.docs)
+      const [bookingsRes, driversRes] = await Promise.all([
+        fetch(url),
+        fetch('/api/drivers?limit=100'),
+      ])
+
+      const bookingsJson = await bookingsRes.json()
+      const driversJson = await driversRes.json()
+
+      if (bookingsJson.docs) {
+        setData(bookingsJson.docs)
+      }
+      if (driversJson.docs) {
+        setDrivers(driversJson.docs)
       }
     } catch (error) {
-      console.error('Error fetching bookings:', error)
+      console.error('Error fetching data:', error)
     } finally {
       setLoading(false)
     }
@@ -279,6 +334,12 @@ const BookingReport = () => {
                 AMOUNT
               </TableCell>
               <TableCell sx={{ color: '#aaa', fontWeight: 'bold', borderRight: '1px solid #333' }}>
+                DRIVER
+              </TableCell>
+              <TableCell sx={{ color: '#aaa', fontWeight: 'bold', borderRight: '1px solid #333' }}>
+                STATUS
+              </TableCell>
+              <TableCell sx={{ color: '#aaa', fontWeight: 'bold', borderRight: '1px solid #333' }}>
                 STATUS
               </TableCell>
             </TableRow>
@@ -287,7 +348,7 @@ const BookingReport = () => {
             {loading ? (
               <TableRow>
                 <TableCell
-                  colSpan={10}
+                  colSpan={11}
                   align="center"
                   sx={{
                     color: 'white',
@@ -302,7 +363,7 @@ const BookingReport = () => {
             ) : data.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={10}
+                  colSpan={11}
                   align="center"
                   sx={{
                     color: 'white',
@@ -439,6 +500,32 @@ const BookingReport = () => {
                     }}
                   >
                     <Chip
+                      label={
+                        typeof row.driver === 'object' && row.driver?.name
+                          ? row.driver.name
+                          : 'Assign'
+                      }
+                      size="small"
+                      color={row.driver ? 'primary' : 'default'}
+                      variant={row.driver ? 'filled' : 'outlined'}
+                      onClick={(e) => handleDriverClick(e, row.id)}
+                      sx={{
+                        fontWeight: 'bold',
+                        cursor: 'pointer',
+                        borderColor: '#666',
+                        color: row.driver ? 'white' : '#aaa',
+                      }}
+                    />
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      color: 'white',
+                      borderColor: '#333',
+                      borderRight: '1px solid #333',
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    <Chip
                       label={row.status?.toUpperCase()}
                       size="small"
                       color={
@@ -475,6 +562,26 @@ const BookingReport = () => {
         <MenuItem onClick={() => handleStatusUpdate('pending')}>Pending</MenuItem>
         <MenuItem onClick={() => handleStatusUpdate('confirmed')}>Confirmed</MenuItem>
         <MenuItem onClick={() => handleStatusUpdate('cancelled')}>Cancelled</MenuItem>
+      </Menu>
+
+      {/* Driver Selection Menu */}
+      <Menu
+        anchorEl={driverAnchorEl}
+        open={Boolean(driverAnchorEl)}
+        onClose={handleDriverClose}
+        PaperProps={{
+          style: {
+            backgroundColor: '#2c2c2c',
+            color: 'white',
+            maxHeight: 300,
+          },
+        }}
+      >
+        {drivers.map((driver) => (
+          <MenuItem key={driver.id} onClick={() => handleDriverUpdate(driver.id, driver.name)}>
+            {driver.name}
+          </MenuItem>
+        ))}
       </Menu>
     </Box>
   )

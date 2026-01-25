@@ -329,6 +329,7 @@ export interface Booking {
   customer?: (string | null) | Customer;
   vehicle: string | Vehicle;
   tripType: 'oneway' | 'roundtrip' | 'packages' | 'multilocation';
+  driver?: (string | null) | Driver;
   /**
    * @minItems 2
    * @maxItems 2
@@ -687,6 +688,7 @@ export interface BookingsSelect<T extends boolean = true> {
   customer?: T;
   vehicle?: T;
   tripType?: T;
+  driver?: T;
   pickupLocation?: T;
   pickupLocationName?: T;
   dropoffLocation?: T;
