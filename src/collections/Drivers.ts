@@ -45,6 +45,15 @@ export const Drivers: CollectionConfig = {
       type: 'text',
       required: false,
     },
+    {
+      name: 'photo',
+      type: 'upload',
+      relationTo: 'media',
+      required: false,
+      admin: {
+        description: 'Driver photo',
+      },
+    },
   ],
   access: {
     // Assuming ties to Users collection; customize based on roles

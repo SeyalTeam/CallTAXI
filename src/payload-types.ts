@@ -188,6 +188,10 @@ export interface Driver {
   aadharNo?: string | null;
   panNo?: string | null;
   license?: string | null;
+  /**
+   * Driver photo
+   */
+  photo?: (string | null) | Media;
   updatedAt: string;
   createdAt: string;
 }
@@ -622,6 +626,7 @@ export interface DriversSelect<T extends boolean = true> {
   aadharNo?: T;
   panNo?: T;
   license?: T;
+  photo?: T;
   updatedAt?: T;
   createdAt?: T;
 }
