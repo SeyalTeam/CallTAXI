@@ -47,6 +47,38 @@ export const Bookings: CollectionConfig = {
         return data
       },
     ],
+    afterChange: [
+      async ({ doc, previousDoc, operation, req }) => {
+        const newDriverId = typeof doc.driver === 'object' ? doc.driver?.id : doc.driver
+        const oldDriverId = previousDoc
+          ? typeof previousDoc.driver === 'object'
+            ? previousDoc.driver?.id
+            : previousDoc.driver
+          : null
+
+        // If a new driver is assigned or the driver has changed
+        if (newDriverId && newDriverId !== oldDriverId) {
+          await req.payload.update({
+            collection: 'drivers',
+            id: newDriverId,
+            data: {
+              status: 'driving',
+            },
+          })
+        }
+
+        // If the old driver was replaced or unassigned, set them back to available
+        if (oldDriverId && oldDriverId !== newDriverId) {
+          await req.payload.update({
+            collection: 'drivers',
+            id: oldDriverId,
+            data: {
+              status: 'available',
+            },
+          })
+        }
+      },
+    ],
   },
   fields: [
     { name: 'customerName', type: 'text', required: true },

@@ -339,9 +339,6 @@ const BookingReport = () => {
               <TableCell sx={{ color: '#aaa', fontWeight: 'bold', borderRight: '1px solid #333' }}>
                 STATUS
               </TableCell>
-              <TableCell sx={{ color: '#aaa', fontWeight: 'bold', borderRight: '1px solid #333' }}>
-                STATUS
-              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
