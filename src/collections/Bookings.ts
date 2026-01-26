@@ -48,7 +48,7 @@ export const Bookings: CollectionConfig = {
       },
     ],
     afterChange: [
-      async ({ doc, previousDoc, operation, req }) => {
+      async ({ doc, previousDoc, operation: _operation, req }) => {
         const newDriverId = typeof doc.driver === 'object' ? doc.driver?.id : doc.driver
         const oldDriverId = previousDoc
           ? typeof previousDoc.driver === 'object'
@@ -63,7 +63,7 @@ export const Bookings: CollectionConfig = {
             id: newDriverId,
             data: {
               status: 'driving',
-            },
+            } as any,
           })
         }
 
@@ -74,7 +74,7 @@ export const Bookings: CollectionConfig = {
             id: oldDriverId,
             data: {
               status: 'available',
-            },
+            } as any,
           })
         }
       },

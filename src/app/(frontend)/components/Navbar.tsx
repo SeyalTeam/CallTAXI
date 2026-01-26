@@ -34,7 +34,7 @@ export default function Navbar() {
   ]
 
   // Dynamic values based on transparency
-  const textColor = scrolled ? '#0f172a' : '#ffffff'
+  // const textColor = scrolled ? '#0f172a' : '#ffffff' // This variable was unused and has been commented out.
   const iconColor = scrolled ? '#0f172a' : '#ffffff'
   const logoColor = scrolled ? '#0f172a' : '#ffffff'
   const navItemColor = scrolled ? '#475569' : '#e2e8f0'

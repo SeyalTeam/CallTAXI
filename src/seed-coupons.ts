@@ -10,7 +10,7 @@ const seed = async () => {
   const vehicles = await payload.find({ collection: 'vehicles', limit: 3 })
   const vehicleIds = vehicles.docs.map((v) => v.id)
 
-  const coupons: any[] = [
+  const coupons: Record<string, unknown>[] = [
     {
       name: 'WELCOME50',
       percentage: 50,
@@ -69,7 +69,7 @@ const seed = async () => {
       if (existing.totalDocs === 0) {
         await payload.create({
           collection: 'coupons',
-          data: coupon as any,
+          data: coupon as any, // Payload expects specific type, any is safest for seed scripts
         })
         console.log(`Created coupon: ${coupon.name}`)
       } else {

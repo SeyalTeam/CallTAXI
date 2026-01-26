@@ -77,7 +77,7 @@ const CustomerReport: React.FC = () => {
         const json = await res.json()
         // Sort by date new to old
         const sorted = json.docs.sort(
-          (a: any, b: any) =>
+          (a: { pickupDateTime: string }, b: { pickupDateTime: string }) =>
             new Date(b.pickupDateTime).getTime() - new Date(a.pickupDateTime).getTime(),
         )
         setCustomerBookings(sorted)

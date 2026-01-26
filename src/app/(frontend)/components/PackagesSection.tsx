@@ -1,15 +1,6 @@
 'use client'
 import React from 'react'
-import {
-  Box,
-  Container,
-  Typography,
-  Grid,
-  Card,
-  CardContent,
-  CardActions,
-  Button,
-} from '@mui/material'
+import { Box, Container, Typography, Grid, Card, CardContent } from '@mui/material'
 
 import { TariffDoc } from '../types'
 import LocalOfferIcon from '@mui/icons-material/LocalOffer'

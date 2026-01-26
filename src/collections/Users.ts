@@ -48,7 +48,7 @@ export const Users: CollectionConfig = {
     },
 
     // Update: Superadmins full; admins none; accounts limited (e.g., to payments, but customize further); drivers own only
-    update: ({ req: { user }, id }) => {
+    update: ({ req: { user }, id: _id }) => {
       if (user?.role === 'superadmin') return true
       if (user?.role === 'admin') return false // Read-only
       if (user?.role === 'accounts') {

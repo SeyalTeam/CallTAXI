@@ -235,16 +235,16 @@ export default function HeroSection() {
 
     async function loadSliderImages() {
       try {
-        const res = await axios.get<{ docs: any[] }>(
+        const res = await axios.get<{ docs: Record<string, unknown>[] }>(
           `${process.env.NEXT_PUBLIC_PAYLOAD_URL || ''}/api/slider-images?limit=10`,
         )
         const docs = res.data.docs || []
         const images: SliderImage[] = docs
           .filter((d) => d.url)
           .map((d) => ({
-            id: d.id,
-            url: d.url,
-            alt: d.alt || 'Slider Image',
+            id: String(d.id),
+            url: String(d.url),
+            alt: String(d.alt || 'Slider Image'),
           }))
         if (mounted && images.length > 0) {
           setSliderImages(images)
@@ -620,7 +620,7 @@ export default function HeroSection() {
         (appliedCoupon.tariffScope !== 'all' && appliedCoupon.tariffScope !== tripType) ||
         (appliedCoupon.vehicleScope === 'specific' &&
           selectedVehicleId &&
-          !(appliedCoupon.vehicles as any[])?.some(
+          !(appliedCoupon.vehicles as (string | { id: string })[])?.some(
             (v) => (typeof v === 'string' ? v : v.id) === selectedVehicleId,
           ))
       ) {
