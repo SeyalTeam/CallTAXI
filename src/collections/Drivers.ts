@@ -54,6 +54,20 @@ export const Drivers: CollectionConfig = {
         description: 'Driver photo',
       },
     },
+    {
+      name: 'status',
+      type: 'select',
+      options: [
+        { label: 'Available', value: 'available' },
+        { label: 'Not Available', value: 'not_available' },
+        { label: 'Driving', value: 'driving' },
+      ],
+      defaultValue: 'available',
+      required: true,
+      admin: {
+        position: 'sidebar',
+      },
+    },
   ],
   access: {
     create: () => true,
