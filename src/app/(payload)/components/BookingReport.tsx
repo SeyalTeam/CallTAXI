@@ -252,6 +252,7 @@ const BookingReport = () => {
               <MenuItem value="pending">Pending</MenuItem>
               <MenuItem value="confirmed">Confirmed</MenuItem>
               <MenuItem value="cancelled">Cancelled</MenuItem>
+              <MenuItem value="completed">Completed</MenuItem>
             </Select>
           </FormControl>
 
@@ -526,11 +527,13 @@ const BookingReport = () => {
                       label={row.status?.toUpperCase()}
                       size="small"
                       color={
-                        row.status === 'confirmed'
-                          ? 'success'
-                          : row.status === 'cancelled'
-                            ? 'error'
-                            : 'warning'
+                        row.status === 'completed'
+                          ? 'info'
+                          : row.status === 'confirmed'
+                            ? 'success'
+                            : row.status === 'cancelled'
+                              ? 'error'
+                              : 'warning'
                       }
                       variant="filled"
                       onClick={(e) => handleStatusClick(e, row.id)}
@@ -559,6 +562,7 @@ const BookingReport = () => {
         <MenuItem onClick={() => handleStatusUpdate('pending')}>Pending</MenuItem>
         <MenuItem onClick={() => handleStatusUpdate('confirmed')}>Confirmed</MenuItem>
         <MenuItem onClick={() => handleStatusUpdate('cancelled')}>Cancelled</MenuItem>
+        <MenuItem onClick={() => handleStatusUpdate('completed')}>Completed</MenuItem>
       </Menu>
 
       {/* Driver Selection Menu */}

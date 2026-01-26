@@ -77,6 +77,17 @@ export const Bookings: CollectionConfig = {
             } as any,
           })
         }
+
+        // Release driver if booking is completed
+        if (doc.status === 'completed' && newDriverId) {
+          await req.payload.update({
+            collection: 'drivers',
+            id: newDriverId,
+            data: {
+              status: 'available',
+            } as any,
+          })
+        }
       },
     ],
   },
@@ -155,7 +166,7 @@ export const Bookings: CollectionConfig = {
     {
       name: 'status',
       type: 'select',
-      options: ['pending', 'confirmed', 'cancelled'],
+      options: ['pending', 'confirmed', 'cancelled', 'completed'],
       defaultValue: 'pending',
     },
     { name: 'notes', type: 'textarea' },
