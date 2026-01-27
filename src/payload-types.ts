@@ -192,6 +192,7 @@ export interface Driver {
    * Driver photo
    */
   photo?: (string | null) | Media;
+  status: 'available' | 'not_available' | 'driving';
   updatedAt: string;
   createdAt: string;
 }
@@ -363,7 +364,7 @@ export interface Booking {
   couponCode?: string | null;
   discountAmount?: number | null;
   distanceKm?: number | null;
-  status?: ('pending' | 'confirmed' | 'cancelled') | null;
+  status?: ('pending' | 'confirmed' | 'cancelled' | 'completed') | null;
   notes?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -627,6 +628,7 @@ export interface DriversSelect<T extends boolean = true> {
   panNo?: T;
   license?: T;
   photo?: T;
+  status?: T;
   updatedAt?: T;
   createdAt?: T;
 }

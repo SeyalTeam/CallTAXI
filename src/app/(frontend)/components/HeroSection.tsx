@@ -165,34 +165,14 @@ export default function HeroSection() {
   useEffect(() => {
     let mounted = true
 
-    async function loadVehicles() {
-      try {
-        const res = await axios.get<{ docs?: unknown[] }>(
-          `${process.env.NEXT_PUBLIC_PAYLOAD_URL || ''}/api/vehicles?limit=100&where[category][equals]=tariff`,
-        )
-        const docs = Array.isArray(res.data.docs) ? res.data.docs : []
-        const parsed = docs
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          .map((d: any) => ({
-            id: d.id || d._id,
-            name: d.name || d.title || '',
-          }))
-          .filter((v): v is VehicleDoc => !!v.id)
-        if (mounted) setVehicles(parsed)
-      } catch (error) {
-        console.error('Failed to load vehicles', error)
-      }
-    }
-
     async function loadTariffs() {
       try {
         const res = await axios.get<{ docs?: unknown[] }>(
-          `${process.env.NEXT_PUBLIC_PAYLOAD_URL || ''}/api/tariffs?limit=100&sort=-updatedAt`,
+          `${process.env.NEXT_PUBLIC_PAYLOAD_URL || ''}/api/tariffs?limit=100&sort=-updatedAt&depth=2`,
         )
         const docs = Array.isArray(res.data.docs) ? res.data.docs : []
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const parsed = docs.map((d: any) => {
-          // simplified parsing for brevity, assuming standard payload structure
           return {
             id: d.id || d._id,
             vehicle: d.vehicle,
@@ -203,7 +183,22 @@ export default function HeroSection() {
             createdAt: d.createdAt,
           } as TariffDoc
         })
-        if (mounted) setTariffs(parsed)
+
+        if (mounted) {
+          setTariffs(parsed)
+
+          // Derive vehicles from tariffs to ensure they have pricing and are in 'tariff' category
+          const extractedVehicles = parsed
+            .map((t) => t.vehicle)
+            .filter(
+              (v): v is VehicleDoc =>
+                typeof v === 'object' && v !== null && v.category === 'tariff',
+            )
+            // Deduplicate by ID
+            .filter((v, index, self) => self.findIndex((s) => s.id === v.id) === index)
+
+          setVehicles(extractedVehicles)
+        }
       } catch (error) {
         console.error('Failed to load tariffs', error)
       }
@@ -254,7 +249,6 @@ export default function HeroSection() {
       }
     }
 
-    void loadVehicles()
     void loadTariffs()
     void loadTN()
     void checkActiveCoupons()

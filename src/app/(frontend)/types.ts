@@ -22,6 +22,7 @@ export type TNLocation = {
 export type VehicleDoc = {
   id: string
   name: string
+  category?: 'tariff' | 'attachment'
   icon?:
     | {
         url: string
