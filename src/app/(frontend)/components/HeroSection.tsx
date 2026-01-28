@@ -491,20 +491,21 @@ export default function HeroSection() {
         durationMin *= 2
       }
 
-      // Check Minimum Distance Rule
-      let billDist = distanceKm
-      if (distanceKm < minDistance) billDist = minDistance
-
       // Calculate Total Fare
-      // Current Logic (from existing codebase): (Dist * Rate + Bata) * Days
-      // This logic produces the "High Price" (~20k) the user expects for Round Trip.
-      // We explicitly apply it to Tour as well.
-      let total = billDist * rate + bata
+      let total = 0
+      const billingDays = days > 0 ? days : 1
 
       if (useRoundTripLogic) {
-        // Ensure days is at least 1
-        const billingDays = days > 0 ? days : 1
-        total = total * billingDays
+        // Industry Standard: Max(Actual Total Distance, Min KM per day * Days)
+        const totalMinDist = minDistance * billingDays
+        // Note: distanceKm is already doubled for roundtrip/multilocation
+        const chargeableDistance = Math.max(distanceKm, totalMinDist)
+        total = chargeableDistance * rate + bata * billingDays
+      } else {
+        // Oneway Logic: Max(Actual, Min)
+        let billDist = distanceKm
+        if (distanceKm < minDistance) billDist = minDistance
+        total = billDist * rate + bata
       }
 
       setDistanceInfo(`${distanceKm.toFixed(2)} km • ${Math.round(durationMin)} min`)
