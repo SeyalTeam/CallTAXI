@@ -13,6 +13,7 @@ export const Bookings: CollectionConfig = {
       'dropoffLocationName',
       'estimatedFare',
       'distanceKm',
+      'pickupDateTime',
       'status',
     ],
   },

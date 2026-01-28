@@ -20,7 +20,7 @@ import {
   StepConnector,
 } from '@mui/material'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
-import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import LocationOnIcon from '@mui/icons-material/LocationOn'
 
@@ -1287,8 +1287,8 @@ export default function HeroSection() {
                             name="pickupDateTime"
                             control={control}
                             render={({ field }) => (
-                              <DatePicker
-                                format="DD/MM/YY"
+                              <DateTimePicker
+                                format="DD/MM/YY hh:mm A"
                                 label="Pickup Date"
                                 value={field.value}
                                 onChange={field.onChange}
@@ -1332,8 +1332,8 @@ export default function HeroSection() {
                               name="dropDateTime"
                               control={control}
                               render={({ field }) => (
-                                <DatePicker
-                                  format="DD/MM/YY"
+                                <DateTimePicker
+                                  format="DD/MM/YY hh:mm A"
                                   label="Return Date"
                                   value={field.value}
                                   onChange={field.onChange}

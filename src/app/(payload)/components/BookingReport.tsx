@@ -197,7 +197,7 @@ const BookingReport = () => {
           `"${row.customerPhone || ''}"`,
           row.tripType,
           typeof row.vehicle === 'object' ? `"${row.vehicle?.name || ''}"` : '',
-          `"${new Date(row.pickupDateTime).toLocaleDateString()}"`,
+          `"${new Date(row.pickupDateTime).toLocaleString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true })}"`,
           `"${row.pickupLocationName || ''}"`,
           `"${row.dropoffLocationName || ''}"`,
           row.estimatedFare || 0,
@@ -413,7 +413,14 @@ const BookingReport = () => {
                         {row.customerName}
                       </Typography>
                       <Typography variant="caption" sx={{ color: 'grey.500', fontSize: '0.75rem' }}>
-                        {new Date(row.pickupDateTime).toLocaleDateString('en-GB')}
+                        {new Date(row.pickupDateTime).toLocaleString('en-GB', {
+                          day: '2-digit',
+                          month: '2-digit',
+                          year: '2-digit',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          hour12: true,
+                        })}
                       </Typography>
                     </Stack>
                   </TableCell>
@@ -455,7 +462,14 @@ const BookingReport = () => {
                       textTransform: 'uppercase',
                     }}
                   >
-                    {new Date(row.pickupDateTime).toLocaleDateString()}
+                    {new Date(row.pickupDateTime).toLocaleString('en-GB', {
+                      day: '2-digit',
+                      month: '2-digit',
+                      year: '2-digit',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      hour12: true,
+                    })}
                   </TableCell>
                   <TableCell
                     sx={{

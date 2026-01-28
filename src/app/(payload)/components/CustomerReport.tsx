@@ -327,7 +327,14 @@ const CustomerReport: React.FC = () => {
                               {index + 1}
                             </TableCell>
                             <TableCell sx={{ color: '#fff', borderRight: '1px solid #333' }}>
-                              {new Date(booking.pickupDateTime).toLocaleDateString()}
+                              {new Date(booking.pickupDateTime).toLocaleString('en-GB', {
+                                day: '2-digit',
+                                month: '2-digit',
+                                year: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                hour12: true,
+                              })}
                             </TableCell>
                             <TableCell sx={{ color: '#fff', borderRight: '1px solid #333' }}>
                               {booking.tripType}
