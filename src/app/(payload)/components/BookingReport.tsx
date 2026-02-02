@@ -22,6 +22,7 @@ import {
   InputLabel,
   Card,
   Menu,
+  Grid,
 } from '@mui/material'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import DownloadIcon from '@mui/icons-material/Download'
@@ -291,6 +292,48 @@ const BookingReport = () => {
           </IconButton>
         </Stack>
       </Card>
+
+      {/* Summary Stats */}
+      <Grid container spacing={2} sx={{ mb: 3 }}>
+        <Grid size={{ xs: 12, sm: 4 }}>
+          <Card sx={{ p: 2, backgroundColor: '#1e1e1e', color: 'white', textAlign: 'center' }}>
+            <Typography variant="body2" sx={{ color: '#aaa', mb: 1 }}>
+              TOTAL BOOKINGS
+            </Typography>
+            <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+              {data.length}
+            </Typography>
+          </Card>
+        </Grid>
+        <Grid size={{ xs: 12, sm: 4 }}>
+          <Card sx={{ p: 2, backgroundColor: '#1e1e1e', color: 'white', textAlign: 'center' }}>
+            <Typography variant="body2" sx={{ color: '#aaa', mb: 1 }}>
+              TOTAL AMOUNT
+            </Typography>
+            <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#4caf50' }}>
+              ₹
+              {data
+                .reduce((acc, curr) => acc + (curr.estimatedFare || 0), 0)
+                .toLocaleString('en-IN')}
+            </Typography>
+          </Card>
+        </Grid>
+        <Grid size={{ xs: 12, sm: 4 }}>
+          <Card sx={{ p: 2, backgroundColor: '#1e1e1e', color: 'white', textAlign: 'center' }}>
+            <Typography variant="body2" sx={{ color: '#aaa', mb: 1 }}>
+              AVG FARE
+            </Typography>
+            <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+              ₹
+              {data.length > 0
+                ? Math.round(
+                    data.reduce((acc, curr) => acc + (curr.estimatedFare || 0), 0) / data.length,
+                  ).toLocaleString('en-IN')
+                : 0}
+            </Typography>
+          </Card>
+        </Grid>
+      </Grid>
 
       {/* Data Table */}
       <TableContainer component={Paper} sx={{ backgroundColor: '#1e1e1e' }}>

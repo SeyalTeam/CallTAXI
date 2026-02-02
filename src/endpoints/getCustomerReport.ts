@@ -15,9 +15,7 @@ export const getCustomerReport: PayloadHandler = async (req): Promise<Response> 
       collection: 'bookings',
       limit: 5000,
       where: {
-        status: {
-          equals: 'confirmed',
-        },
+        or: [{ status: { equals: 'confirmed' } }, { status: { equals: 'completed' } }],
       },
       depth: 0,
     })
