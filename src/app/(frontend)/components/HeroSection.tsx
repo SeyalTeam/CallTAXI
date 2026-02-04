@@ -897,7 +897,7 @@ export default function HeroSection() {
                   </Button>
                 </Box>
               ) : (
-                <form onSubmit={handleSubmit(onSubmit)}>
+                <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
                   {/* Tab Bar Header */}
                   <Controller
                     name="tripType"
@@ -1077,12 +1077,17 @@ export default function HeroSection() {
                               {...field}
                               fullWidth
                               size="small"
-                              autoComplete="off"
+                              autoComplete="new-password"
                               label={
                                 tripType === 'multilocation' && tourLocations.length > 0
                                   ? 'Next Location'
                                   : 'Pickup Location'
                               }
+                              inputProps={{
+                                autoComplete: 'new-password',
+                                autoCorrect: 'off',
+                                spellCheck: 'false',
+                              }}
                               onChange={(e) => {
                                 field.onChange(e)
                                 handleLocationSearch(e.target.value, setPickupSuggestions)
@@ -1209,8 +1214,13 @@ export default function HeroSection() {
                                 {...field}
                                 fullWidth
                                 size="small"
-                                autoComplete="off"
+                                autoComplete="new-password"
                                 label="Drop Location"
+                                inputProps={{
+                                  autoComplete: 'new-password',
+                                  autoCorrect: 'off',
+                                  spellCheck: 'false',
+                                }}
                                 onChange={(e) => {
                                   field.onChange(e)
                                   handleLocationSearch(e.target.value, setDropSuggestions)
