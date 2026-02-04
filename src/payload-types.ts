@@ -365,6 +365,12 @@ export interface Booking {
   discountAmount?: number | null;
   distanceKm?: number | null;
   status?: ('pending' | 'confirmed' | 'cancelled' | 'completed') | null;
+  paymentStatus?: ('unpaid' | 'partial' | 'paid' | 'failed') | null;
+  paymentAmount?: number | null;
+  paymentType?: ('minimum' | 'full') | null;
+  razorpayOrderId?: string | null;
+  razorpayPaymentId?: string | null;
+  razorpaySignature?: string | null;
   notes?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -714,6 +720,12 @@ export interface BookingsSelect<T extends boolean = true> {
   discountAmount?: T;
   distanceKm?: T;
   status?: T;
+  paymentStatus?: T;
+  paymentAmount?: T;
+  paymentType?: T;
+  razorpayOrderId?: T;
+  razorpayPaymentId?: T;
+  razorpaySignature?: T;
   notes?: T;
   updatedAt?: T;
   createdAt?: T;

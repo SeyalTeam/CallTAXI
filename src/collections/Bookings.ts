@@ -15,6 +15,8 @@ export const Bookings: CollectionConfig = {
       'distanceKm',
       'pickupDateTime',
       'status',
+      'paymentStatus',
+      'paymentAmount',
     ],
   },
   hooks: {
@@ -169,6 +171,59 @@ export const Bookings: CollectionConfig = {
       type: 'select',
       options: ['pending', 'confirmed', 'cancelled', 'completed'],
       defaultValue: 'pending',
+    },
+    {
+      name: 'paymentStatus',
+      type: 'select',
+      options: ['unpaid', 'partial', 'paid', 'failed'],
+      defaultValue: 'unpaid',
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'paymentAmount',
+      type: 'number',
+      required: false,
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'paymentType',
+      type: 'select',
+      options: ['minimum', 'full'],
+      required: false,
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'razorpayOrderId',
+      type: 'text',
+      required: false,
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+      },
+    },
+    {
+      name: 'razorpayPaymentId',
+      type: 'text',
+      required: false,
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+      },
+    },
+    {
+      name: 'razorpaySignature',
+      type: 'text',
+      required: false,
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+      },
     },
     { name: 'notes', type: 'textarea' },
   ],

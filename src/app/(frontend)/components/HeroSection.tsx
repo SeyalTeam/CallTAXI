@@ -18,6 +18,11 @@ import {
   Popper,
   Stepper,
   StepConnector,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Divider,
 } from '@mui/material'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker'
@@ -32,6 +37,25 @@ interface SliderImage {
   id: string
   url: string
   alt: string
+}
+
+type BookingPayload = {
+  customerName: string
+  customerPhone: string
+  tripType: FormValues['tripType']
+  vehicle: string
+  pickupLocation?: [number, number]
+  dropoffLocation?: [number, number]
+  pickupLocationName: string
+  dropoffLocationName?: string
+  pickupDateTime?: string
+  dropDateTime?: string
+  estimatedFare?: number
+  distanceKm?: number
+  couponCode?: string
+  discountAmount?: number
+  tourLocations?: { name: string; point: [number, number] }[]
+  notes?: string
 }
 
 /**
@@ -170,6 +194,16 @@ export default function HeroSection() {
   const [calculatedDistance, setCalculatedDistance] = useState<number | null>(null)
   const [fare, setFare] = useState<string | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
+  const [paymentDialogOpen, setPaymentDialogOpen] = useState<boolean>(false)
+  const [paymentSummary, setPaymentSummary] = useState<{
+    fare: number
+    discount: number
+    payable: number
+    distanceInfo?: string
+  } | null>(null)
+  const [pendingBookingPayload, setPendingBookingPayload] = useState<BookingPayload | null>(null)
+  const [paymentError, setPaymentError] = useState<string | null>(null)
+  const [paymentProcessing, setPaymentProcessing] = useState<boolean>(false)
 
   const [_isCalculating, setIsCalculating] = useState<boolean>(false)
   const [tourLocations, setTourLocations] = useState<TNLocation[]>([])
@@ -680,10 +714,149 @@ export default function HeroSection() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tripType, selectedVehicleId])
 
+  const resetBookingForm = () => {
+    reset()
+    setPickupCoords(null)
+    setDropCoords(null)
+    setFare(null)
+    setDistanceInfo('')
+    setCalculatedDistance(null)
+
+    // Clear Coupon State
+    setCouponCodeInput('')
+    setAppliedCoupon(null)
+    setCouponError(null)
+    setDiscountAmount(0)
+  }
+
+  const closePaymentDialog = () => {
+    if (paymentProcessing) return
+    setPaymentDialogOpen(false)
+    setPaymentError(null)
+    setPendingBookingPayload(null)
+    setPaymentSummary(null)
+  }
+
+  const ensureRazorpayLoaded = () => {
+    if (typeof window === 'undefined') return Promise.resolve(false)
+    if (window.Razorpay) return Promise.resolve(true)
+
+    return new Promise<boolean>((resolve) => {
+      const script = document.createElement('script')
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js'
+      script.onload = () => resolve(true)
+      script.onerror = () => resolve(false)
+      document.body.appendChild(script)
+    })
+  }
+
+  const startPayment = async (paymentType: 'minimum' | 'full') => {
+    if (!pendingBookingPayload || !paymentSummary) {
+      setPaymentError('Please submit the booking again.')
+      return
+    }
+
+    const payable = paymentSummary.payable
+    const amountRupees = paymentType === 'full' ? payable : Math.min(500, payable)
+
+    if (!Number.isFinite(amountRupees) || amountRupees <= 0) {
+      setPaymentError('Invalid payment amount.')
+      return
+    }
+
+    setPaymentProcessing(true)
+    setPaymentError(null)
+
+    const loaded = await ensureRazorpayLoaded()
+    if (!loaded) {
+      setPaymentError('Failed to load Razorpay. Please try again.')
+      setPaymentProcessing(false)
+      return
+    }
+
+    try {
+      const orderRes = await axios.post('/api/razorpay/order', {
+        amount: Math.round(amountRupees * 100),
+        currency: 'INR',
+        receipt: `booking_${Date.now()}`,
+      })
+
+      const { orderId, amount, currency, keyId } = orderRes.data || {}
+      if (!orderId || !amount || !currency || !keyId) {
+        throw new Error('Invalid order response')
+      }
+
+      const options = {
+        key: keyId,
+        amount,
+        currency,
+        name: 'Kani Taxi',
+        description:
+          paymentType === 'full' ? 'Full booking payment' : 'Minimum booking payment',
+        order_id: orderId,
+        prefill: {
+          name: pendingBookingPayload.customerName,
+          contact: pendingBookingPayload.customerPhone,
+        },
+        notes: {
+          tripType: pendingBookingPayload.tripType,
+        },
+        theme: {
+          color: '#fbc024',
+        },
+        modal: {
+          ondismiss: () => {
+            setPaymentProcessing(false)
+          },
+        },
+        handler: async (response: {
+          razorpay_order_id: string
+          razorpay_payment_id: string
+          razorpay_signature: string
+        }) => {
+          try {
+            const verifyRes = await axios.post('/api/razorpay/verify', {
+              booking: pendingBookingPayload,
+              payment: {
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                amount,
+                paymentType,
+              },
+            })
+
+            setBookingSuccess(verifyRes.data?.bookingId || response.razorpay_payment_id)
+            resetBookingForm()
+            setPaymentDialogOpen(false)
+            setPendingBookingPayload(null)
+            setPaymentSummary(null)
+          } catch (error) {
+            console.error('Payment verification failed', error)
+            setPaymentError('Payment verified, but booking failed. Please contact support.')
+          } finally {
+            setPaymentProcessing(false)
+          }
+        },
+      }
+
+      if (!window.Razorpay) {
+        throw new Error('Razorpay SDK unavailable')
+      }
+
+      const razorpay = new window.Razorpay(options)
+      razorpay.open()
+    } catch (error) {
+      console.error('Payment start failed', error)
+      setPaymentError('Unable to start payment. Please try again.')
+      setPaymentProcessing(false)
+    }
+  }
+
   const [bookingSuccess, setBookingSuccess] = useState<string | null>(null)
 
   async function onSubmit(data: FormValues) {
-    const payload = {
+    const payload: BookingPayload = {
       customerName: data.customerName,
       customerPhone: data.customerPhone,
       tripType: data.tripType,
@@ -707,7 +880,6 @@ export default function HeroSection() {
       distanceKm: calculatedDistance || undefined,
       couponCode: appliedCoupon?.name,
       discountAmount: discountAmount || undefined,
-      status: 'pending',
       // Map tour locations if applicable
       tourLocations:
         data.tripType === 'multilocation'
@@ -737,28 +909,24 @@ export default function HeroSection() {
       payload.pickupLocation = [Number(tourLocations[0].lon), Number(tourLocations[0].lat)]
     }
 
-    try {
-      const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_PAYLOAD_URL || ''}/api/bookings`,
-        payload,
-      )
-      // Success: Show in-form message instead of alert
-      setBookingSuccess(res.data.id)
-      reset()
-      setPickupCoords(null)
-      setDropCoords(null)
-      setFare(null)
-      setDistanceInfo('')
-      setCalculatedDistance(null)
+    const rawFare = fare ? Number(fare) : NaN
+    const discount = discountAmount || 0
+    const payable = Number.isFinite(rawFare) ? Math.max(rawFare - discount, 0) : NaN
 
-      // Clear Coupon State
-      setCouponCodeInput('')
-      setAppliedCoupon(null)
-      setCouponError(null)
-      setDiscountAmount(0)
-    } catch (_e) {
-      alert('Booking failed. Please try again.')
+    if (!Number.isFinite(payable) || payable <= 0) {
+      alert('Please calculate the fare before proceeding to payment.')
+      return
     }
+
+    setPendingBookingPayload(payload)
+    setPaymentSummary({
+      fare: rawFare,
+      discount,
+      payable,
+      distanceInfo,
+    })
+    setPaymentError(null)
+    setPaymentDialogOpen(true)
   }
 
   return (
@@ -1677,7 +1845,7 @@ export default function HeroSection() {
                                     variant="contained"
                                     fullWidth
                                     onClick={validateCoupon}
-                                    disabled={loading || !couponCodeInput}
+                                    disabled={loading || paymentProcessing || !couponCodeInput}
                                     sx={{
                                       height: 40,
                                       bgcolor: '#fbc123',
@@ -1707,7 +1875,7 @@ export default function HeroSection() {
                             <Button
                               type="submit"
                               variant="contained"
-                              disabled={loading}
+                              disabled={loading || paymentProcessing}
                               sx={{
                                 width: { xs: 'auto', md: '100%' },
                                 px: { xs: 4, md: 0 },
@@ -1726,7 +1894,11 @@ export default function HeroSection() {
                                 },
                               }}
                             >
-                              {loading ? <CircularProgress size={24} /> : 'Book Your Taxi'}
+                              {loading || paymentProcessing ? (
+                                <CircularProgress size={24} />
+                              ) : (
+                                'Book Your Taxi'
+                              )}
                             </Button>
                           </Grid>
                           {/* Fare Info Display for Tour */}
@@ -1833,7 +2005,7 @@ export default function HeroSection() {
                                     variant="contained"
                                     fullWidth
                                     onClick={validateCoupon}
-                                    disabled={loading || !couponCodeInput}
+                                    disabled={loading || paymentProcessing || !couponCodeInput}
                                     sx={{
                                       height: 40,
                                       bgcolor: '#fbc123',
@@ -1873,7 +2045,7 @@ export default function HeroSection() {
                           <Button
                             type="submit"
                             variant="contained"
-                            disabled={loading}
+                            disabled={loading || paymentProcessing}
                             sx={{
                               width: { xs: 'auto', md: '25%' },
                               flexShrink: 0,
@@ -1895,7 +2067,11 @@ export default function HeroSection() {
                               },
                             }}
                           >
-                            {loading ? <CircularProgress size={24} /> : 'Book Your Taxi'}
+                            {loading || paymentProcessing ? (
+                              <CircularProgress size={24} />
+                            ) : (
+                              'Book Your Taxi'
+                            )}
                           </Button>
 
                           {fare && selectedVehicleId && (
@@ -2085,6 +2261,111 @@ export default function HeroSection() {
                   </Box>
                 </form>
               )}
+              <Dialog
+                open={paymentDialogOpen}
+                onClose={closePaymentDialog}
+                maxWidth="xs"
+                fullWidth
+              >
+                <DialogTitle sx={{ fontWeight: 700, color: '#0f172a' }}>
+                  Complete Payment
+                </DialogTitle>
+                <DialogContent>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, mt: 1 }}>
+                    <Typography variant="subtitle2" color="#0f172a" fontWeight={700}>
+                      Tariff Calculation
+                    </Typography>
+                    <Box
+                      sx={{
+                        bgcolor: '#f8fafc',
+                        border: '1px solid #e2e8f0',
+                        borderRadius: 2,
+                        p: 2,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 0.75,
+                      }}
+                    >
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <Typography variant="body2" color="#475569">
+                          Estimated Fare
+                        </Typography>
+                        <Typography variant="body2" fontWeight={700} color="#0f172a">
+                          ₹{paymentSummary ? paymentSummary.fare.toFixed(2) : '0.00'}
+                        </Typography>
+                      </Box>
+                      {paymentSummary && paymentSummary.discount > 0 && (
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                          <Typography variant="body2" color="#475569">
+                            Discount
+                          </Typography>
+                          <Typography variant="body2" fontWeight={700} color="#16a34a">
+                            -₹{paymentSummary.discount.toFixed(2)}
+                          </Typography>
+                        </Box>
+                      )}
+                      <Divider sx={{ my: 0.5 }} />
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <Typography variant="body2" color="#0f172a" fontWeight={700}>
+                          Payable
+                        </Typography>
+                        <Typography variant="body2" fontWeight={700} color="#0f172a">
+                          ₹{paymentSummary ? paymentSummary.payable.toFixed(2) : '0.00'}
+                        </Typography>
+                      </Box>
+                      {paymentSummary?.distanceInfo && (
+                        <Typography variant="caption" color="#64748b">
+                          {paymentSummary.distanceInfo}
+                        </Typography>
+                      )}
+                    </Box>
+                    {paymentSummary && paymentSummary.payable > 0 && (
+                      <Typography variant="caption" color="#64748b">
+                        Minimum payable now is ₹{Math.min(500, paymentSummary.payable).toFixed(2)}.
+                      </Typography>
+                    )}
+                    {paymentError && (
+                      <Typography variant="body2" color="error">
+                        {paymentError}
+                      </Typography>
+                    )}
+                  </Box>
+                </DialogContent>
+                <DialogActions sx={{ px: 3, pb: 2 }}>
+                  <Button onClick={closePaymentDialog} disabled={paymentProcessing}>
+                    Cancel
+                  </Button>
+                  {paymentSummary && paymentSummary.payable > 500 && (
+                    <Button
+                      variant="outlined"
+                      onClick={() => startPayment('minimum')}
+                      disabled={paymentProcessing}
+                    >
+                      {paymentProcessing ? (
+                        <CircularProgress size={18} />
+                      ) : (
+                        `Pay ₹${Math.min(500, paymentSummary.payable).toFixed(2)}`
+                      )}
+                    </Button>
+                  )}
+                  <Button
+                    variant="contained"
+                    onClick={() => startPayment('full')}
+                    disabled={paymentProcessing}
+                    sx={{
+                      bgcolor: '#fbc024',
+                      color: '#000',
+                      '&:hover': { bgcolor: '#f59e0b' },
+                    }}
+                  >
+                    {paymentProcessing ? (
+                      <CircularProgress size={18} />
+                    ) : (
+                      `Pay Full ₹${paymentSummary ? paymentSummary.payable.toFixed(2) : '0.00'}`
+                    )}
+                  </Button>
+                </DialogActions>
+              </Dialog>
             </Paper>
           </Grid>
         </Grid>
