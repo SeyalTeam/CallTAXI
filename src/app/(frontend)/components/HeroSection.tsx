@@ -115,16 +115,23 @@ const getLocationDetails = (loc: TNLocation) => {
 
   const village = loc.village || raw.village || raw.hamlet || raw.suburb || raw.town || raw.city
 
-  return { district, taluk, panchayat, village }
+  const state = raw.state
+
+  return { district, taluk, panchayat, village, state }
 }
 
 const formatLocationDetails = (loc: TNLocation) => {
-  const { district, taluk, panchayat, village } = getLocationDetails(loc)
+  const { district, taluk, panchayat, village, state } = getLocationDetails(loc)
   const nameKey = normalizeText(loc.name)
   const details = [village, panchayat, taluk, district].filter((d) => {
     if (!d) return false
     return normalizeText(d) !== nameKey
   })
+  const stateText = state && state !== 'Tamil Nadu' ? state : undefined
+  if (stateText && normalizeText(stateText) !== nameKey) {
+    const districtKey = normalizeText(district)
+    if (normalizeText(stateText) !== districtKey) details.push(stateText)
+  }
   return details.join(', ')
 }
 
