@@ -1,9 +1,12 @@
 import { createHmac } from 'crypto'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
+import type { Booking } from '@/payload-types'
+
+type BookingCreate = Omit<Booking, 'id' | 'createdAt' | 'updatedAt'>
 
 type VerifyBody = {
-  booking?: Record<string, unknown>
+  booking?: Partial<BookingCreate>
   payment?: {
     razorpay_order_id?: string
     razorpay_payment_id?: string
@@ -21,6 +24,37 @@ export const POST = async (request: Request) => {
 
     if (!booking || !payment) {
       return Response.json({ error: 'Missing booking or payment data' }, { status: 400 })
+    }
+
+    const isNonEmptyString = (value: unknown) =>
+      typeof value === 'string' && value.trim().length > 0
+
+    const isPoint = (value: unknown): value is [number, number] =>
+      Array.isArray(value) &&
+      value.length === 2 &&
+      typeof value[0] === 'number' &&
+      typeof value[1] === 'number'
+
+    const tripType = booking.tripType
+    const needsDropoff = tripType === 'oneway' || tripType === 'roundtrip'
+
+    if (
+      !isNonEmptyString(booking.customerName) ||
+      !isNonEmptyString(booking.customerPhone) ||
+      !isNonEmptyString(booking.vehicle) ||
+      !isNonEmptyString(tripType) ||
+      !isPoint(booking.pickupLocation) ||
+      !isNonEmptyString(booking.pickupLocationName) ||
+      !isNonEmptyString(booking.pickupDateTime)
+    ) {
+      return Response.json({ error: 'Missing required booking fields' }, { status: 400 })
+    }
+
+    if (
+      needsDropoff &&
+      (!isPoint(booking.dropoffLocation) || !isNonEmptyString(booking.dropoffLocationName))
+    ) {
+      return Response.json({ error: 'Missing drop-off details' }, { status: 400 })
     }
 
     const orderId = payment.razorpay_order_id
@@ -70,10 +104,11 @@ export const POST = async (request: Request) => {
       config: configPromise,
     })
 
+    const bookingData = booking as BookingCreate
     const bookingDoc = await payload.create({
       collection: 'bookings',
       data: {
-        ...booking,
+        ...bookingData,
         status: 'confirmed',
         paymentStatus,
         paymentAmount: paidAmount,
