@@ -73,6 +73,47 @@ export const Vehicles: CollectionConfig = {
   admin: {
     group: 'Collection',
     useAsTitle: 'name',
+    defaultColumns: ['name', 'number', 'driver', 'status', 'category'],
+  },
+  hooks: {
+    beforeChange: [
+      async ({ data, req, originalDoc }) => {
+        if (data?.driver === undefined) return data
+
+        const driverId = typeof data.driver === 'object' ? data.driver?.id : data.driver
+        if (!driverId) return data
+
+        const existing = await req.payload.find({
+          collection: 'vehicles',
+          where: {
+            and: [
+              {
+                driver: {
+                  equals: driverId,
+                },
+              },
+              ...(originalDoc?.id
+                ? [
+                    {
+                      id: {
+                        not_equals: originalDoc.id,
+                      },
+                    },
+                  ]
+                : []),
+            ],
+          },
+          limit: 1,
+          depth: 0,
+        })
+
+        if (existing.docs.length > 0) {
+          throw new Error('This driver is already assigned to another vehicle.')
+        }
+
+        return data
+      },
+    ],
   },
   fields: [
     {
@@ -94,6 +135,29 @@ export const Vehicles: CollectionConfig = {
       name: 'ownerName',
       type: 'text',
       required: true,
+    },
+    {
+      name: 'driver',
+      type: 'relationship',
+      relationTo: 'drivers',
+      required: true,
+      admin: {
+        description: 'Each driver can be assigned to only one vehicle.',
+      },
+    },
+    {
+      name: 'status',
+      type: 'select',
+      options: [
+        { label: 'Available', value: 'available' },
+        { label: 'Not Available', value: 'not_available' },
+        { label: 'Driving', value: 'driving' },
+      ],
+      defaultValue: 'available',
+      required: true,
+      admin: {
+        position: 'sidebar',
+      },
     },
     {
       name: 'lastFc',

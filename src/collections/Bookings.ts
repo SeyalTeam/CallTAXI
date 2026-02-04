@@ -58,6 +58,12 @@ export const Bookings: CollectionConfig = {
             ? previousDoc.driver?.id
             : previousDoc.driver
           : null
+        const newVehicleId = typeof doc.vehicle === 'object' ? doc.vehicle?.id : doc.vehicle
+        const oldVehicleId = previousDoc
+          ? typeof previousDoc.vehicle === 'object'
+            ? previousDoc.vehicle?.id
+            : previousDoc.vehicle
+          : null
 
         // If a new driver is assigned or the driver has changed
         if (newDriverId && newDriverId !== oldDriverId) {
@@ -81,11 +87,44 @@ export const Bookings: CollectionConfig = {
           })
         }
 
+        // If a new vehicle is assigned or the vehicle has changed
+        if (newVehicleId && newVehicleId !== oldVehicleId) {
+          await req.payload.update({
+            collection: 'vehicles',
+            id: newVehicleId,
+            data: {
+              status: 'driving',
+            } as any,
+          })
+        }
+
+        // If the old vehicle was replaced or unassigned, set it back to available
+        if (oldVehicleId && oldVehicleId !== newVehicleId) {
+          await req.payload.update({
+            collection: 'vehicles',
+            id: oldVehicleId,
+            data: {
+              status: 'available',
+            } as any,
+          })
+        }
+
         // Release driver if booking is completed
         if (doc.status === 'completed' && newDriverId) {
           await req.payload.update({
             collection: 'drivers',
             id: newDriverId,
+            data: {
+              status: 'available',
+            } as any,
+          })
+        }
+
+        // Release vehicle if booking is completed
+        if (doc.status === 'completed' && newVehicleId) {
+          await req.payload.update({
+            collection: 'vehicles',
+            id: newVehicleId,
             data: {
               status: 'available',
             } as any,
