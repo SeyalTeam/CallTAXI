@@ -39,6 +39,8 @@ interface SliderImage {
   alt: string
 }
 
+const DEFAULT_MINIMUM_PAYMENT = 500
+
 type BookingPayload = {
   customerName: string
   customerPhone: string
@@ -194,6 +196,7 @@ export default function HeroSection() {
   const [calculatedDistance, setCalculatedDistance] = useState<number | null>(null)
   const [fare, setFare] = useState<string | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
+  const [minimumPayment, setMinimumPayment] = useState<number>(DEFAULT_MINIMUM_PAYMENT)
   const [paymentDialogOpen, setPaymentDialogOpen] = useState<boolean>(false)
   const [paymentSummary, setPaymentSummary] = useState<{
     fare: number
@@ -336,10 +339,25 @@ export default function HeroSection() {
       }
     }
 
+    async function loadPaymentSettings() {
+      try {
+        const res = await axios.get<{ minimumPayment?: number }>(
+          `${process.env.NEXT_PUBLIC_PAYLOAD_URL || ''}/api/globals/payment-settings`,
+        )
+        const minValue = Number(res.data?.minimumPayment)
+        if (Number.isFinite(minValue) && minValue >= 0 && mounted) {
+          setMinimumPayment(minValue)
+        }
+      } catch (error) {
+        console.error('Failed to load payment settings', error)
+      }
+    }
+
     void loadTariffs()
     void loadTN()
     void checkActiveCoupons()
     void loadSliderImages()
+    void loadPaymentSettings()
 
     return () => {
       mounted = false
@@ -757,10 +775,16 @@ export default function HeroSection() {
     }
 
     const payable = paymentSummary.payable
-    const amountRupees = paymentType === 'full' ? payable : Math.min(500, payable)
+    const minPayableNow = Math.min(minimumPayment, payable)
+    const amountRupees = paymentType === 'full' ? payable : minPayableNow
 
     if (!Number.isFinite(amountRupees) || amountRupees <= 0) {
       setPaymentError('Invalid payment amount.')
+      return
+    }
+
+    if (paymentType === 'minimum' && minimumPayment <= 0) {
+      setPaymentError('Minimum payment is not configured.')
       return
     }
 
@@ -2319,9 +2343,10 @@ export default function HeroSection() {
                         </Typography>
                       )}
                     </Box>
-                    {paymentSummary && paymentSummary.payable > 0 && (
+                    {paymentSummary && paymentSummary.payable > 0 && minimumPayment > 0 && (
                       <Typography variant="caption" color="#64748b">
-                        Minimum payable now is ₹{Math.min(500, paymentSummary.payable).toFixed(2)}.
+                        Minimum payable now is ₹
+                        {Math.min(minimumPayment, paymentSummary.payable).toFixed(2)}.
                       </Typography>
                     )}
                     {paymentError && (
@@ -2335,7 +2360,9 @@ export default function HeroSection() {
                   <Button onClick={closePaymentDialog} disabled={paymentProcessing}>
                     Cancel
                   </Button>
-                  {paymentSummary && paymentSummary.payable > 500 && (
+                  {paymentSummary &&
+                    paymentSummary.payable > minimumPayment &&
+                    minimumPayment > 0 && (
                     <Button
                       variant="outlined"
                       onClick={() => startPayment('minimum')}
@@ -2344,7 +2371,7 @@ export default function HeroSection() {
                       {paymentProcessing ? (
                         <CircularProgress size={18} />
                       ) : (
-                        `Pay ₹${Math.min(500, paymentSummary.payable).toFixed(2)}`
+                        `Pay ₹${Math.min(minimumPayment, paymentSummary.payable).toFixed(2)}`
                       )}
                     </Button>
                   )}
