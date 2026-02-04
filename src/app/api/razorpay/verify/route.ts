@@ -121,19 +121,27 @@ export const POST = async (request: Request) => {
     const paymentStatus = paidAmount + 0.01 < payable ? 'partial' : 'paid'
 
     const bookingData = booking as BookingCreate
-    const bookingDoc = await payload.create({
-      collection: 'bookings',
-      data: {
-        ...bookingData,
-        status: 'confirmed',
-        paymentStatus,
-        paymentAmount: paidAmount,
-        paymentType,
-        razorpayOrderId: orderId,
-        razorpayPaymentId: paymentId,
-        razorpaySignature: signature,
-      },
-    })
+    let bookingDoc
+    try {
+      bookingDoc = await payload.create({
+        collection: 'bookings',
+        data: {
+          ...bookingData,
+          status: 'confirmed',
+          paymentStatus,
+          paymentAmount: paidAmount,
+          paymentType,
+          razorpayOrderId: orderId,
+          razorpayPaymentId: paymentId,
+          razorpaySignature: signature,
+        },
+      })
+    } catch (error) {
+      console.error('Booking creation failed', error)
+      const message =
+        error instanceof Error && error.message ? error.message : 'Booking creation failed'
+      return Response.json({ error: message }, { status: 500 })
+    }
 
     return Response.json({ bookingId: bookingDoc.id })
   } catch (error) {

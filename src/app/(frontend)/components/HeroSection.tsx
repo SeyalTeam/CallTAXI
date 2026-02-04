@@ -747,6 +747,28 @@ export default function HeroSection() {
     setDiscountAmount(0)
   }
 
+  const getBookingValidationError = (data: FormValues) => {
+    if (!data.customerName?.trim()) return 'Please enter your name.'
+    if (!data.customerPhone?.trim()) return 'Please enter your phone number.'
+    if (!data.vehicle) return 'Please select a vehicle.'
+    if (!pickupCoords) return 'Please select a pickup location from suggestions.'
+    if (!data.pickupDateTime) return 'Please select a pickup date and time.'
+
+    if (data.tripType === 'oneway' || data.tripType === 'roundtrip') {
+      if (!dropCoords) return 'Please select a drop location from suggestions.'
+    }
+
+    if (data.tripType === 'roundtrip' && !data.dropDateTime) {
+      return 'Please select a return date and time.'
+    }
+
+    if (data.tripType === 'multilocation' && tourLocations.length < 2) {
+      return 'Please add at least two locations for your tour.'
+    }
+
+    return null
+  }
+
   const closePaymentDialog = () => {
     if (paymentProcessing) return
     setPaymentDialogOpen(false)
@@ -857,7 +879,11 @@ export default function HeroSection() {
             setPaymentSummary(null)
           } catch (error) {
             console.error('Payment verification failed', error)
-            setPaymentError('Payment verified, but booking failed. Please contact support.')
+            const message =
+              axios.isAxiosError(error) && error.response?.data?.error
+                ? String(error.response.data.error)
+                : 'Payment verified, but booking failed. Please contact support.'
+            setPaymentError(message)
           } finally {
             setPaymentProcessing(false)
           }
@@ -880,6 +906,12 @@ export default function HeroSection() {
   const [bookingSuccess, setBookingSuccess] = useState<string | null>(null)
 
   async function onSubmit(data: FormValues) {
+    const validationError = getBookingValidationError(data)
+    if (validationError) {
+      alert(validationError)
+      return
+    }
+
     const payload: BookingPayload = {
       customerName: data.customerName,
       customerPhone: data.customerPhone,
@@ -922,11 +954,6 @@ export default function HeroSection() {
             : `${data.pickup} to ${data.drop}`,
     }
 
-    // Validation for Tour
-    if (data.tripType === 'multilocation' && tourLocations.length === 0) {
-      alert('Please add at least one location for your tour.')
-      return
-    }
     // Override pickup for Tour logic if needed
     if (data.tripType === 'multilocation' && tourLocations.length > 0) {
       payload.pickupLocationName = tourLocations[0].name
