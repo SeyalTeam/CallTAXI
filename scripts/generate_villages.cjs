@@ -43,15 +43,38 @@ async function generateVillages() {
         tags.county ||
         'Tamil Nadu'
 
+      const taluk =
+        tags['addr:subdistrict'] ||
+        tags['is_in:subdistrict'] ||
+        tags['is_in:tehsil'] ||
+        tags['is_in:taluk'] ||
+        tags.subdistrict ||
+        tags.tehsil ||
+        tags.taluk ||
+        tags.block ||
+        tags.sub_district
+
+      const panchayat =
+        tags.panchayat ||
+        tags['addr:panchayat'] ||
+        tags.village_panchayat ||
+        tags.grampanchayat ||
+        tags.grama_panchayat ||
+        tags.panchayat_name
+
       const place = {
         district: district,
+        taluk: taluk,
+        panchayat: panchayat,
         name: name,
-        display_name: `${name}, ${district}, Tamil Nadu, India`,
+        display_name: `${name}, ${taluk ? taluk + ', ' : ''}${district}, Tamil Nadu, India`,
         lat: String(node.lat),
         lon: String(node.lon),
         raw_addr: {
           village: name,
           state_district: district,
+          subdistrict: taluk,
+          panchayat: panchayat,
           state: 'Tamil Nadu',
           country: 'India',
           country_code: 'in',

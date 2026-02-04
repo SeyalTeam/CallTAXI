@@ -14,9 +14,32 @@ export type FormValues = {
 
 export type TNLocation = {
   name: string
-  district: string
+  district?: string
+  taluk?: string
+  panchayat?: string
+  village?: string
   lat: string
   lon: string
+  raw_addr?: {
+    village?: string
+    hamlet?: string
+    suburb?: string
+    town?: string
+    city?: string
+    panchayat?: string
+    subdistrict?: string
+    taluk?: string
+    tehsil?: string
+    block?: string
+    state_district?: string
+    district?: string
+    county?: string
+    city_district?: string
+    state?: string
+    country?: string
+    country_code?: string
+    postcode?: string
+  }
 }
 
 export type VehicleDoc = {

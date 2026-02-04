@@ -97,6 +97,42 @@ const HighlightedText = ({ text, highlight }: { text: string; highlight: string 
   return <>{text}</>
 }
 
+const normalizeText = (val?: string) => (val || '').trim().toLowerCase()
+
+const getLocationDetails = (loc: TNLocation) => {
+  const raw = loc.raw_addr || {}
+  const district =
+    (loc.district && loc.district !== 'Tamil Nadu' ? loc.district : undefined) ||
+    raw.state_district ||
+    raw.district ||
+    raw.county ||
+    raw.city_district ||
+    loc.district
+
+  const taluk = loc.taluk || raw.subdistrict || raw.taluk || raw.tehsil || raw.block || raw.county
+
+  const panchayat = loc.panchayat || raw.panchayat
+
+  const village = loc.village || raw.village || raw.hamlet || raw.suburb || raw.town || raw.city
+
+  return { district, taluk, panchayat, village }
+}
+
+const formatLocationDetails = (loc: TNLocation) => {
+  const { district, taluk, panchayat, village } = getLocationDetails(loc)
+  const nameKey = normalizeText(loc.name)
+  const details = [village, panchayat, taluk, district].filter((d) => {
+    if (!d) return false
+    return normalizeText(d) !== nameKey
+  })
+  return details.join(', ')
+}
+
+const getLocationDisplayValue = (loc: TNLocation) => {
+  const details = formatLocationDetails(loc)
+  return details ? `${loc.name}, ${details}` : loc.name
+}
+
 export default function HeroSection() {
   const { handleSubmit, control, watch, setValue, reset } = useForm<FormValues>({
     defaultValues: {
@@ -206,9 +242,15 @@ export default function HeroSection() {
 
     async function loadTN() {
       try {
-        const res = await fetch('/tamil_nadu_locations.json')
-        if (!res.ok) throw new Error('tn dataset fetch failed')
-        const json = (await res.json()) as { places?: TNLocation[] }
+        const tryFetch = async (url: string) => {
+          const res = await fetch(url)
+          if (!res.ok) return null
+          return (await res.json()) as { places?: TNLocation[] }
+        }
+
+        const enriched = await tryFetch('/tamil_nadu_locations.enriched.json')
+        const json = enriched || (await tryFetch('/tamil_nadu_locations.json'))
+        if (!json) throw new Error('tn dataset fetch failed')
         if (mounted && json.places) setTNLocations(json.places)
       } catch (error) {
         console.error('Failed to load TN locations', error)
@@ -344,7 +386,7 @@ export default function HeroSection() {
     setSuggestions: (s: TNLocation[]) => void,
     setCoords: (c: { lat: string; lon: string }) => void,
   ) => {
-    const val = loc.name === loc.district ? loc.name : `${loc.name}, ${loc.district}`
+    const val = getLocationDisplayValue(loc)
 
     // Multi-Location Logic
     if (tripType === 'multilocation' && fieldName === 'pickup') {
@@ -1134,9 +1176,7 @@ export default function HeroSection() {
                                           marginLeft: '6px',
                                         }}
                                       >
-                                        {s.name !== s.district
-                                          ? `${s.district}, Tamil Nadu`
-                                          : 'Tamil Nadu'}
+                                        {formatLocationDetails(s)}
                                       </span>
                                     </Typography>
                                   </Box>
@@ -1259,9 +1299,7 @@ export default function HeroSection() {
                                             marginLeft: '6px',
                                           }}
                                         >
-                                          {s.name !== s.district
-                                            ? `${s.district}, Tamil Nadu`
-                                            : 'Tamil Nadu'}
+                                          {formatLocationDetails(s)}
                                         </span>
                                       </Typography>
                                     </Box>
