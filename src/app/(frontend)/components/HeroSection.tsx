@@ -248,10 +248,14 @@ export default function HeroSection() {
           return (await res.json()) as { places?: TNLocation[] }
         }
 
-        const enriched = await tryFetch('/tamil_nadu_locations.enriched.json')
-        const json = enriched || (await tryFetch('/tamil_nadu_locations.json'))
-        if (!json) throw new Error('tn dataset fetch failed')
-        if (mounted && json.places) setTNLocations(json.places)
+        const tnJson = await tryFetch('/tamil_nadu_locations.json')
+        if (!tnJson) throw new Error('tn dataset fetch failed')
+        const indiaJson = await tryFetch('/overallindia_important.json')
+        const merged = [
+          ...(tnJson.places || []),
+          ...(indiaJson && indiaJson.places ? indiaJson.places : []),
+        ]
+        if (mounted) setTNLocations(merged)
       } catch (error) {
         console.error('Failed to load TN locations', error)
       }

@@ -1,0 +1,132 @@
+{
+  "meta": {
+    "generatedAt": "2026-02-04T12:01:05.731Z",
+    "updatedAt": "2026-02-04T12:01:05.743Z"
+  },
+  "places": [
+    {
+      "district": "Bengaluru Urban",
+      "name": "Bangalore",
+      "display_name": "Bengaluru (Bangalore), Karnataka, India",
+      "lat": "12.97889",
+      "lon": "77.59167",
+      "raw_addr": {
+        "city": "Bengaluru",
+        "state_district": "Bengaluru Urban",
+        "state": "Karnataka",
+        "country": "India",
+        "country_code": "in"
+      }
+    },
+    {
+      "district": "Bengaluru Urban",
+      "name": "Bengaluru",
+      "display_name": "Bengaluru, Karnataka, India",
+      "lat": "12.97889",
+      "lon": "77.59167",
+      "raw_addr": {
+        "city": "Bengaluru",
+        "state_district": "Bengaluru Urban",
+        "state": "Karnataka",
+        "country": "India",
+        "country_code": "in"
+      }
+    },
+    {
+      "district": "Puducherry",
+      "name": "Pondicherry",
+      "display_name": "Pondicherry (Puducherry), India",
+      "lat": "11.917",
+      "lon": "79.817",
+      "raw_addr": {
+        "city": "Pondicherry",
+        "state_district": "Puducherry",
+        "state": "Puducherry",
+        "country": "India",
+        "country_code": "in"
+      }
+    },
+    {
+      "district": "Puducherry",
+      "name": "Puducherry",
+      "display_name": "Puducherry, India",
+      "lat": "11.917",
+      "lon": "79.817",
+      "raw_addr": {
+        "city": "Puducherry",
+        "state_district": "Puducherry",
+        "state": "Puducherry",
+        "country": "India",
+        "country_code": "in"
+      }
+    },
+    {
+      "district": "Thiruvananthapuram",
+      "name": "Thiruvananthapuram",
+      "display_name": "Thiruvananthapuram, Kerala, India",
+      "lat": "8.524111",
+      "lon": "76.936611",
+      "raw_addr": {
+        "city": "Thiruvananthapuram",
+        "state_district": "Thiruvananthapuram",
+        "state": "Kerala",
+        "country": "India",
+        "country_code": "in"
+      }
+    },
+    {
+      "district": "Thiruvananthapuram",
+      "name": "Thiruvananthapuram Airport",
+      "display_name": "Thiruvananthapuram International Airport, Kerala, India",
+      "lat": "8.48",
+      "lon": "76.92",
+      "raw_addr": {
+        "state_district": "Thiruvananthapuram",
+        "state": "Kerala",
+        "country": "India",
+        "country_code": "in"
+      }
+    },
+    {
+      "district": "Tirupati",
+      "name": "Tirupati",
+      "display_name": "Tirupati, Andhra Pradesh, India",
+      "lat": "13.6355",
+      "lon": "79.4236",
+      "raw_addr": {
+        "city": "Tirupati",
+        "state_district": "Tirupati",
+        "state": "Andhra Pradesh",
+        "country": "India",
+        "country_code": "in"
+      }
+    },
+    {
+      "district": "Tirupati",
+      "name": "Tirupati Airport",
+      "display_name": "Tirupati Airport (Renigunta), Andhra Pradesh, India",
+      "lat": "13.63778",
+      "lon": "79.54722",
+      "raw_addr": {
+        "state_district": "Tirupati",
+        "state": "Andhra Pradesh",
+        "country": "India",
+        "country_code": "in"
+      }
+    },
+    {
+      "district": "Thiruvananthapuram",
+      "name": "Trivandrum",
+      "display_name": "Trivandrum (Thiruvananthapuram), Kerala, India",
+      "lat": "8.524111",
+      "lon": "76.936611",
+      "raw_addr": {
+        "city": "Thiruvananthapuram",
+        "state_district": "Thiruvananthapuram",
+        "state": "Kerala",
+        "country": "India",
+        "country_code": "in"
+      }
+    }
+  ]
+}
