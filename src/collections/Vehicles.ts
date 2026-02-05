@@ -140,7 +140,7 @@ export const Vehicles: CollectionConfig = {
       name: 'driver',
       type: 'relationship',
       relationTo: 'drivers',
-      required: true,
+      required: false,
       admin: {
         description: 'Each driver can be assigned to only one vehicle.',
       },

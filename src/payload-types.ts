@@ -263,7 +263,7 @@ export interface Vehicle {
   /**
    * Each driver can be assigned to only one vehicle.
    */
-  driver: string | Driver;
+  driver?: (string | null) | Driver;
   status: 'available' | 'not_available' | 'driving';
   lastFc: string;
   image?: (string | null) | VehicleImage;
