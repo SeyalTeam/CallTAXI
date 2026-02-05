@@ -114,10 +114,12 @@ export interface Config {
   globals: {
     'booking-report': BookingReport;
     'customer-report': CustomerReport;
+    'payment-settings': PaymentSetting;
   };
   globalsSelect: {
     'booking-report': BookingReportSelect<false> | BookingReportSelect<true>;
     'customer-report': CustomerReportSelect<false> | CustomerReportSelect<true>;
+    'payment-settings': PaymentSettingsSelect<false> | PaymentSettingsSelect<true>;
   };
   locale: null;
   user: User & {
@@ -258,6 +260,11 @@ export interface Vehicle {
   number: string;
   seatCount?: number | null;
   ownerName: string;
+  /**
+   * Each driver can be assigned to only one vehicle.
+   */
+  driver: string | Driver;
+  status: 'available' | 'not_available' | 'driving';
   lastFc: string;
   image?: (string | null) | VehicleImage;
   icon?: (string | null) | VehicleIcon;
@@ -684,6 +691,8 @@ export interface VehiclesSelect<T extends boolean = true> {
   number?: T;
   seatCount?: T;
   ownerName?: T;
+  driver?: T;
+  status?: T;
   lastFc?: T;
   image?: T;
   icon?: T;
@@ -936,6 +945,19 @@ export interface CustomerReport {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payment-settings".
+ */
+export interface PaymentSetting {
+  id: string;
+  /**
+   * Minimum amount required to confirm a booking.
+   */
+  minimumPayment?: number | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "booking-report_select".
  */
 export interface BookingReportSelect<T extends boolean = true> {
@@ -948,6 +970,16 @@ export interface BookingReportSelect<T extends boolean = true> {
  * via the `definition` "customer-report_select".
  */
 export interface CustomerReportSelect<T extends boolean = true> {
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payment-settings_select".
+ */
+export interface PaymentSettingsSelect<T extends boolean = true> {
+  minimumPayment?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

@@ -1,7 +1,7 @@
 import { createHmac } from 'crypto'
-import configPromise from '@payload-config'
-import { getPayload } from 'payload'
 import type { Booking } from '@/payload-types'
+import { getPayload } from 'payload'
+import configPromise from '@payload-config'
 
 type BookingCreate = Omit<Booking, 'id' | 'createdAt' | 'updatedAt'>
 
@@ -20,6 +20,7 @@ const DEFAULT_MINIMUM_PAYMENT = 500
 
 export const POST = async (request: Request) => {
   try {
+    const payload = await getPayload({ config: configPromise })
     const body = (await request.json()) as VerifyBody
     const booking = body.booking
     const payment = body.payment
@@ -86,23 +87,18 @@ export const POST = async (request: Request) => {
       return Response.json({ error: 'Invalid payment signature' }, { status: 400 })
     }
 
-    const payload = await getPayload({
-      config: configPromise,
-    })
-
     const estimatedFare = Number(booking.estimatedFare ?? 0)
     const discountAmount = Number(booking.discountAmount ?? 0)
     const payable = Math.max(estimatedFare - discountAmount, 0)
     const paidAmount = Number((amountPaise / 100).toFixed(2))
-    let minimumPayment = DEFAULT_MINIMUM_PAYMENT
 
+    let minimumPayment = DEFAULT_MINIMUM_PAYMENT
     try {
-      const settings = await payload.db.findGlobal<{ minimumPayment?: number }>({
-        slug: 'payment-settings',
-      })
-      const minValue = Number(settings?.minimumPayment)
-      if (Number.isFinite(minValue) && minValue >= 0) {
-        minimumPayment = minValue
+      const settings = (await payload.findGlobal({
+        slug: 'payment-settings' as any,
+      })) as any
+      if (settings?.minimumPayment !== undefined) {
+        minimumPayment = Number(settings.minimumPayment)
       }
     } catch (error) {
       console.error('Failed to load payment settings', error)
@@ -118,34 +114,39 @@ export const POST = async (request: Request) => {
       return Response.json({ error: 'Minimum payment amount is insufficient' }, { status: 400 })
     }
 
-    const paymentStatus = paidAmount + 0.01 < payable ? 'partial' : 'paid'
+    const paymentStatus = (paidAmount + 0.01 < payable ? 'partial' : 'paid') as 'partial' | 'paid'
 
     const bookingData = booking as BookingCreate
-    let bookingDoc
-    try {
-      bookingDoc = await payload.create({
-        collection: 'bookings',
-        data: {
-          ...bookingData,
-          status: 'confirmed',
-          paymentStatus,
-          paymentAmount: paidAmount,
-          paymentType,
-          razorpayOrderId: orderId,
-          razorpayPaymentId: paymentId,
-          razorpaySignature: signature,
-        },
-      })
-    } catch (error) {
-      console.error('Booking creation failed', error)
-      const message =
-        error instanceof Error && error.message ? error.message : 'Booking creation failed'
-      return Response.json({ error: message }, { status: 500 })
+    const bookingPayload = {
+      ...bookingData,
+      status: 'confirmed' as const,
+      paymentStatus,
+      paymentAmount: paidAmount,
+      paymentType,
+      razorpayOrderId: orderId,
+      razorpayPaymentId: paymentId,
+      razorpaySignature: signature,
     }
 
-    return Response.json({ bookingId: bookingDoc.id })
+    try {
+      const result = await payload.create({
+        collection: 'bookings',
+        data: bookingPayload as any,
+      })
+
+      return Response.json({ bookingId: result.id })
+    } catch (error) {
+      console.error('Booking creation failed:', error)
+      let message = 'Booking creation failed'
+      if (error instanceof Error) {
+        message = error.message
+      }
+      return Response.json({ error: message }, { status: 500 })
+    }
   } catch (error) {
     console.error('Razorpay verification failed', error)
-    return Response.json({ error: 'Failed to verify payment' }, { status: 500 })
+    const message =
+      error instanceof Error && error.message ? error.message : 'Failed to verify payment'
+    return Response.json({ error: message }, { status: 500 })
   }
 }
