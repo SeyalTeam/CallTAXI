@@ -248,7 +248,7 @@ export default function HeroSection() {
     async function loadTariffs() {
       try {
         const res = await axios.get<{ docs?: unknown[] }>(
-          `${process.env.NEXT_PUBLIC_PAYLOAD_URL || ''}/api/tariffs?limit=100&sort=-updatedAt&depth=2`,
+          `/api/tariffs?limit=100&sort=-updatedAt&depth=2`,
         )
         const docs = Array.isArray(res.data.docs) ? res.data.docs : []
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -308,7 +308,7 @@ export default function HeroSection() {
     async function checkActiveCoupons() {
       try {
         const res = await axios.get<{ totalDocs: number; docs: CouponDoc[] }>(
-          `${process.env.NEXT_PUBLIC_PAYLOAD_URL || ''}/api/coupons?where[active][equals]=true&limit=1`,
+          `/api/coupons?where[active][equals]=true&limit=1`,
         )
         if (mounted && res.data.totalDocs > 0) {
           setHasActiveCoupons(true)
@@ -321,7 +321,7 @@ export default function HeroSection() {
     async function loadSliderImages() {
       try {
         const res = await axios.get<{ docs: Record<string, unknown>[] }>(
-          `${process.env.NEXT_PUBLIC_PAYLOAD_URL || ''}/api/slider-images?limit=10`,
+          `/api/slider-images?limit=10`,
         )
         const docs = res.data.docs || []
         const images: SliderImage[] = docs
@@ -341,9 +341,7 @@ export default function HeroSection() {
 
     async function loadPaymentSettings() {
       try {
-        const res = await axios.get<{ minimumPayment?: number }>(
-          `${process.env.NEXT_PUBLIC_PAYLOAD_URL || ''}/api/globals/payment-settings`,
-        )
+        const res = await axios.get<{ minimumPayment?: number }>(`/api/globals/payment-settings`)
         const minValue = Number(res.data?.minimumPayment)
         if (Number.isFinite(minValue) && minValue >= 0 && mounted) {
           setMinimumPayment(minValue)
@@ -635,7 +633,7 @@ export default function HeroSection() {
 
     try {
       const res = await axios.get<{ docs: CouponDoc[] }>(
-        `${process.env.NEXT_PUBLIC_PAYLOAD_URL || ''}/api/coupons?where[name][equals]=${couponCodeInput}`,
+        `/api/coupons?where[name][equals]=${couponCodeInput}`,
       )
       const coupons = res.data.docs
 
@@ -837,8 +835,7 @@ export default function HeroSection() {
         amount,
         currency,
         name: 'Kani Taxi',
-        description:
-          paymentType === 'full' ? 'Full booking payment' : 'Minimum booking payment',
+        description: paymentType === 'full' ? 'Full booking payment' : 'Minimum booking payment',
         order_id: orderId,
         prefill: {
           name: pendingBookingPayload.customerName,
@@ -2312,12 +2309,7 @@ export default function HeroSection() {
                   </Box>
                 </form>
               )}
-              <Dialog
-                open={paymentDialogOpen}
-                onClose={closePaymentDialog}
-                maxWidth="xs"
-                fullWidth
-              >
+              <Dialog open={paymentDialogOpen} onClose={closePaymentDialog} maxWidth="xs" fullWidth>
                 <DialogTitle sx={{ fontWeight: 700, color: '#0f172a' }}>
                   Complete Payment
                 </DialogTitle>
@@ -2390,18 +2382,18 @@ export default function HeroSection() {
                   {paymentSummary &&
                     paymentSummary.payable > minimumPayment &&
                     minimumPayment > 0 && (
-                    <Button
-                      variant="outlined"
-                      onClick={() => startPayment('minimum')}
-                      disabled={paymentProcessing}
-                    >
-                      {paymentProcessing ? (
-                        <CircularProgress size={18} />
-                      ) : (
-                        `Pay ₹${Math.min(minimumPayment, paymentSummary.payable).toFixed(2)}`
-                      )}
-                    </Button>
-                  )}
+                      <Button
+                        variant="outlined"
+                        onClick={() => startPayment('minimum')}
+                        disabled={paymentProcessing}
+                      >
+                        {paymentProcessing ? (
+                          <CircularProgress size={18} />
+                        ) : (
+                          `Pay ₹${Math.min(minimumPayment, paymentSummary.payable).toFixed(2)}`
+                        )}
+                      </Button>
+                    )}
                   <Button
                     variant="contained"
                     onClick={() => startPayment('full')}
