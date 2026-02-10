@@ -901,10 +901,12 @@ export default function HeroSection() {
       razorpay.open()
     } catch (error) {
       console.error('Payment start failed', error)
-      const message =
-        axios.isAxiosError(error) && error.response?.data?.error
-          ? String(error.response.data.error)
-          : 'Unable to start payment. Please try again.'
+      let message = 'Unable to start payment. Please try again.'
+      if (axios.isAxiosError(error) && error.response?.data?.error) {
+        message = String(error.response.data.error)
+      } else if (error instanceof Error) {
+        message = error.message
+      }
       setPaymentError(message)
       setPaymentProcessing(false)
     }
