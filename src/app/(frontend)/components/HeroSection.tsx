@@ -2172,6 +2172,13 @@ export default function HeroSection() {
                                     <span style={{ color: '#fbc024' }}>
                                       ₹{(Number(fare) - discountAmount).toFixed(2)}
                                     </span>
+                                    <Typography
+                                      component="span"
+                                      variant="caption"
+                                      sx={{ color: '#94a3b8', ml: 1, fontWeight: 'normal' }}
+                                    >
+                                      (Toll, Parking Extra)
+                                    </Typography>
                                   </Typography>
                                   <Typography
                                     variant="body2"
@@ -2184,6 +2191,13 @@ export default function HeroSection() {
                               ) : (
                                 <Typography variant="subtitle1" color="#fff" fontWeight="bold">
                                   Estimated Share: <span style={{ color: '#fbc024' }}>₹{fare}</span>
+                                  <Typography
+                                    component="span"
+                                    variant="caption"
+                                    sx={{ color: '#94a3b8', ml: 1, fontWeight: 'normal' }}
+                                  >
+                                    (Toll, Parking Extra)
+                                  </Typography>
                                 </Typography>
                               )}
                               <Typography variant="body2" color="#64748b">
