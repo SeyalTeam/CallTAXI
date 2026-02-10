@@ -2466,9 +2466,14 @@ export default function HeroSection() {
                       paymentSummary.payable > minimumPayment &&
                       minimumPayment > 0 && (
                         <Button
-                          variant="outlined"
+                          variant="contained"
                           onClick={() => startPayment('minimum')}
                           disabled={paymentProcessing}
+                          sx={{
+                            bgcolor: '#2563eb',
+                            color: '#fff',
+                            '&:hover': { bgcolor: '#1d4ed8' },
+                          }}
                         >
                           {paymentProcessing ? (
                             <CircularProgress size={18} />
