@@ -2448,14 +2448,15 @@ export default function HeroSection() {
                 <DialogActions sx={{ px: 3, pb: 3, flexDirection: 'column', gap: 1.5 }}>
                   <Button
                     fullWidth
-                    variant="text"
+                    variant="contained"
                     onClick={handlePayLater}
                     disabled={paymentProcessing}
                     sx={{
-                      color: '#64748b',
+                      bgcolor: '#16a34a',
+                      color: '#fff',
                       textTransform: 'none',
                       fontWeight: 600,
-                      '&:hover': { bgcolor: 'rgba(100, 116, 139, 0.04)' },
+                      '&:hover': { bgcolor: '#15803d' },
                     }}
                   >
                     Book without payment
