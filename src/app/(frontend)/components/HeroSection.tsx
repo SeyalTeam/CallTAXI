@@ -2478,7 +2478,7 @@ export default function HeroSection() {
                           {paymentProcessing ? (
                             <CircularProgress size={18} />
                           ) : (
-                            `Pay ₹${Math.min(minimumPayment, paymentSummary.payable).toFixed(2)}`
+                            `Pay Minimum ₹${Math.min(minimumPayment, paymentSummary.payable).toFixed(2)}`
                           )}
                         </Button>
                       )}
