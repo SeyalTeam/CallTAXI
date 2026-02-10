@@ -47,6 +47,27 @@ export const Bookings: CollectionConfig = {
             data.customer = newCustomer.id
           }
         }
+        if (operation === 'create' && !data.bookingCode) {
+          let code = ''
+          let isUnique = false
+          while (!isUnique) {
+            code = Math.floor(100000 + Math.random() * 900000).toString()
+            const existing = await req.payload.find({
+              collection: 'bookings',
+              where: {
+                bookingCode: {
+                  equals: code,
+                },
+              },
+              limit: 0,
+            })
+            if (existing.docs.length === 0) {
+              isUnique = true
+            }
+          }
+          data.bookingCode = code
+        }
+
         return data
       },
     ],
@@ -259,6 +280,15 @@ export const Bookings: CollectionConfig = {
       name: 'razorpaySignature',
       type: 'text',
       required: false,
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+      },
+    },
+    {
+      name: 'bookingCode',
+      type: 'text',
+      unique: true,
       admin: {
         position: 'sidebar',
         readOnly: true,

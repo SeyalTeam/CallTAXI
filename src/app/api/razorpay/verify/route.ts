@@ -134,7 +134,10 @@ export const POST = async (request: Request) => {
         data: bookingPayload as any,
       })
 
-      return Response.json({ bookingId: result.id })
+      return Response.json({
+        bookingId: result.id,
+        bookingCode: (result as any).bookingCode,
+      })
     } catch (error) {
       console.error('Booking creation failed:', error)
       let message = 'Booking creation failed'

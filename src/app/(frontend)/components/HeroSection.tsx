@@ -23,7 +23,9 @@ import {
   DialogContent,
   DialogActions,
   Divider,
+  IconButton,
 } from '@mui/material'
+import CloseIcon from '@mui/icons-material/Close'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
@@ -869,7 +871,11 @@ export default function HeroSection() {
               },
             })
 
-            setBookingSuccess(verifyRes.data?.bookingId || response.razorpay_payment_id)
+            setBookingSuccess(
+              verifyRes.data?.bookingCode ||
+                verifyRes.data?.bookingId ||
+                response.razorpay_payment_id,
+            )
             resetBookingForm()
             setPaymentDialogOpen(false)
             setPendingBookingPayload(null)
@@ -896,6 +902,34 @@ export default function HeroSection() {
     } catch (error) {
       console.error('Payment start failed', error)
       setPaymentError('Unable to start payment. Please try again.')
+      setPaymentProcessing(false)
+    }
+  }
+
+  const handlePayLater = async () => {
+    if (!pendingBookingPayload || !paymentSummary) {
+      setPaymentError('Please submit the booking again.')
+      return
+    }
+
+    setPaymentProcessing(true)
+    setPaymentError(null)
+
+    try {
+      const res = await axios.post('/api/bookings/create', pendingBookingPayload)
+      setBookingSuccess(res.data?.bookingCode || res.data?.bookingId || 'success')
+      resetBookingForm()
+      setPaymentDialogOpen(false)
+      setPendingBookingPayload(null)
+      setPaymentSummary(null)
+    } catch (error) {
+      console.error('Pay later booking failed', error)
+      const message =
+        axios.isAxiosError(error) && error.response?.data?.error
+          ? String(error.response.data.error)
+          : 'Booking failed. Please contact support.'
+      setPaymentError(message)
+    } finally {
       setPaymentProcessing(false)
     }
   }
@@ -2310,8 +2344,24 @@ export default function HeroSection() {
                 </form>
               )}
               <Dialog open={paymentDialogOpen} onClose={closePaymentDialog} maxWidth="xs" fullWidth>
-                <DialogTitle sx={{ fontWeight: 700, color: '#0f172a' }}>
+                <DialogTitle
+                  sx={{
+                    fontWeight: 700,
+                    color: '#0f172a',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}
+                >
                   Complete Payment
+                  <IconButton
+                    aria-label="close"
+                    onClick={closePaymentDialog}
+                    disabled={paymentProcessing}
+                    sx={{ color: '#64748b' }}
+                  >
+                    <CloseIcon />
+                  </IconButton>
                 </DialogTitle>
                 <DialogContent>
                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, mt: 1 }}>
@@ -2375,41 +2425,54 @@ export default function HeroSection() {
                     )}
                   </Box>
                 </DialogContent>
-                <DialogActions sx={{ px: 3, pb: 2 }}>
-                  <Button onClick={closePaymentDialog} disabled={paymentProcessing}>
-                    Cancel
-                  </Button>
-                  {paymentSummary &&
-                    paymentSummary.payable > minimumPayment &&
-                    minimumPayment > 0 && (
-                      <Button
-                        variant="outlined"
-                        onClick={() => startPayment('minimum')}
-                        disabled={paymentProcessing}
-                      >
-                        {paymentProcessing ? (
-                          <CircularProgress size={18} />
-                        ) : (
-                          `Pay ₹${Math.min(minimumPayment, paymentSummary.payable).toFixed(2)}`
-                        )}
-                      </Button>
-                    )}
+                <DialogActions sx={{ px: 3, pb: 3, flexDirection: 'column', gap: 1.5 }}>
                   <Button
-                    variant="contained"
-                    onClick={() => startPayment('full')}
+                    fullWidth
+                    variant="text"
+                    onClick={handlePayLater}
                     disabled={paymentProcessing}
                     sx={{
-                      bgcolor: '#fbc024',
-                      color: '#000',
-                      '&:hover': { bgcolor: '#f59e0b' },
+                      color: '#64748b',
+                      textTransform: 'none',
+                      fontWeight: 600,
+                      '&:hover': { bgcolor: 'rgba(100, 116, 139, 0.04)' },
                     }}
                   >
-                    {paymentProcessing ? (
-                      <CircularProgress size={18} />
-                    ) : (
-                      `Pay Full ₹${paymentSummary ? paymentSummary.payable.toFixed(2) : '0.00'}`
-                    )}
+                    Book without payment
                   </Button>
+                  <Box sx={{ width: '100%', display: 'flex', gap: 1.5 }}>
+                    {paymentSummary &&
+                      paymentSummary.payable > minimumPayment &&
+                      minimumPayment > 0 && (
+                        <Button
+                          variant="outlined"
+                          onClick={() => startPayment('minimum')}
+                          disabled={paymentProcessing}
+                        >
+                          {paymentProcessing ? (
+                            <CircularProgress size={18} />
+                          ) : (
+                            `Pay ₹${Math.min(minimumPayment, paymentSummary.payable).toFixed(2)}`
+                          )}
+                        </Button>
+                      )}
+                    <Button
+                      variant="contained"
+                      onClick={() => startPayment('full')}
+                      disabled={paymentProcessing}
+                      sx={{
+                        bgcolor: '#fbc024',
+                        color: '#000',
+                        '&:hover': { bgcolor: '#f59e0b' },
+                      }}
+                    >
+                      {paymentProcessing ? (
+                        <CircularProgress size={18} />
+                      ) : (
+                        `Pay Full ₹${paymentSummary ? paymentSummary.payable.toFixed(2) : '0.00'}`
+                      )}
+                    </Button>
+                  </Box>
                 </DialogActions>
               </Dialog>
             </Paper>

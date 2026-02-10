@@ -378,6 +378,7 @@ export interface Booking {
   razorpayOrderId?: string | null;
   razorpayPaymentId?: string | null;
   razorpaySignature?: string | null;
+  bookingCode?: string | null;
   notes?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -735,6 +736,7 @@ export interface BookingsSelect<T extends boolean = true> {
   razorpayOrderId?: T;
   razorpayPaymentId?: T;
   razorpaySignature?: T;
+  bookingCode?: T;
   notes?: T;
   updatedAt?: T;
   createdAt?: T;
