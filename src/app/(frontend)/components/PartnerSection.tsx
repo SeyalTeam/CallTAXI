@@ -27,7 +27,7 @@ export default function PartnerSection() {
   }
 
   const sectionStyle = {
-    bgcolor: '#f1f7f7',
+    bgcolor: '#e0f2fe',
     color: '#0f172a',
     pt: { xs: 3, md: 7 },
     pb: { xs: 3, md: 7 },

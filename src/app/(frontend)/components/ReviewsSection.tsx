@@ -87,7 +87,7 @@ export default function ReviewsSection() {
       id="reviews-section"
       sx={{
         py: { xs: 6, md: 10 },
-        background: '#f1f7f7',
+        background: '#e0f2fe',
         color: '#0f172a',
         overflow: 'hidden',
       }}

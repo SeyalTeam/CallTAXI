@@ -113,7 +113,7 @@ export default function ContactSection() {
   }
 
   return (
-    <Box id="contact-section" sx={{ py: { xs: 6, md: 10 }, bgcolor: '#f1f7f7' }}>
+    <Box id="contact-section" sx={{ py: { xs: 6, md: 10 }, bgcolor: '#e0f2fe' }}>
       <Container maxWidth="xl">
         <Box
           sx={{

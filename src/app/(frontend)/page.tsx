@@ -95,7 +95,7 @@ export default async function Page() {
     })
 
   return (
-    <main style={{ backgroundColor: '#0f172a', minHeight: '100vh' }}>
+    <main style={{ backgroundColor: '#e0f2fe', minHeight: '100vh' }}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -124,7 +124,7 @@ export default async function Page() {
             right: 0,
             bottom: 0,
             background:
-              'linear-gradient(to bottom, #f3f4f6 0%, rgba(243, 244, 246, 0.98) 15%, rgba(243, 244, 246, 0.98) 100%)',
+              'linear-gradient(to bottom, #e0f2fe 0%, rgba(224, 242, 254, 0.98) 15%, rgba(224, 242, 254, 0.98) 100%)',
             bgcolor: 'transparent', // fallback
             zIndex: 0,
           }}

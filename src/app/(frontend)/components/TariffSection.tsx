@@ -36,7 +36,7 @@ export default function TariffSection({ tariffs }: { tariffs: TariffDoc[] }) {
         pb: 0,
         position: 'relative',
         overflow: 'hidden',
-        bgcolor: '#f1f7f7',
+        bgcolor: '#e0f2fe',
         // backgroundImage removed to avoid yellow tint
         color: '#0f172a',
       }}
