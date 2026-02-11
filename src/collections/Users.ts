@@ -28,7 +28,7 @@ export const Users: CollectionConfig = {
       hasMany: false, // One-to-one link
       admin: {
         condition: (data) => data.role === 'driver',
-        position: 'sidebar', // Optional: Place in sidebar for better UI
+        position: 'sidebar',
       },
     },
   ],
