@@ -20,6 +20,7 @@ import { SliderImages } from './collections/SliderImages'
 import { Contacts } from './collections/Contacts'
 import { getBookingReport } from './endpoints/getBookingReport'
 import { getCustomerReport } from './endpoints/getCustomerReport'
+import { generatePaymentLink } from './endpoints/generatePaymentLink'
 import { CustomerReport } from './globals/CustomerReport'
 import { PaymentSettings } from './globals/PaymentSettings'
 
@@ -37,6 +38,11 @@ export default buildConfig({
       path: '/get-customer-report',
       method: 'get',
       handler: getCustomerReport,
+    },
+    {
+      path: '/razorpay/payment-link',
+      method: 'post',
+      handler: generatePaymentLink,
     },
   ],
   admin: {

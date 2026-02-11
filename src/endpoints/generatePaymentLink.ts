@@ -1,18 +1,19 @@
-import { getPayload } from 'payload'
-import configPromise from '@payload-config'
+import { PayloadHandler } from 'payload'
 import Razorpay from 'razorpay'
 
-export const POST = async (request: Request) => {
-  try {
-    const payload = await getPayload({ config: configPromise })
-    
-    // Auth check
-    const { user } = await payload.auth({ headers: request.headers } as { headers: Headers })
-    if (!user) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+export const generatePaymentLink: PayloadHandler = async (req): Promise<Response> => {
+  const { payload, user } = req
 
-    const { bookingId } = (await request.json()) as { bookingId: string }
+  if (!user) {
+    return Response.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  try {
+    if (!req.json) {
+       return Response.json({ error: 'Request body is missing' }, { status: 400 })
+    }
+    const body = await req.json()
+    const { bookingId } = body as { bookingId: string }
 
     if (!bookingId) {
       return Response.json({ error: 'Booking ID is required' }, { status: 400 })
