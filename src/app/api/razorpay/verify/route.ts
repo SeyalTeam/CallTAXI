@@ -119,7 +119,7 @@ export const POST = async (request: Request) => {
     const bookingData = booking as BookingCreate
     const bookingPayload = {
       ...bookingData,
-      status: 'confirmed' as const,
+      status: 'pending' as const,
       paymentStatus,
       paymentAmount: paidAmount,
       paymentType,

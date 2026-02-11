@@ -15,7 +15,7 @@ export const POST = async (request: Request) => {
 
     const bookingData = {
       ...body,
-      status: 'confirmed',
+      status: 'pending',
       paymentStatus: 'unpaid',
       paymentAmount: 0,
     }
