@@ -1027,7 +1027,7 @@ export default function HeroSection() {
         alignItems: 'flex-start', // Top align to prevent tab jumping
         justifyContent: 'center',
         // Premium corporate light theme background
-        background: { xs: '#0f172a', md: '#e0f2fe' },
+        background: { xs: 'transparent', md: '#e0f2fe' },
         color: '#000',
         pt: { xs: '220px', md: '56vh' }, // Desktop pushed further down per 40% request
         overflow: 'visible',
