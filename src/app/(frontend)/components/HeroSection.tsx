@@ -1037,7 +1037,7 @@ export default function HeroSection() {
       }}
     >
       {/* Background Slider */}
-      {sliderImages.length > 0 &&
+      {sliderImages.length > 0 ? (
         sliderImages.map((img, index) => (
           <Box
             key={img.id}
@@ -1065,7 +1065,34 @@ export default function HeroSection() {
               },
             }}
           />
-        ))}
+        ))
+      ) : (
+        // Fallback Static Image
+        <Box
+          sx={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: { xs: '500px', md: '220px' },
+            backgroundImage:
+              'url(https://bucghzn379yrpbdu.public.blob.vercel-storage.com/Banner/kanitaxi-hero-bg.png)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            zIndex: 0,
+            // Dark overlay for text readability
+            '&::before': {
+              content: '""',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            },
+          }}
+        />
+      )}
 
       <Container
         maxWidth="xl"
