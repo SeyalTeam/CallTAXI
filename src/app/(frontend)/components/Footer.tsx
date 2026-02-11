@@ -7,23 +7,25 @@ import FacebookIcon from '@mui/icons-material/Facebook'
 import InstagramIcon from '@mui/icons-material/Instagram'
 import XIcon from '@mui/icons-material/X'
 import YouTubeIcon from '@mui/icons-material/YouTube'
-import { Box, Container, Typography, Grid, IconButton } from '@mui/material'
+import { Box, Container, Typography, Grid, IconButton, SxProps, Theme } from '@mui/material'
 
-const ThreadsIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg
-    width="1em"
-    height="1em"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    {...props}
-  >
-    <path d="M12 2a10 10 0 0 1 10 10v0a10 10 0 0 1-10 10H8a4 4 0 0 1-4-4v-4a12 12 0 0 1 12-12v0" />
-    <path d="M9 12a3 3 0 1 0 6 0 3 3 0 1 0-6 0Z" />
-  </svg>
+const ThreadsIcon = ({ fontSize, sx }: { fontSize?: string; sx?: SxProps<Theme> }) => (
+  <Box
+    component="img"
+    src="https://assets.streamlinehq.com/image/private/w_300,h_300,ar_1/f_auto/v1/icons/phosphor-regular/threads-logo-k5c6gxlwykjcqyoby4n7vs.png/threads-logo-3a9s16wq15a0okikkvwic1r.png?_a=DATAiZAAZAA0"
+    alt="Threads"
+    sx={{
+      width: fontSize === 'small' ? 20 : 24,
+      height: fontSize === 'small' ? 20 : 24,
+      filter:
+        'brightness(0) saturate(100%) invert(20%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(90%)', // Approximate #333333
+      '&:hover': {
+        filter:
+          'brightness(0) saturate(100%) invert(0%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(0%) contrast(100%)', // Approximate #000000
+      },
+      ...sx,
+    }}
+  />
 )
 
 export default function Footer() {

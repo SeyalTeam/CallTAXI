@@ -2,10 +2,23 @@ import { PayloadHandler } from 'payload'
 import Razorpay from 'razorpay'
 
 export const generatePaymentLink: PayloadHandler = async (req): Promise<Response> => {
-  const { payload, user } = req
+  const { payload } = req
+  
+  // Try to get user from req first, then fall back to explicit auth check
+  let user = (req as any).user
+  if (!user) {
+    const authResult = await payload.auth({ headers: req.headers })
+    user = authResult.user
+  }
 
   if (!user) {
-    return Response.json({ error: 'Unauthorized' }, { status: 401 })
+    return Response.json({ 
+      error: 'Unauthorized', 
+      debug: { 
+        hasReqUser: !!(req as any).user,
+        authHeaderPresent: !!req.headers.get('authorization'),
+      } 
+    }, { status: 401 })
   }
 
   try {

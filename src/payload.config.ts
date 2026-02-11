@@ -40,7 +40,7 @@ export default buildConfig({
       handler: getCustomerReport,
     },
     {
-      path: '/razorpay/payment-link',
+      path: '/payment-link-generate',
       method: 'post',
       handler: generatePaymentLink,
     },
