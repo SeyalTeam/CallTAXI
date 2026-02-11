@@ -2,31 +2,33 @@ import { PayloadHandler } from 'payload'
 import Razorpay from 'razorpay'
 
 export const generatePaymentLink: PayloadHandler = async (req): Promise<Response> => {
-  const { payload } = req
+  const { payload, user } = req
   
-  // Try to get user from req first, then fall back to explicit auth check
-  let user = (req as any).user
-  if (!user) {
-    const authResult = await payload.auth({ headers: req.headers })
-    user = authResult.user
-  }
-
+  // Since this is now a collection endpoint, payload automatically handles auth for us
+  // but we still check if the user is present.
   if (!user) {
     return Response.json({ 
       error: 'Unauthorized', 
       debug: { 
-        hasReqUser: !!(req as any).user,
+        hasReqUser: !!req.user,
         authHeaderPresent: !!req.headers.get('authorization'),
       } 
     }, { status: 401 })
   }
 
   try {
-    if (!req.json) {
-       return Response.json({ error: 'Request body is missing' }, { status: 400 })
+    let bookingId: string | undefined
+
+    // For collection endpoints like /api/bookings/:id/payment-link
+    if (req.routeParams?.id) {
+      bookingId = req.routeParams.id as string
     }
-    const body = await req.json()
-    const { bookingId } = body as { bookingId: string }
+
+    // Fallback to body if not in params
+    if (!bookingId && req.json) {
+       const body = await req.json()
+       bookingId = (body as any)?.bookingId
+    }
 
     if (!bookingId) {
       return Response.json({ error: 'Booking ID is required' }, { status: 400 })

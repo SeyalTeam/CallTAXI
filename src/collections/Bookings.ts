@@ -1,7 +1,15 @@
 import type { CollectionConfig } from 'payload'
+import { generatePaymentLink } from '../endpoints/generatePaymentLink'
 
 export const Bookings: CollectionConfig = {
   slug: 'bookings',
+  endpoints: [
+    {
+      path: '/:id/payment-link',
+      method: 'post',
+      handler: generatePaymentLink,
+    },
+  ],
   defaultSort: '-createdAt',
   admin: {
     group: 'Collection',
