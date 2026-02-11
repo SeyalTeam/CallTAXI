@@ -9,6 +9,23 @@ import XIcon from '@mui/icons-material/X'
 import YouTubeIcon from '@mui/icons-material/YouTube'
 import { Box, Container, Typography, Grid, IconButton } from '@mui/material'
 
+const ThreadsIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    width="1em"
+    height="1em"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <path d="M12 2a10 10 0 0 1 10 10v0a10 10 0 0 1-10 10H8a4 4 0 0 1-4-4v-4a12 12 0 0 1 12-12v0" />
+    <path d="M9 12a3 3 0 1 0 6 0 3 3 0 1 0-6 0Z" />
+  </svg>
+)
+
 export default function Footer() {
   const [showSticky, setShowSticky] = useState(false)
 
@@ -179,13 +196,34 @@ export default function Footer() {
               {/* Social Media Icons */}
               <Box display="flex" gap={1} mt={1}>
                 {[
-                  { icon: FacebookIcon, label: 'Facebook' },
-                  { icon: InstagramIcon, label: 'Instagram' },
-                  { icon: XIcon, label: 'X' },
-                  { icon: YouTubeIcon, label: 'YouTube' },
+                  {
+                    icon: FacebookIcon,
+                    label: 'Facebook',
+                    url: 'https://www.facebook.com/share/17wi9DV1uV/?mibextid=wwXIfr',
+                  },
+                  {
+                    icon: InstagramIcon,
+                    label: 'Instagram',
+                    url: 'https://www.instagram.com/kani.taxi?igsh=ejNqdHN5cDBsN2c4&utm_source=qr',
+                  },
+                  {
+                    icon: ThreadsIcon,
+                    label: 'Threads',
+                    url: 'https://www.threads.com/@kani.taxi?invite=0',
+                  },
+                  { icon: XIcon, label: 'X', url: 'https://x.com/kanitaxiyia9?s=11' },
+                  {
+                    icon: YouTubeIcon,
+                    label: 'YouTube',
+                    url: 'https://youtube.com/@kanitaxi-b1d?si=olzi_vPKHOvLqvG2',
+                  },
                 ].map((social, idx) => (
                   <IconButton
                     key={idx}
+                    component="a"
+                    href={social.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     size="small"
                     sx={{
                       color: '#333333',
