@@ -1249,16 +1249,20 @@ export default function HeroSection() {
                                 justifyContent: 'space-between',
                                 borderRadius: 3,
                                 cursor: 'pointer',
-                                bgcolor: isSelected ? '#fff9db' : '#fff',
-                                border: isSelected ? '2px solid #fbc024' : '1px solid #cbd5e1',
+                                bgcolor: isSelected ? '#fbc024' : '#fff',
+                                border: isSelected ? '2px solid #eab308' : '1px solid #cbd5e1',
                                 boxShadow: isSelected
-                                  ? '0 4px 12px rgba(251, 193, 36, 0.3)'
+                                  ? '0 8px 20px rgba(251, 192, 36, 0.4)'
                                   : '0 2px 4px rgba(0,0,0,0.1)',
-                                transition: 'all 0.2s ease',
+                                transform: isSelected ? 'scale(1.08) translateY(-2px)' : 'none',
+                                zIndex: isSelected ? 1 : 0,
+                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                                 flexShrink: 0,
                                 '&:hover': {
                                   borderColor: '#fbc024',
-                                  transform: 'translateY(-2px)',
+                                  transform: isSelected
+                                    ? 'scale(1.08) translateY(-4px)'
+                                    : 'translateY(-2px)',
                                 },
                               }}
                             >
@@ -1281,6 +1285,7 @@ export default function HeroSection() {
                                     maxHeight: '90%',
                                     objectFit: 'contain',
                                     display: 'block',
+                                    mixBlendMode: 'multiply',
                                   }}
                                 />
                               </Box>
@@ -1288,9 +1293,9 @@ export default function HeroSection() {
                               <Typography
                                 variant="body2"
                                 sx={{
-                                  color: '#0f172a',
-                                  fontWeight: isSelected ? 700 : 500,
-                                  fontSize: { xs: '0.65rem', md: '0.75rem' }, // Reduced font size
+                                  color: isSelected ? '#000' : '#0f172a',
+                                  fontWeight: isSelected ? 900 : 600,
+                                  fontSize: { xs: '0.65rem', md: '0.78rem' }, // Slightly larger active font
                                   letterSpacing: 0.1,
                                   textAlign: 'center',
                                   lineHeight: 1.1,
