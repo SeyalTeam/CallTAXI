@@ -264,7 +264,7 @@ export default function Footer() {
         </Container>
       </Box>
 
-      {/* Mobile Action Bar - Modern Floating Design */}
+      {/* Mobile Action Bar - Modern Floating Design V2 (Colored Buttons) */}
       {showSticky && (
         <Box
           sx={{
@@ -272,16 +272,17 @@ export default function Footer() {
             bottom: 24,
             left: '50%',
             transform: 'translateX(-50%)',
-            width: '90%',
-            maxWidth: '400px',
-            bgcolor: 'rgba(217, 119, 6, 0.9)', // Saturated orange with transparency
-            backdropFilter: 'blur(12px)',
+            width: '92%',
+            maxWidth: '430px',
+            bgcolor: 'rgba(255, 255, 255, 0.4)', // Glass container
+            backdropFilter: 'blur(16px)',
             borderRadius: '100px',
             zIndex: 1000,
             display: { xs: 'flex', md: 'none' },
-            boxShadow: '0 12px 30px rgba(0, 0, 0, 0.3)',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            overflow: 'hidden',
+            boxShadow: '0 12px 35px rgba(0, 0, 0, 0.25)',
+            border: '1px solid rgba(255, 255, 255, 0.5)',
+            p: 0.75, // Internal padding for the glass container
+            gap: 1,
             animation: 'floatIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
             '@keyframes floatIn': {
               from: { transform: 'translateX(-50%) translateY(100px)', opacity: 0 },
@@ -297,28 +298,22 @@ export default function Footer() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: 1.5,
-              py: 2,
-              color: '#fff',
+              gap: 1.25,
+              py: 1.5,
+              bgcolor: '#2563eb', // Call Blue
+              color: '#ffffff',
+              borderRadius: '100px',
               textDecoration: 'none',
-              transition: 'all 0.2s',
-              '&:active': { bgcolor: 'rgba(180, 83, 9, 0.5)', transform: 'scale(0.95)' },
+              transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+              boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)',
+              '&:active': { transform: 'scale(0.96)', bgcolor: '#1d4ed8' },
             }}
           >
-            <PhoneIcon sx={{ fontSize: 22 }} />
-            <Typography variant="subtitle2" fontWeight="800" sx={{ letterSpacing: 0.5 }}>
+            <PhoneIcon sx={{ fontSize: 20, color: '#ffffff' }} />
+            <Typography variant="subtitle2" fontWeight="900" sx={{ letterSpacing: 0.8 }}>
               CALL
             </Typography>
           </Box>
-
-          <Box
-            sx={{
-              width: '1px',
-              height: '24px',
-              bgcolor: 'rgba(255,255,255,0.3)',
-              alignSelf: 'center',
-            }}
-          />
 
           <Box
             component="a"
@@ -329,16 +324,19 @@ export default function Footer() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: 1.5,
-              py: 2,
-              color: '#fff',
+              gap: 1.25,
+              py: 1.5,
+              bgcolor: '#22c55e', // WhatsApp Green
+              color: '#ffffff',
+              borderRadius: '100px',
               textDecoration: 'none',
-              transition: 'all 0.2s',
-              '&:active': { bgcolor: 'rgba(180, 83, 9, 0.5)', transform: 'scale(0.95)' },
+              transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+              boxShadow: '0 4px 12px rgba(34, 197, 94, 0.3)',
+              '&:active': { transform: 'scale(0.96)', bgcolor: '#16a34a' },
             }}
           >
-            <WhatsAppIcon sx={{ fontSize: 22 }} />
-            <Typography variant="subtitle2" fontWeight="800" sx={{ letterSpacing: 0.5 }}>
+            <WhatsAppIcon sx={{ fontSize: 22, color: '#ffffff' }} />
+            <Typography variant="subtitle2" fontWeight="900" sx={{ letterSpacing: 0.8 }}>
               WHATSAPP
             </Typography>
           </Box>
