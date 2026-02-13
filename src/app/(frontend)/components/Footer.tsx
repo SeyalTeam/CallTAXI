@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import PhoneIcon from '@mui/icons-material/Phone'
 import WhatsAppIcon from '@mui/icons-material/WhatsApp'
 import FacebookIcon from '@mui/icons-material/Facebook'
@@ -29,24 +29,7 @@ const ThreadsIcon = ({ fontSize, sx }: { fontSize?: string; sx?: SxProps<Theme> 
 )
 
 export default function Footer() {
-  const [showSticky, setShowSticky] = useState(false)
-
-  useEffect(() => {
-    // Observe #home to toggle sticky footer
-    const targetEl = document.getElementById('home')
-    if (!targetEl) return
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        // Hide when Hero is visible. Show when scrolled past Hero (till footer).
-        setShowSticky(!entry.isIntersecting)
-      },
-      { threshold: 0 },
-    )
-
-    observer.observe(targetEl)
-    return () => observer.disconnect()
-  }, [])
+  // Removed scroll-dependent visibility for mobile action bar as per requested persistence
 
   return (
     <Box
@@ -264,84 +247,82 @@ export default function Footer() {
         </Container>
       </Box>
 
-      {/* Mobile Action Bar - Modern Floating Design V2 (Colored Buttons) */}
-      {showSticky && (
+      {/* Mobile Action Bar - Modern Floating Design V2 (Persistent) */}
+      <Box
+        sx={{
+          position: 'fixed',
+          bottom: 24,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: '92%',
+          maxWidth: '430px',
+          bgcolor: 'rgba(255, 255, 255, 0.4)', // Glass container
+          backdropFilter: 'blur(16px)',
+          borderRadius: '100px',
+          zIndex: 1000,
+          display: { xs: 'flex', md: 'none' },
+          boxShadow: '0 12px 35px rgba(0, 0, 0, 0.25)',
+          border: '1px solid rgba(255, 255, 255, 0.5)',
+          p: 0.75, // Internal padding for the glass container
+          gap: 1,
+          animation: 'floatIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+          '@keyframes floatIn': {
+            from: { transform: 'translateX(-50%) translateY(100px)', opacity: 0 },
+            to: { transform: 'translateX(-50%) translateY(0)', opacity: 1 },
+          },
+        }}
+      >
         <Box
+          component="a"
+          href="tel:+919488104888"
           sx={{
-            position: 'fixed',
-            bottom: 24,
-            left: '50%',
-            transform: 'translateX(-50%)',
-            width: '92%',
-            maxWidth: '430px',
-            bgcolor: 'rgba(255, 255, 255, 0.4)', // Glass container
-            backdropFilter: 'blur(16px)',
+            flex: 1,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 1.25,
+            py: 1.5,
+            bgcolor: '#2563eb', // Call Blue
+            color: '#ffffff',
             borderRadius: '100px',
-            zIndex: 1000,
-            display: { xs: 'flex', md: 'none' },
-            boxShadow: '0 12px 35px rgba(0, 0, 0, 0.25)',
-            border: '1px solid rgba(255, 255, 255, 0.5)',
-            p: 0.75, // Internal padding for the glass container
-            gap: 1,
-            animation: 'floatIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-            '@keyframes floatIn': {
-              from: { transform: 'translateX(-50%) translateY(100px)', opacity: 0 },
-              to: { transform: 'translateX(-50%) translateY(0)', opacity: 1 },
-            },
+            textDecoration: 'none',
+            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+            boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)',
+            '&:active': { transform: 'scale(0.96)', bgcolor: '#1d4ed8' },
           }}
         >
-          <Box
-            component="a"
-            href="tel:+919488104888"
-            sx={{
-              flex: 1,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 1.25,
-              py: 1.5,
-              bgcolor: '#2563eb', // Call Blue
-              color: '#ffffff',
-              borderRadius: '100px',
-              textDecoration: 'none',
-              transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-              boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)',
-              '&:active': { transform: 'scale(0.96)', bgcolor: '#1d4ed8' },
-            }}
-          >
-            <PhoneIcon sx={{ fontSize: 20, color: '#ffffff' }} />
-            <Typography variant="subtitle2" fontWeight="900" sx={{ letterSpacing: 0.8 }}>
-              CALL
-            </Typography>
-          </Box>
-
-          <Box
-            component="a"
-            href="https://wa.me/919488104888"
-            target="_blank"
-            sx={{
-              flex: 1,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 1.25,
-              py: 1.5,
-              bgcolor: '#22c55e', // WhatsApp Green
-              color: '#ffffff',
-              borderRadius: '100px',
-              textDecoration: 'none',
-              transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-              boxShadow: '0 4px 12px rgba(34, 197, 94, 0.3)',
-              '&:active': { transform: 'scale(0.96)', bgcolor: '#16a34a' },
-            }}
-          >
-            <WhatsAppIcon sx={{ fontSize: 22, color: '#ffffff' }} />
-            <Typography variant="subtitle2" fontWeight="900" sx={{ letterSpacing: 0.8 }}>
-              WHATSAPP
-            </Typography>
-          </Box>
+          <PhoneIcon sx={{ fontSize: 20, color: '#ffffff' }} />
+          <Typography variant="subtitle2" fontWeight="900" sx={{ letterSpacing: 0.8 }}>
+            CALL
+          </Typography>
         </Box>
-      )}
+
+        <Box
+          component="a"
+          href="https://wa.me/919488104888"
+          target="_blank"
+          sx={{
+            flex: 1,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 1.25,
+            py: 1.5,
+            bgcolor: '#22c55e', // WhatsApp Green
+            color: '#ffffff',
+            borderRadius: '100px',
+            textDecoration: 'none',
+            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+            boxShadow: '0 4px 12px rgba(34, 197, 94, 0.3)',
+            '&:active': { transform: 'scale(0.96)', bgcolor: '#16a34a' },
+          }}
+        >
+          <WhatsAppIcon sx={{ fontSize: 22, color: '#ffffff' }} />
+          <Typography variant="subtitle2" fontWeight="900" sx={{ letterSpacing: 0.8 }}>
+            WHATSAPP
+          </Typography>
+        </Box>
+      </Box>
     </Box>
   )
 }
