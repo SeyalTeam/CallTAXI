@@ -264,22 +264,28 @@ export default function Footer() {
         </Container>
       </Box>
 
-      {/* Mobile Action Bar - Conditional Sticky */}
+      {/* Mobile Action Bar - Modern Floating Design */}
       {showSticky && (
         <Box
           sx={{
             position: 'fixed',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            bgcolor: '#d97706',
+            bottom: 24,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: '90%',
+            maxWidth: '400px',
+            bgcolor: 'rgba(217, 119, 6, 0.9)', // Saturated orange with transparency
+            backdropFilter: 'blur(12px)',
+            borderRadius: '100px',
             zIndex: 1000,
             display: { xs: 'flex', md: 'none' },
-            boxShadow: '0 -4px 6px -1px rgba(0, 0, 0, 0.1)',
-            animation: 'slideUp 0.3s ease-out',
-            '@keyframes slideUp': {
-              from: { transform: 'translateY(100%)' },
-              to: { transform: 'translateY(0)' },
+            boxShadow: '0 12px 30px rgba(0, 0, 0, 0.3)',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            overflow: 'hidden',
+            animation: 'floatIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+            '@keyframes floatIn': {
+              from: { transform: 'translateX(-50%) translateY(100px)', opacity: 0 },
+              to: { transform: 'translateX(-50%) translateY(0)', opacity: 1 },
             },
           }}
         >
@@ -289,21 +295,31 @@ export default function Footer() {
             sx={{
               flex: 1,
               display: 'flex',
-              flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              py: 1.5,
+              gap: 1.5,
+              py: 2,
               color: '#fff',
               textDecoration: 'none',
-              borderRight: '1px solid rgba(255, 255, 255, 0.3)',
-              '&:active': { bgcolor: '#b45309' },
+              transition: 'all 0.2s',
+              '&:active': { bgcolor: 'rgba(180, 83, 9, 0.5)', transform: 'scale(0.95)' },
             }}
           >
-            <PhoneIcon sx={{ mb: 0.5 }} />
-            <Typography variant="subtitle2" fontWeight="bold">
-              Call Now
+            <PhoneIcon sx={{ fontSize: 22 }} />
+            <Typography variant="subtitle2" fontWeight="800" sx={{ letterSpacing: 0.5 }}>
+              CALL
             </Typography>
           </Box>
+
+          <Box
+            sx={{
+              width: '1px',
+              height: '24px',
+              bgcolor: 'rgba(255,255,255,0.3)',
+              alignSelf: 'center',
+            }}
+          />
+
           <Box
             component="a"
             href="https://wa.me/919488104888"
@@ -311,18 +327,19 @@ export default function Footer() {
             sx={{
               flex: 1,
               display: 'flex',
-              flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              py: 1.5,
+              gap: 1.5,
+              py: 2,
               color: '#fff',
               textDecoration: 'none',
-              '&:active': { bgcolor: '#b45309' },
+              transition: 'all 0.2s',
+              '&:active': { bgcolor: 'rgba(180, 83, 9, 0.5)', transform: 'scale(0.95)' },
             }}
           >
-            <WhatsAppIcon sx={{ mb: 0.5 }} />
-            <Typography variant="subtitle2" fontWeight="bold">
-              Let&apos;s Connect
+            <WhatsAppIcon sx={{ fontSize: 22 }} />
+            <Typography variant="subtitle2" fontWeight="800" sx={{ letterSpacing: 0.5 }}>
+              WHATSAPP
             </Typography>
           </Box>
         </Box>
