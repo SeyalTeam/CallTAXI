@@ -108,7 +108,9 @@ export const Users: CollectionConfig = {
       required: false,
       hasMany: false, // One-to-one link
       validate: (value, { data, siblingData }) => {
-        const role = data?.role ?? siblingData?.role
+        const roleFromData = (data as { role?: string } | undefined)?.role
+        const roleFromSiblingData = (siblingData as { role?: string } | undefined)?.role
+        const role = roleFromData ?? roleFromSiblingData
         if (role === 'driver' && !getRelationshipId(value)) {
           return 'Driver profile is required for driver access.'
         }
