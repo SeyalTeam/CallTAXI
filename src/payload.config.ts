@@ -27,6 +27,34 @@ const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
 export default buildConfig({
+  onInit: async (payload) => {
+    type MongoLikeCollection = {
+      dropIndex: (name: string) => Promise<void>
+      indexes: () => Promise<Array<{ name?: string }>>
+    }
+
+    try {
+      const dbConnection = (
+        payload.db as unknown as {
+          connection?: { collection?: (name: string) => MongoLikeCollection | undefined }
+        }
+      ).connection
+      const usersCollection = dbConnection?.collection?.('users')
+
+      if (!usersCollection) return
+
+      const indexes: Array<{ name?: string }> = await usersCollection.indexes()
+      const hasLegacyPhoneIndex = indexes.some((index) => index.name === 'phoneNumber_1')
+
+      if (hasLegacyPhoneIndex) {
+        await usersCollection.dropIndex('phoneNumber_1')
+        payload.logger.info('Dropped legacy users.phoneNumber_1 index.')
+      }
+    } catch (error) {
+      payload.logger.warn('Could not verify/drop legacy users.phoneNumber_1 index.')
+      payload.logger.debug(error)
+    }
+  },
   endpoints: [
     {
       path: '/get-booking-report',

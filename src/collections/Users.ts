@@ -16,6 +16,22 @@ const getRelationshipId = (value: unknown): string | null => {
   return null
 }
 
+const getCompatibilityPhoneNumber = (data: unknown, originalDoc: unknown): string => {
+  const dataRecord = data as Record<string, unknown> | undefined
+  const originalRecord = originalDoc as Record<string, unknown> | undefined
+
+  const emailFromData = typeof dataRecord?.email === 'string' ? dataRecord.email : null
+  const emailFromOriginal = typeof originalRecord?.email === 'string' ? originalRecord.email : null
+  const baseEmail = emailFromData ?? emailFromOriginal
+
+  if (baseEmail) {
+    return `compat:${baseEmail.trim().toLowerCase()}`
+  }
+
+  const idFromOriginal = typeof originalRecord?.id === 'string' ? originalRecord.id : `${Date.now()}`
+  return `compat:${idFromOriginal}`
+}
+
 export const Users: CollectionConfig = {
   slug: 'users',
   admin: {
@@ -44,12 +60,13 @@ export const Users: CollectionConfig = {
         const nextDriverProfile =
           data?.driverProfile === undefined ? originalDoc?.driverProfile : data.driverProfile
         const nextDriverProfileId = getRelationshipId(nextDriverProfile)
+        const compatibilityPhoneNumber = getCompatibilityPhoneNumber(data, originalDoc)
 
         if (nextRole !== 'driver') {
           return {
             ...(data ?? {}),
             driverProfile: null,
-            phoneNumber: null,
+            phoneNumber: compatibilityPhoneNumber,
           }
         }
 
@@ -92,7 +109,7 @@ export const Users: CollectionConfig = {
 
         return {
           ...(data ?? {}),
-          phoneNumber: null,
+          phoneNumber: compatibilityPhoneNumber,
         }
       },
     ],
