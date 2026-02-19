@@ -1,5 +1,21 @@
 import type { CollectionConfig } from 'payload'
 
+const getRelationshipId = (value: unknown): string | null => {
+  if (typeof value === 'string' && value.length > 0) {
+    return value
+  }
+
+  if (value && typeof value === 'object' && 'id' in value) {
+    const id = (value as { id?: unknown }).id
+
+    if (typeof id === 'string' && id.length > 0) {
+      return id
+    }
+  }
+
+  return null
+}
+
 export const Users: CollectionConfig = {
   slug: 'users',
   admin: {
@@ -7,15 +23,80 @@ export const Users: CollectionConfig = {
     useAsTitle: 'email',
   },
   auth: true,
+  hooks: {
+    beforeValidate: [
+      ({ data }) => {
+        if (!data?.role || data.role === 'driver') return data
+
+        return {
+          ...data,
+          driverProfile: null,
+        }
+      },
+    ],
+    beforeChange: [
+      async ({ data, originalDoc, req }) => {
+        const nextRole = data?.role ?? originalDoc?.role
+        const nextDriverProfile =
+          data?.driverProfile === undefined ? originalDoc?.driverProfile : data.driverProfile
+        const nextDriverProfileId = getRelationshipId(nextDriverProfile)
+
+        if (nextRole !== 'driver') {
+          return {
+            ...(data ?? {}),
+            driverProfile: null,
+          }
+        }
+
+        if (!nextDriverProfileId) {
+          throw new Error('Please select a driver profile when creating driver access.')
+        }
+
+        const existingDriverAccess = await req.payload.find({
+          collection: 'users',
+          where: {
+            and: [
+              {
+                role: {
+                  equals: 'driver',
+                },
+              },
+              {
+                driverProfile: {
+                  equals: nextDriverProfileId,
+                },
+              },
+              ...(typeof originalDoc?.id === 'string'
+                ? [
+                    {
+                      id: {
+                        not_equals: originalDoc.id,
+                      },
+                    },
+                  ]
+                : []),
+            ],
+          },
+          depth: 0,
+          limit: 1,
+        })
+
+        if (existingDriverAccess.totalDocs > 0) {
+          throw new Error('Selected driver profile already has driver access.')
+        }
+
+        return data
+      },
+    ],
+  },
   fields: [
     {
       name: 'role',
       type: 'select',
       required: true,
       options: [
-        { label: 'Superadmin', value: 'superadmin' },
+        { label: 'Super Admin', value: 'superadmin' },
         { label: 'Admin', value: 'admin' },
-        { label: 'Accounts', value: 'accounts' },
         { label: 'Driver', value: 'driver' },
       ],
       defaultValue: 'driver', // Default to least privileged
@@ -24,8 +105,15 @@ export const Users: CollectionConfig = {
       name: 'driverProfile',
       type: 'relationship',
       relationTo: 'drivers',
-      required: false, // Make true if mandatory for drivers
+      required: false,
       hasMany: false, // One-to-one link
+      validate: (value, { data, siblingData }) => {
+        const role = data?.role ?? siblingData?.role
+        if (role === 'driver' && !getRelationshipId(value)) {
+          return 'Driver profile is required for driver access.'
+        }
+        return true
+      },
       admin: {
         condition: (data) => data.role === 'driver',
         position: 'sidebar',
@@ -36,9 +124,9 @@ export const Users: CollectionConfig = {
     // Creation: Only superadmins can create new users
     create: ({ req: { user } }) => user?.role === 'superadmin',
 
-    // Read: Superadmins/admins/accounts full read; drivers only own data
+    // Read: Superadmins/admins full read; drivers only own data
     read: ({ req: { user } }) => {
-      if (user?.role === 'superadmin' || user?.role === 'admin' || user?.role === 'accounts') {
+      if (user?.role === 'superadmin' || user?.role === 'admin') {
         return true // Full read access
       }
       if (user?.role === 'driver') {
@@ -47,14 +135,10 @@ export const Users: CollectionConfig = {
       return false
     },
 
-    // Update: Superadmins full; admins none; accounts limited (e.g., to payments, but customize further); drivers own only
+    // Update: Superadmins full; admins read-only; drivers own only
     update: ({ req: { user }, id: _id }) => {
       if (user?.role === 'superadmin') return true
       if (user?.role === 'admin') return false // Read-only
-      if (user?.role === 'accounts') {
-        // Limited: Customize to allow updates on payment fields if added; for now, own only
-        return { id: { equals: user.id } }
-      }
       if (user?.role === 'driver') {
         return { id: { equals: user.id } } // Own profile only
       }

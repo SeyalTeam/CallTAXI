@@ -154,7 +154,7 @@ export interface UserAuthOperations {
  */
 export interface User {
   id: string;
-  role: 'superadmin' | 'admin' | 'accounts' | 'driver';
+  role: 'superadmin' | 'admin' | 'driver';
   driverProfile?: (string | null) | Driver;
   updatedAt: string;
   createdAt: string;
