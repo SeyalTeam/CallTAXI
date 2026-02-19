@@ -26,12 +26,16 @@ export const Users: CollectionConfig = {
   hooks: {
     beforeValidate: [
       ({ data }) => {
-        if (!data?.role || data.role === 'driver') return data
+        if (!data || typeof data !== 'object') return data
 
-        return {
-          ...data,
-          driverProfile: null,
+        const normalizedData = { ...(data as Record<string, unknown>) }
+        delete normalizedData.phoneNumber
+
+        if (normalizedData.role !== 'driver') {
+          normalizedData.driverProfile = null
         }
+
+        return normalizedData
       },
     ],
     beforeChange: [
@@ -45,6 +49,7 @@ export const Users: CollectionConfig = {
           return {
             ...(data ?? {}),
             driverProfile: null,
+            phoneNumber: null,
           }
         }
 
@@ -85,7 +90,10 @@ export const Users: CollectionConfig = {
           throw new Error('Selected driver profile already has driver access.')
         }
 
-        return data
+        return {
+          ...(data ?? {}),
+          phoneNumber: null,
+        }
       },
     ],
   },
@@ -119,6 +127,16 @@ export const Users: CollectionConfig = {
       admin: {
         condition: (data) => data.role === 'driver',
         position: 'sidebar',
+      },
+    },
+    {
+      // Compatibility field: allows stale admin payloads containing `phoneNumber`.
+      // It is hidden from UI and removed in hooks before persisting.
+      name: 'phoneNumber',
+      type: 'text',
+      required: false,
+      admin: {
+        hidden: true,
       },
     },
   ],
