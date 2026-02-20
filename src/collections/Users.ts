@@ -16,27 +16,12 @@ const getRelationshipId = (value: unknown): string | null => {
   return null
 }
 
-const getCompatibilityPhoneNumber = (data: unknown, originalDoc: unknown): string => {
-  const dataRecord = data as Record<string, unknown> | undefined
-  const originalRecord = originalDoc as Record<string, unknown> | undefined
-
-  const emailFromData = typeof dataRecord?.email === 'string' ? dataRecord.email : null
-  const emailFromOriginal = typeof originalRecord?.email === 'string' ? originalRecord.email : null
-  const baseEmail = emailFromData ?? emailFromOriginal
-
-  if (baseEmail) {
-    return `compat:${baseEmail.trim().toLowerCase()}`
-  }
-
-  const idFromOriginal = typeof originalRecord?.id === 'string' ? originalRecord.id : `${Date.now()}`
-  return `compat:${idFromOriginal}`
-}
-
 export const Users: CollectionConfig = {
   slug: 'users',
   admin: {
     group: 'Collection',
     useAsTitle: 'email',
+    defaultColumns: ['email', 'role', 'driverProfile'],
   },
   auth: true,
   hooks: {
@@ -45,7 +30,6 @@ export const Users: CollectionConfig = {
         if (!data || typeof data !== 'object') return data
 
         const normalizedData = { ...(data as Record<string, unknown>) }
-        delete normalizedData.phoneNumber
 
         if (normalizedData.role !== 'driver') {
           normalizedData.driverProfile = null
@@ -60,13 +44,11 @@ export const Users: CollectionConfig = {
         const nextDriverProfile =
           data?.driverProfile === undefined ? originalDoc?.driverProfile : data.driverProfile
         const nextDriverProfileId = getRelationshipId(nextDriverProfile)
-        const compatibilityPhoneNumber = getCompatibilityPhoneNumber(data, originalDoc)
 
         if (nextRole !== 'driver') {
           return {
             ...(data ?? {}),
             driverProfile: null,
-            phoneNumber: compatibilityPhoneNumber,
           }
         }
 
@@ -107,10 +89,7 @@ export const Users: CollectionConfig = {
           throw new Error('Selected driver profile already has driver access.')
         }
 
-        return {
-          ...(data ?? {}),
-          phoneNumber: compatibilityPhoneNumber,
-        }
+        return data
       },
     ],
   },
@@ -144,16 +123,6 @@ export const Users: CollectionConfig = {
       admin: {
         condition: (data) => data.role === 'driver',
         position: 'sidebar',
-      },
-    },
-    {
-      // Compatibility field: allows stale admin payloads containing `phoneNumber`.
-      // It is hidden from UI and removed in hooks before persisting.
-      name: 'phoneNumber',
-      type: 'text',
-      required: false,
-      admin: {
-        hidden: true,
       },
     },
   ],

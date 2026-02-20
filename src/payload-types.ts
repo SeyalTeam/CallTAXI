@@ -122,9 +122,7 @@ export interface Config {
     'payment-settings': PaymentSettingsSelect<false> | PaymentSettingsSelect<true>;
   };
   locale: null;
-  user: User & {
-    collection: 'users';
-  };
+  user: User;
   jobs: {
     tasks: unknown;
     workflows: unknown;
@@ -156,7 +154,6 @@ export interface User {
   id: string;
   role: 'superadmin' | 'admin' | 'driver';
   driverProfile?: (string | null) | Driver;
-  phoneNumber?: string | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -174,6 +171,7 @@ export interface User {
       }[]
     | null;
   password?: string | null;
+  collection: 'users';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -594,7 +592,6 @@ export interface PayloadMigration {
 export interface UsersSelect<T extends boolean = true> {
   role?: T;
   driverProfile?: T;
-  phoneNumber?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
