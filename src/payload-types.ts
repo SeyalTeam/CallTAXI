@@ -370,6 +370,14 @@ export interface Booking {
   couponCode?: string | null;
   discountAmount?: number | null;
   distanceKm?: number | null;
+  /**
+   * Add extra kilometers driven after the estimated route distance.
+   */
+  extraKm?: number | null;
+  /**
+   * Auto-calculated extra KM amount added to fare.
+   */
+  extraKmCharge?: number | null;
   status?: ('pending' | 'confirmed' | 'cancelled' | 'completed') | null;
   paymentStatus?: ('unpaid' | 'partial' | 'paid' | 'failed') | null;
   paymentAmount?: number | null;
@@ -728,6 +736,8 @@ export interface BookingsSelect<T extends boolean = true> {
   couponCode?: T;
   discountAmount?: T;
   distanceKm?: T;
+  extraKm?: T;
+  extraKmCharge?: T;
   status?: T;
   paymentStatus?: T;
   paymentAmount?: T;

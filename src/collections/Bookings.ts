@@ -1,5 +1,26 @@
 import type { CollectionConfig } from 'payload'
 
+const toSafeNumber = (value: unknown): number => {
+  const parsed = Number(value)
+  return Number.isFinite(parsed) ? parsed : 0
+}
+
+const getRelationId = (value: unknown): string | number | null => {
+  if (value === null || value === undefined) return null
+  if (typeof value === 'object') {
+    const relation = value as { id?: string | number | null }
+    return relation.id ?? null
+  }
+  if (typeof value === 'string' || typeof value === 'number') return value
+  return null
+}
+
+type TariffRateSnapshot = {
+  packages?: { extraKmRate?: number | null } | null
+  oneway?: { perKmRate?: number | null } | null
+  roundtrip?: { perKmRate?: number | null } | null
+}
+
 export const Bookings: CollectionConfig = {
   slug: 'bookings',
   defaultSort: '-createdAt',
@@ -13,6 +34,8 @@ export const Bookings: CollectionConfig = {
       'dropoffLocationName',
       'estimatedFare',
       'distanceKm',
+      'extraKm',
+      'extraKmCharge',
       'pickupDateTime',
       'status',
       'paymentStatus',
@@ -21,7 +44,7 @@ export const Bookings: CollectionConfig = {
   },
   hooks: {
     beforeChange: [
-      async ({ data, req, operation }) => {
+      async ({ data, req, operation, originalDoc }) => {
         if ((operation === 'create' || operation === 'update') && data.customerPhone) {
           const existingCustomer = await req.payload.find({
             collection: 'customers',
@@ -68,11 +91,56 @@ export const Bookings: CollectionConfig = {
           data.bookingCode = code
         }
 
+        if (operation === 'create' || operation === 'update') {
+          const currentFare = toSafeNumber(data.estimatedFare ?? originalDoc?.estimatedFare)
+          const previousExtraKm = toSafeNumber(originalDoc?.extraKm)
+          const nextExtraKm = Math.max(toSafeNumber(data.extraKm ?? originalDoc?.extraKm), 0)
+          const tripType = data.tripType ?? originalDoc?.tripType
+          const vehicleId = getRelationId(data.vehicle ?? originalDoc?.vehicle)
+
+          let perKmExtraRate = 0
+          if (vehicleId && tripType) {
+            const tariffResult = await req.payload.find({
+              collection: 'tariffs',
+              where: {
+                vehicle: {
+                  equals: vehicleId,
+                },
+              },
+              limit: 1,
+              depth: 0,
+            })
+
+            if (tariffResult.docs.length > 0) {
+              const tariff = tariffResult.docs[0] as TariffRateSnapshot
+              if (tripType === 'packages') {
+                perKmExtraRate = toSafeNumber(tariff.packages?.extraKmRate)
+              } else if (tripType === 'oneway') {
+                perKmExtraRate = toSafeNumber(tariff.oneway?.perKmRate)
+              } else {
+                // Multilocation uses roundtrip tariff structure.
+                perKmExtraRate = toSafeNumber(tariff.roundtrip?.perKmRate)
+              }
+            }
+          }
+
+          const extraKmCharge = Number((nextExtraKm * perKmExtraRate).toFixed(2))
+          const shouldUpdateFare = nextExtraKm !== previousExtraKm && perKmExtraRate > 0
+
+          if (shouldUpdateFare) {
+            const deltaExtraKm = nextExtraKm - previousExtraKm
+            data.estimatedFare = Number((currentFare + deltaExtraKm * perKmExtraRate).toFixed(2))
+          }
+
+          data.extraKm = nextExtraKm
+          data.extraKmCharge = extraKmCharge
+        }
+
         return data
       },
     ],
     afterChange: [
-      async ({ doc, previousDoc, operation, req }) => {
+      async ({ doc, previousDoc, operation: _operation, req }) => {
         const newDriverId = typeof doc.driver === 'object' ? doc.driver?.id : doc.driver
         const oldDriverId = previousDoc
           ? typeof previousDoc.driver === 'object'
@@ -226,6 +294,24 @@ export const Bookings: CollectionConfig = {
     { name: 'couponCode', type: 'text', required: false },
     { name: 'discountAmount', type: 'number', required: false },
     { name: 'distanceKm', type: 'number', required: false },
+    {
+      name: 'extraKm',
+      type: 'number',
+      required: false,
+      defaultValue: 0,
+      admin: {
+        description: 'Add extra kilometers driven after the estimated route distance.',
+      },
+    },
+    {
+      name: 'extraKmCharge',
+      type: 'number',
+      required: false,
+      admin: {
+        readOnly: true,
+        description: 'Auto-calculated extra KM amount added to fare.',
+      },
+    },
     {
       name: 'status',
       type: 'select',
