@@ -70,9 +70,17 @@ export const Drivers: CollectionConfig = {
     },
   ],
   access: {
-    create: () => true,
-    read: () => true,
-    update: () => true,
+    create: ({ req: { user } }) => !!user,
+    read: ({ req: { user } }) => {
+      if (user?.role === 'superadmin' || user?.role === 'admin') return true
+      if (user?.role === 'driver') return { id: { equals: user.driverProfile } }
+      return false
+    },
+    update: ({ req: { user } }) => {
+      if (user?.role === 'superadmin' || user?.role === 'admin') return true
+      if (user?.role === 'driver') return { id: { equals: user.driverProfile } }
+      return false
+    },
     delete: ({ req: { user } }) => user?.role === 'superadmin',
   },
 }
