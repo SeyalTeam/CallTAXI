@@ -70,7 +70,7 @@ export const Drivers: CollectionConfig = {
     },
   ],
   access: {
-    create: ({ req: { user } }) => !!user,
+    create: () => true,
     read: ({ req: { user } }) => {
       if (user?.role === 'superadmin' || user?.role === 'admin') return true
       if (user?.role === 'driver') return { id: { equals: user.driverProfile } }
