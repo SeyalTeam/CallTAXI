@@ -130,8 +130,39 @@ export default function Footer() {
             </Box>
           </Grid>
 
-          {/* Column 4: Information */}
-          <Grid size={{ xs: 6, md: 3 }}>
+          {/* Column 4: Top Locations */}
+          <Grid size={{ xs: 6, md: 2 }}>
+            <Typography variant="subtitle1" fontWeight="700" gutterBottom sx={{ mb: 2.5 }}>
+              Top Locations
+            </Typography>
+            <Box display="flex" flexDirection="column" gap={1.5}>
+              {[
+                'Thoothukudi Airport',
+                'V.O.C. Port Tuticorin',
+                'Thoothukudi Railway Station',
+                'Sawyerpuram',
+                'Tirunelveli',
+                'Sheriff City',
+              ].map((item) => (
+                <Typography
+                  key={item}
+                  variant="body2"
+                  fontWeight="500"
+                  sx={{
+                    cursor: 'pointer',
+                    color: '#333333',
+                    textDecoration: 'none',
+                    '&:hover': { color: '#000000' },
+                  }}
+                >
+                  {item}
+                </Typography>
+              ))}
+            </Box>
+          </Grid>
+
+          {/* Column 5: Information */}
+          <Grid size={{ xs: 6, md: 2 }}>
             <Typography variant="subtitle1" fontWeight="700" gutterBottom sx={{ mb: 2.5 }}>
               Information
             </Typography>
@@ -159,8 +190,8 @@ export default function Footer() {
             </Box>
           </Grid>
 
-          {/* Column 5: Download App */}
-          <Grid size={{ xs: 6, md: 3 }}>
+          {/* Column 6: Download App */}
+          <Grid size={{ xs: 6, md: 2 }}>
             <Typography variant="subtitle1" fontWeight="700" gutterBottom sx={{ mb: 2.5 }}>
               Download our Apps
             </Typography>

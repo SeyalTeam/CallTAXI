@@ -33,6 +33,7 @@ import LocationOnIcon from '@mui/icons-material/LocationOn'
 
 import axios from 'axios'
 import { FormValues, TNLocation, VehicleDoc, TariffDoc, CouponDoc } from '../types'
+import { getPublicAssetURL } from '../../../utilities/storage'
 
 // Define Slider Image Type
 interface SliderImage {
@@ -42,6 +43,7 @@ interface SliderImage {
 }
 
 const DEFAULT_MINIMUM_PAYMENT = 500
+const heroBackgroundImageURL = getPublicAssetURL('Banner/kanitaxi-hero-bg.png', 'hero-bg.png')
 
 type BookingPayload = {
   customerName: string
@@ -1075,8 +1077,7 @@ export default function HeroSection() {
             left: 0,
             right: 0,
             bottom: { xs: '500px', md: '220px' },
-            backgroundImage:
-              'url(https://bucghzn379yrpbdu.public.blob.vercel-storage.com/Banner/kanitaxi-hero-bg.png)',
+            backgroundImage: `url(${heroBackgroundImageURL})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             zIndex: 0,

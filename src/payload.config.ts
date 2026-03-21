@@ -1,4 +1,4 @@
-import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
+import { s3Storage } from '@payloadcms/storage-s3'
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import { payloadCloudPlugin } from '@payloadcms/payload-cloud'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
@@ -22,9 +22,17 @@ import { getBookingReport } from './endpoints/getBookingReport'
 import { getCustomerReport } from './endpoints/getCustomerReport'
 import { CustomerReport } from './globals/CustomerReport'
 import { PaymentSettings } from './globals/PaymentSettings'
+import { getUploadedFileURL } from './utilities/storage'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
+const s3Enabled = Boolean(
+  process.env.S3_BUCKET &&
+    process.env.S3_ENDPOINT &&
+    process.env.S3_ACCESS_KEY_ID &&
+    process.env.S3_SECRET_ACCESS_KEY &&
+    (process.env.S3_PUBLIC_URL || process.env.NEXT_PUBLIC_S3_PUBLIC_URL),
+)
 
 export default buildConfig({
   onInit: async (payload) => {
@@ -105,22 +113,40 @@ export default buildConfig({
   sharp,
   plugins: [
     payloadCloudPlugin(),
-    vercelBlobStorage({
+    s3Storage({
+      enabled: s3Enabled,
       collections: {
         media: {
           prefix: 'Call Taxi/Kani Taxi',
+          disablePayloadAccessControl: true,
+          generateFileURL: ({ filename, prefix }) => getUploadedFileURL(filename, prefix),
         },
         'vehicle-images': {
           prefix: 'Call Taxi/Kani Taxi/Vehicles',
+          disablePayloadAccessControl: true,
+          generateFileURL: ({ filename, prefix }) => getUploadedFileURL(filename, prefix),
         },
         'vehicle-icons': {
           prefix: 'Call Taxi/Kani Taxi/Icons',
+          disablePayloadAccessControl: true,
+          generateFileURL: ({ filename, prefix }) => getUploadedFileURL(filename, prefix),
         },
         'slider-images': {
           prefix: 'Call Taxi/Kani Taxi/slider',
+          disablePayloadAccessControl: true,
+          generateFileURL: ({ filename, prefix }) => getUploadedFileURL(filename, prefix),
         },
       },
-      token: process.env.BLOB_READ_WRITE_TOKEN,
+      bucket: process.env.S3_BUCKET || '',
+      config: {
+        credentials: {
+          accessKeyId: process.env.S3_ACCESS_KEY_ID || '',
+          secretAccessKey: process.env.S3_SECRET_ACCESS_KEY || '',
+        },
+        region: process.env.S3_REGION || 'auto',
+        endpoint: process.env.S3_ENDPOINT,
+        forcePathStyle: true,
+      },
     }),
   ],
 })

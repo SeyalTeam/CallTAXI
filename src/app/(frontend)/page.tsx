@@ -10,18 +10,23 @@ import ReviewsSection from './components/ReviewsSection'
 import ContactSection from './components/ContactSection'
 import Footer from './components/Footer'
 import PartnerSection from './components/PartnerSection'
+import SEOTagsSection from './components/SEOTagsSection'
 import { TariffDoc } from './types'
+import { getPublicAssetURL } from '../../utilities/storage'
 
 export const dynamic = 'force-dynamic'
+const locationImageURL = getPublicAssetURL('Banner/kanitaxi-location.png', 'location.png')
 
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'LocalBusiness',
   name: 'Kani Taxi',
-  image: 'https://bucghzn379yrpbdu.public.blob.vercel-storage.com/Banner/kanitaxi-location.png',
+  alternateName: 'Kani Call Taxi',
+  image: locationImageURL,
   telephone: '+919488104888',
   email: 'kanitaxi5555@gmail.com',
   url: 'https://kanitaxi.com',
+  logo: locationImageURL,
   address: {
     '@type': 'PostalAddress',
     streetAddress: '33 Chetti street subramaniyapuram sawyerpuram',
@@ -35,6 +40,7 @@ const jsonLd = {
     latitude: 8.7642,
     longitude: 78.1348,
   },
+  hasMap: 'https://www.google.com/maps/place/Thoothukudi,+Tamil+Nadu/',
   areaServed: [
     {
       '@type': 'City',
@@ -46,10 +52,14 @@ const jsonLd = {
     },
     {
       '@type': 'City',
+      name: 'Tuticorin',
+    },
+    {
+      '@type': 'City',
       name: 'Tirunelveli',
     },
   ],
-  priceRange: '₹',
+  priceRange: '₹₹',
   openingHoursSpecification: [
     {
       '@type': 'OpeningHoursSpecification',
@@ -58,10 +68,7 @@ const jsonLd = {
       closes: '23:59',
     },
   ],
-  sameAs: [
-    'https://www.facebook.com/kanitaxi', // Example, can be removed if not known
-    // Add other social profiles if available
-  ],
+  sameAs: ['https://www.facebook.com/kanitaxi'],
 }
 
 export default async function Page() {
@@ -108,8 +115,7 @@ export default async function Page() {
       <Box
         sx={{
           position: 'relative',
-          backgroundImage:
-            'url(https://bucghzn379yrpbdu.public.blob.vercel-storage.com/Banner/kanitaxi-location.png)',
+          backgroundImage: `url(${locationImageURL})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundAttachment: 'fixed', // Parallax effect
@@ -138,6 +144,8 @@ export default async function Page() {
       <ReviewsSection />
 
       <PartnerSection />
+
+      <SEOTagsSection />
 
       <ContactSection />
       <Footer />
