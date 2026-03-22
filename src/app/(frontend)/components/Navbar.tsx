@@ -1,8 +1,10 @@
 'use client'
 import React, { useState } from 'react'
-import { AppBar, Toolbar, Box, Typography, Button, IconButton, Menu, MenuItem } from '@mui/material'
-import DirectionsCarOutlinedIcon from '@mui/icons-material/DirectionsCarOutlined'
+import { AppBar, Toolbar, Box, Button, IconButton, Menu, MenuItem } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
+import { getPublicAssetURL } from '../../../utilities/storage'
+
+const navbarLogoURL = getPublicAssetURL('Brand/kani-taxi-logo.png')
 
 export default function Navbar() {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
@@ -34,9 +36,7 @@ export default function Navbar() {
   ]
 
   // Dynamic values based on transparency
-  // const textColor = scrolled ? '#0f172a' : '#ffffff' // This variable was unused and has been commented out.
   const iconColor = scrolled ? '#0f172a' : '#ffffff'
-  const logoColor = scrolled ? '#0f172a' : '#ffffff'
   const navItemColor = scrolled ? '#475569' : '#e2e8f0'
 
   return (
@@ -57,20 +57,22 @@ export default function Navbar() {
           <Box
             display="flex"
             alignItems="center"
-            gap={1}
+            gap={1.25}
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             sx={{ cursor: 'pointer' }}
           >
-            <DirectionsCarOutlinedIcon
-              sx={{ color: iconColor, fontSize: 35, transition: 'color 0.3s' }}
+            <Box
+              component="img"
+              src={navbarLogoURL}
+              alt="Kani Taxi"
+              sx={{
+                display: 'block',
+                width: { xs: 150, sm: 170, md: 190 },
+                height: 'auto',
+                transition: 'transform 0.3s ease, filter 0.3s ease',
+                filter: scrolled ? 'none' : 'drop-shadow(0 10px 18px rgba(15, 23, 42, 0.28))',
+              }}
             />
-            <Typography
-              variant="h5"
-              fontWeight="700"
-              sx={{ color: logoColor, letterSpacing: 0.5, transition: 'color 0.3s' }}
-            >
-              KANI TAXI
-            </Typography>
           </Box>
 
           {/* Desktop Menu */}
