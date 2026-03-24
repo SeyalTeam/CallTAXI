@@ -1024,6 +1024,8 @@ export default function HeroSection() {
       id="home"
       sx={{
         position: 'relative',
+        width: '100%',
+        maxWidth: '100%',
         minHeight: '95vh',
         display: 'flex',
         alignItems: 'flex-start', // Top align to prevent tab jumping
@@ -1032,7 +1034,8 @@ export default function HeroSection() {
         background: { xs: 'transparent', md: '#e0f2fe' },
         color: '#000',
         pt: { xs: '220px', md: '56vh' }, // Desktop pushed further down per 40% request
-        overflow: 'visible',
+        overflowX: 'clip',
+        overflowY: 'visible',
         mb: { xs: '-500px', md: '-220px' }, // Pull next section up
         pb: { xs: '120px', md: '10vh' }, // Restore volume for proper overlap
         zIndex: 2,
@@ -1096,10 +1099,12 @@ export default function HeroSection() {
       )}
 
       <Container
+        disableGutters
         maxWidth="xl"
         sx={{
           position: 'relative',
           zIndex: 1, // Ensure content is above the canvas
+          px: { xs: 0, sm: 2, md: 3 },
         }}
       >
         <Grid container spacing={{ xs: 2, md: 3 }} alignItems="center" justifyContent="center">
