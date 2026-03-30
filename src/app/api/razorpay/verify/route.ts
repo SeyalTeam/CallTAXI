@@ -38,8 +38,8 @@ export const POST = async (request: Request) => {
       typeof value[0] === 'number' &&
       typeof value[1] === 'number'
 
-    const tripType = booking.tripType
-    const needsDropoff = tripType === 'oneway' || tripType === 'roundtrip'
+    const tripType = isNonEmptyString(booking.tripType) ? booking.tripType : undefined
+    const needsDropoff = tripType === 'oneway' || tripType === 'droptaxi' || tripType === 'roundtrip'
 
     if (
       !isNonEmptyString(booking.customerName) ||

@@ -3,16 +3,16 @@ import { Box, Container, Typography, Grid } from '@mui/material'
 import LocationOnIcon from '@mui/icons-material/LocationOn'
 
 const TOP_KEYWORDS = [
+  'Drop Taxi Tamil Nadu',
+  'One Way Drop Taxi',
+  'Drop Taxi Thoothukudi to Chennai',
+  'Thoothukudi to Madurai Drop Taxi',
+  'Thoothukudi to Coimbatore Cab',
+  'No Return Charge Taxi Tamil Nadu',
+  'Outstation Drop Taxi Tuticorin',
+  '24/7 Drop Taxi Booking',
+  'Tamil Nadu One Way Cab',
   'Call Taxi Thoothukudi',
-  'Tuticorin Cab Booking',
-  'Thoothukudi Airport Taxi',
-  'Sawyerpuram Call Taxi',
-  'Reliable Taxi Tuticorin',
-  '24/7 Taxi Thoothukudi',
-  'Airport Pickup Tuticorin',
-  'Outstation Cabs Thoothukudi',
-  'Local Car Rental Tuticorin',
-  'Thoothukudi to Tirunelveli Taxi',
 ]
 
 export default function SEOTagsSection() {
@@ -36,7 +36,7 @@ export default function SEOTagsSection() {
             textAlign: 'center',
           }}
         >
-          Premier Call Taxi Services in Thoothukudi & Tuticorin
+          Trusted Drop Taxi Services Across Tamil Nadu
         </Typography>
 
         <Typography
@@ -48,15 +48,12 @@ export default function SEOTagsSection() {
             fontSize: '1rem',
           }}
         >
-          Kani Taxi is your trusted partner for all transportation needs across{' '}
-          <strong>Thoothukudi</strong> and <strong>Sawyerpuram</strong>. Whether you are looking for
-          a <strong>call taxi in Thoothukudi</strong> for a local trip, an{' '}
-          <strong>airport taxi to Tuticorin Airport</strong>, or an{' '}
-          <strong>outstation cab from Thoothukudi</strong> to any destination in South Tamil Nadu,
-          we provide the most reliable and affordable services. Our fleet includes well-maintained
-          AC cars with professional drivers who ensure a safe and comfortable journey for every
-          passenger. As the leading <strong>taxi service in Tuticorin</strong>, we operate 24/7,
-          providing <strong>round-the-clock booking</strong> for emergency and planned travels.
+          Kani Taxi provides reliable <strong>drop taxi</strong> and <strong>call taxi</strong>{' '}
+          services from <strong>Thoothukudi</strong>, <strong>Tuticorin</strong>, and nearby cities
+          to destinations across Tamil Nadu. Whether you need a <strong>one way cab</strong> for
+          Chennai, Madurai, Coimbatore, Tirunelveli, or Nagercoil, we offer affordable fares with{' '}
+          <strong>no return charge</strong>. Our AC cabs and verified drivers are available 24/7 for
+          local rides, airport transfers, and outstation trips.
         </Typography>
 
         <Grid container spacing={2}>
@@ -89,8 +86,7 @@ export default function SEOTagsSection() {
 
         <Box sx={{ mt: 5, textAlign: 'center' }}>
           <Typography variant="body2" sx={{ color: '#94a3b8', fontStyle: 'italic' }}>
-            Serving Thoothukudi, Sawyerpuram, Tirunelveli, and surrounding districts with premium
-            taxi solutions.
+            Serving Thoothukudi and all major Tamil Nadu locations with reliable one way cabs.
           </Typography>
         </Box>
       </Container>

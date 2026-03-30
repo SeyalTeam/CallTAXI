@@ -267,6 +267,7 @@ const BookingReport = () => {
             >
               <MenuItem value="all">All Types</MenuItem>
               <MenuItem value="oneway">One Way</MenuItem>
+              <MenuItem value="droptaxi">Drop Taxi</MenuItem>
               <MenuItem value="roundtrip">Round Trip</MenuItem>
               <MenuItem value="packages">Packages</MenuItem>
             </Select>

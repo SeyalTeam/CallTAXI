@@ -19,7 +19,7 @@ const locationImageURL = getPublicAssetURL('Banner/kanitaxi-location.png', 'loca
 
 const jsonLd = {
   '@context': 'https://schema.org',
-  '@type': 'LocalBusiness',
+  '@type': 'TaxiService',
   name: 'Kani Taxi',
   alternateName: 'Kani Call Taxi',
   image: locationImageURL,
@@ -27,6 +27,8 @@ const jsonLd = {
   email: 'kanitaxi5555@gmail.com',
   url: 'https://kanitaxi.com',
   logo: locationImageURL,
+  description:
+    'Drop taxi and call taxi service across Tamil Nadu. One way cabs from Thoothukudi to all Tamil Nadu cities.',
   address: {
     '@type': 'PostalAddress',
     streetAddress: '33 Chetti street subramaniyapuram sawyerpuram',
@@ -41,34 +43,10 @@ const jsonLd = {
     longitude: 78.1348,
   },
   hasMap: 'https://www.google.com/maps/place/Thoothukudi,+Tamil+Nadu/',
-  areaServed: [
-    {
-      '@type': 'City',
-      name: 'Thoothukudi',
-    },
-    {
-      '@type': 'City',
-      name: 'Sawyerpuram',
-    },
-    {
-      '@type': 'City',
-      name: 'Tuticorin',
-    },
-    {
-      '@type': 'City',
-      name: 'Tirunelveli',
-    },
-  ],
+  areaServed: 'Tamil Nadu',
   priceRange: '₹₹',
-  openingHoursSpecification: [
-    {
-      '@type': 'OpeningHoursSpecification',
-      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
-      opens: '00:00',
-      closes: '23:59',
-    },
-  ],
-  sameAs: ['https://www.facebook.com/kanitaxi'],
+  openingHours: 'Mo-Su 00:00-23:59',
+  sameAs: ['https://www.threads.com/@kani.taxi'],
 }
 
 export default async function Page() {

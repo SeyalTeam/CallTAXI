@@ -2,29 +2,21 @@ import React from 'react'
 import './styles.css'
 
 export const metadata = {
-  title: 'Kani Taxi | #1 Call Taxi in Thoothukudi | 24/7 Cab booking Tuticorin',
+  title: 'Kani Taxi | #1 Drop Taxi & Call Taxi in Tamil Nadu | Thoothukudi | 24/7 Booking',
   description:
-    'Book the best call taxi in Thoothukudi, Sawyerpuram & Tuticorin. Affordable AC cabs for Airport drops, outstation trips, and local rentals. Reliable, safe, and professional drivers. Call 9488104888.',
+    'Book affordable drop taxi across Tamil Nadu. One way cab from Thoothukudi, Tuticorin to Chennai, Madurai, Coimbatore & all Tamil Nadu cities. 24/7 service, AC cabs, no return charge.',
   keywords: [
-    'Call Taxi Thoothukudi',
-    'Taxi Service Sawyerpuram',
-    'Best Cab Service Thoothukudi',
-    'Airport Taxi Thoothukudi',
-    'Kani Taxi',
-    'Outstation Taxi Thoothukudi',
-    'Car Rental Thoothukudi',
-    'Tuticorin Cabs',
-    'Thoothukudi Call Taxi Number',
-    'Local Taxi booking Thoothukudi',
-    'Sawyerpuram to Thoothukudi Taxi',
-    'Airport Drop Tuticorin',
-    'Cheap Cabs Thoothukudi',
-    '24 Hours Taxi Service Thoothukudi',
+    'drop taxi Tamil Nadu',
+    'one way drop taxi',
+    'call taxi Thoothukudi',
+    'outstation cab Tamil Nadu',
+    'taxi Tuticorin',
+    'drop taxi booking',
   ],
   openGraph: {
-    title: 'Kani Taxi - Best Call Taxi in Thoothukudi',
+    title: 'Kani Taxi - Drop Taxi & Call Taxi in Tamil Nadu',
     description:
-      'Looking for a reliable taxi in Thoothukudi? Book Kani Taxi for safe and affordable rides. 24/7 Availability. Call +91 94881 04888.',
+      'Book one way drop taxi across Tamil Nadu with no return charge. 24/7 service from Thoothukudi and Tuticorin.',
     url: 'https://kanitaxi.com',
     siteName: 'Kani Taxi',
     locale: 'en_IN',
@@ -32,9 +24,9 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Kani Taxi - Reliable Call Taxi Service in Thoothukudi',
+    title: 'Kani Taxi - One Way Drop Taxi in Tamil Nadu',
     description:
-      'Book your ride now! Call +91 94881 04888 for the best taxi service in Thoothukudi and Sawyerpuram.',
+      'Affordable one way cabs from Thoothukudi and Tuticorin to all major Tamil Nadu cities.',
   },
 }
 

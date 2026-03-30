@@ -46,7 +46,8 @@ export default function Footer() {
             </Typography>
             <Box display="flex" flexDirection="column" gap={1.5}>
               {[
-                'One Way Drop',
+                'Drop Taxi Tamil Nadu',
+                'One Way Drop Taxi',
                 'Round Trip',
                 'Airport Transfer',
                 'Tour Packages',
@@ -103,6 +104,7 @@ export default function Footer() {
             <Box display="flex" flexDirection="column" gap={1.5}>
               {[
                 { label: 'Booking', id: 'home' },
+                { label: 'Drop Taxi', href: '/drop-taxi' },
                 { label: 'About Us', id: 'about-section' },
                 { label: 'Tariffs', id: 'tariff-section' },
                 { label: 'Packages', id: 'packages-section' },
@@ -111,11 +113,20 @@ export default function Footer() {
                 <Typography
                   key={item.label}
                   variant="body2"
-                  onClick={() =>
-                    document
-                      .getElementById(item.id)
-                      ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-                  }
+                  onClick={() => {
+                    if ('href' in item && item.href) {
+                      window.location.href = item.href
+                      return
+                    }
+                    if ('id' in item && item.id) {
+                      const section = document.getElementById(item.id)
+                      if (section) {
+                        section.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                      } else {
+                        window.location.href = `/#${item.id}`
+                      }
+                    }
+                  }}
                   fontWeight="500"
                   sx={{
                     cursor: 'pointer',

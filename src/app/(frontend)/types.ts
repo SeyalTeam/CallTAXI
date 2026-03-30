@@ -3,7 +3,7 @@ import type { Dayjs } from 'dayjs'
 export type FormValues = {
   customerName: string
   customerPhone: string
-  tripType: 'oneway' | 'roundtrip' | 'packages' | 'multilocation'
+  tripType: 'oneway' | 'droptaxi' | 'roundtrip' | 'packages' | 'multilocation'
   vehicle: string
   pickup: string
   drop: string

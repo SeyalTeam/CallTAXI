@@ -115,7 +115,7 @@ export const Bookings: CollectionConfig = {
               const tariff = tariffResult.docs[0] as TariffRateSnapshot
               if (tripType === 'packages') {
                 perKmExtraRate = toSafeNumber(tariff.packages?.extraKmRate)
-              } else if (tripType === 'oneway') {
+              } else if (tripType === 'oneway' || tripType === 'droptaxi') {
                 perKmExtraRate = toSafeNumber(tariff.oneway?.perKmRate)
               } else {
                 // Multilocation uses roundtrip tariff structure.
@@ -238,7 +238,7 @@ export const Bookings: CollectionConfig = {
     {
       name: 'tripType',
       type: 'select',
-      options: ['oneway', 'roundtrip', 'packages', 'multilocation'],
+      options: ['oneway', 'droptaxi', 'roundtrip', 'packages', 'multilocation'],
       required: true,
     },
     {

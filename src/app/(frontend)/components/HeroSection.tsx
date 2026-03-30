@@ -170,7 +170,17 @@ const getLocationDisplayValue = (loc: TNLocation) => {
   return details ? `${loc.name}, ${details}` : loc.name
 }
 
-export default function HeroSection() {
+type HeroSectionProps = {
+  embedded?: boolean
+  sectionId?: string
+  headingTag?: 'h1' | 'h2'
+}
+
+export default function HeroSection({
+  embedded = false,
+  sectionId = 'home',
+  headingTag = 'h1',
+}: HeroSectionProps = {}) {
   const { handleSubmit, control, watch, setValue, reset } = useForm<FormValues>({
     defaultValues: {
       customerName: '',
@@ -188,6 +198,7 @@ export default function HeroSection() {
   const selectedVehicleId = watch('vehicle')
   const pickupDateTime = watch('pickupDateTime')
   const dropDateTime = watch('dropDateTime')
+  const effectiveTripTypeForCoupon = tripType === 'droptaxi' ? 'oneway' : tripType
 
   const [vehicles, setVehicles] = useState<VehicleDoc[]>([])
   const [pickupSuggestions, setPickupSuggestions] = useState<TNLocation[]>([])
@@ -358,13 +369,15 @@ export default function HeroSection() {
     void loadTariffs()
     void loadTN()
     void checkActiveCoupons()
-    void loadSliderImages()
+    if (!embedded) {
+      void loadSliderImages()
+    }
     void loadPaymentSettings()
 
     return () => {
       mounted = false
     }
-  }, [])
+  }, [embedded])
 
   // Slider Interval
   useEffect(() => {
@@ -670,7 +683,7 @@ export default function HeroSection() {
       }
 
       // 3. Check tariff scope
-      if (coupon.tariffScope !== 'all' && coupon.tariffScope !== tripType) {
+      if (coupon.tariffScope !== 'all' && coupon.tariffScope !== effectiveTripTypeForCoupon) {
         setCouponError(`This coupon is only valid for ${coupon.tariffScope} trips`)
         setLoading(false)
         return
@@ -719,7 +732,8 @@ export default function HeroSection() {
   useEffect(() => {
     if (appliedCoupon) {
       if (
-        (appliedCoupon.tariffScope !== 'all' && appliedCoupon.tariffScope !== tripType) ||
+        (appliedCoupon.tariffScope !== 'all' &&
+          appliedCoupon.tariffScope !== effectiveTripTypeForCoupon) ||
         (appliedCoupon.vehicleScope === 'specific' &&
           selectedVehicleId &&
           !(appliedCoupon.vehicles as (string | { id: string })[])?.some(
@@ -732,7 +746,7 @@ export default function HeroSection() {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tripType, selectedVehicleId])
+  }, [effectiveTripTypeForCoupon, selectedVehicleId])
 
   const resetBookingForm = () => {
     reset()
@@ -756,7 +770,11 @@ export default function HeroSection() {
     if (!pickupCoords) return 'Please select a pickup location from suggestions.'
     if (!data.pickupDateTime) return 'Please select a pickup date and time.'
 
-    if (data.tripType === 'oneway' || data.tripType === 'roundtrip') {
+    if (
+      data.tripType === 'oneway' ||
+      data.tripType === 'droptaxi' ||
+      data.tripType === 'roundtrip'
+    ) {
       if (!dropCoords) return 'Please select a drop location from suggestions.'
     }
 
@@ -1019,30 +1037,44 @@ export default function HeroSection() {
     setPaymentDialogOpen(true)
   }
 
+  const headingComponent = headingTag
+
   return (
     <Box
-      id="home"
-      sx={{
-        position: 'relative',
-        width: '100%',
-        maxWidth: '100%',
-        minHeight: '95vh',
-        display: 'flex',
-        alignItems: 'flex-start', // Top align to prevent tab jumping
-        justifyContent: 'center',
-        // Premium corporate light theme background
-        background: { xs: 'transparent', md: '#e0f2fe' },
-        color: '#000',
-        pt: { xs: '220px', md: '56vh' }, // Desktop pushed further down per 40% request
-        overflowX: 'clip',
-        overflowY: 'visible',
-        mb: { xs: '-500px', md: '-220px' }, // Pull next section up
-        pb: { xs: '120px', md: '10vh' }, // Restore volume for proper overlap
-        zIndex: 2,
-      }}
+      id={sectionId}
+      sx={
+        embedded
+          ? {
+              position: 'relative',
+              width: '100%',
+              maxWidth: '100%',
+              display: 'flex',
+              justifyContent: 'center',
+              background: '#e0f2fe',
+              color: '#000',
+              py: { xs: 5, md: 7 },
+            }
+          : {
+              position: 'relative',
+              width: '100%',
+              maxWidth: '100%',
+              minHeight: '95vh',
+              display: 'flex',
+              alignItems: 'flex-start',
+              justifyContent: 'center',
+              background: { xs: 'transparent', md: '#e0f2fe' },
+              color: '#000',
+              pt: { xs: '220px', md: '56vh' },
+              overflowX: 'clip',
+              overflowY: 'visible',
+              mb: { xs: '-500px', md: '-220px' },
+              pb: { xs: '120px', md: '10vh' },
+              zIndex: 2,
+            }
+      }
     >
       {/* Background Slider */}
-      {sliderImages.length > 0 ? (
+      {!embedded && sliderImages.length > 0 ? (
         sliderImages.map((img, index) => (
           <Box
             key={img.id}
@@ -1071,7 +1103,7 @@ export default function HeroSection() {
             }}
           />
         ))
-      ) : (
+      ) : !embedded ? (
         // Fallback Static Image
         <Box
           sx={{
@@ -1096,20 +1128,36 @@ export default function HeroSection() {
             },
           }}
         />
-      )}
+      ) : null}
 
       <Container
         disableGutters
         maxWidth="xl"
         sx={{
           position: 'relative',
-          zIndex: 1, // Ensure content is above the canvas
+          zIndex: 1,
           px: { xs: 0, sm: 2, md: 3 },
         }}
       >
         <Grid container spacing={{ xs: 2, md: 3 }} alignItems="center" justifyContent="center">
           {/* Booking Form Card */}
           <Grid size={{ xs: 12, md: 10 }}>
+            {embedded ? (
+              <Typography
+                component={headingComponent}
+                variant="h3"
+                sx={{
+                  color: '#0f172a',
+                  textAlign: 'center',
+                  fontWeight: 900,
+                  mb: 3,
+                  px: { xs: 1.5, md: 0 },
+                  fontSize: { xs: '1.35rem', md: '2.2rem' },
+                }}
+              >
+                Tamil Nadu&apos;s Trusted Drop Taxi Service - One Way Cabs with No Return Charge
+              </Typography>
+            ) : null}
             <Paper
               elevation={0}
               sx={{
@@ -1197,6 +1245,11 @@ export default function HeroSection() {
                             img: '/assets/tabs/tab_icon_oneway_taxi_1768130636829.png',
                           },
                           {
+                            id: 'droptaxi',
+                            label: 'Drop Taxi',
+                            img: '/assets/tabs/tab_icon_oneway_taxi_1768130636829.png',
+                          },
+                          {
                             id: 'roundtrip',
                             label: 'Round Trip',
                             img: '/assets/tabs/tab_icon_roundtrip_luggage_1768130650587.png',
@@ -1245,7 +1298,7 @@ export default function HeroSection() {
                                 }
                               }}
                               sx={{
-                                width: { xs: '23%', md: '80px' }, // Reduced further (~96 -> 80)
+                                width: { xs: '19%', md: '84px' },
                                 minWidth: 0,
                                 height: { xs: 75, md: 80 },
                                 p: { xs: 0.5, md: 0.75 },

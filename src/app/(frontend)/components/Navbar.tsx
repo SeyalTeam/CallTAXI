@@ -1,16 +1,30 @@
 'use client'
+
 import React, { useState } from 'react'
-import { AppBar, Toolbar, Box, Button, IconButton, Menu, MenuItem } from '@mui/material'
+import { AppBar, Toolbar, Box, Button, IconButton, Menu, MenuItem, Divider } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
+import { usePathname, useRouter } from 'next/navigation'
 import { getPublicAssetURL } from '../../../utilities/storage'
 
 const navbarLogoURL = getPublicAssetURL('Brand/kani-taxi-logo.png')
 
+const topRouteLinks = [
+  { label: 'Thoothukudi -> Chennai', href: '/drop-taxi/thoothukudi-to-chennai' },
+  { label: 'Thoothukudi -> Madurai', href: '/drop-taxi/thoothukudi-to-madurai' },
+  { label: 'Thoothukudi -> Coimbatore', href: '/drop-taxi/thoothukudi-to-coimbatore' },
+  { label: 'Thoothukudi -> Bangalore', href: '/drop-taxi/thoothukudi-to-bangalore' },
+  { label: 'Thoothukudi -> Tirunelveli', href: '/drop-taxi/thoothukudi-to-tirunelveli' },
+]
+
 export default function Navbar() {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
+  const [dropTaxiAnchorEl, setDropTaxiAnchorEl] = useState<HTMLElement | null>(null)
   const [scrolled, setScrolled] = useState(false)
 
-  // Handle scroll detection
+  const pathname = usePathname()
+  const router = useRouter()
+
   React.useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20)
@@ -22,20 +36,32 @@ export default function Navbar() {
   const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => setAnchorEl(event.currentTarget)
   const handleMenuClose = () => setAnchorEl(null)
 
+  const handleDropTaxiMenuOpen = (event: React.MouseEvent<HTMLElement>) =>
+    setDropTaxiAnchorEl(event.currentTarget)
+  const handleDropTaxiMenuClose = () => setDropTaxiAnchorEl(null)
+
   const handleScrollTo = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    if (pathname === '/') {
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    } else {
+      router.push(`/#${id}`)
+    }
     handleMenuClose()
   }
 
-  const menuItems = [
-    { label: 'Booking', id: 'home' },
+  const handleNavigate = (href: string) => {
+    router.push(href)
+    handleMenuClose()
+    handleDropTaxiMenuClose()
+  }
+
+  const sectionItems = [
     { label: 'About', id: 'about-section' },
     { label: 'Tariff', id: 'tariff-section' },
     { label: 'Packages', id: 'packages-section' },
     { label: 'Contact', id: 'contact-section' },
   ]
 
-  // Dynamic values based on transparency
   const iconColor = scrolled ? '#0f172a' : '#ffffff'
   const navItemColor = scrolled ? '#475569' : '#e2e8f0'
 
@@ -50,7 +76,7 @@ export default function Navbar() {
           boxShadow: scrolled ? '0 4px 6px -1px rgba(0, 0, 0, 0.1)' : 'none',
           borderBottom: 'none',
           transition: 'all 0.3s ease',
-          py: scrolled ? 0.5 : 0, // shrink slightly on scroll
+          py: scrolled ? 0.5 : 0,
         }}
       >
         <Toolbar sx={{ justifyContent: 'space-between', py: { xs: 1.5, md: 2 } }}>
@@ -58,7 +84,13 @@ export default function Navbar() {
             display="flex"
             alignItems="center"
             gap={1.25}
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            onClick={() => {
+              if (pathname === '/') {
+                window.scrollTo({ top: 0, behavior: 'smooth' })
+              } else {
+                router.push('/')
+              }
+            }}
             sx={{ cursor: 'pointer' }}
           >
             <Box
@@ -75,9 +107,35 @@ export default function Navbar() {
             />
           </Box>
 
-          {/* Desktop Menu */}
           <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1 }}>
-            {menuItems.map((item) => (
+            <Button
+              onClick={() => handleScrollTo('home')}
+              sx={{
+                color: navItemColor,
+                textTransform: 'none',
+                fontWeight: 600,
+                transition: 'color 0.3s',
+                '&:hover': { color: '#FFD700' },
+              }}
+            >
+              Booking
+            </Button>
+
+            <Button
+              onClick={handleDropTaxiMenuOpen}
+              endIcon={<ArrowDropDownIcon />}
+              sx={{
+                color: navItemColor,
+                textTransform: 'none',
+                fontWeight: 600,
+                transition: 'color 0.3s',
+                '&:hover': { color: '#FFD700' },
+              }}
+            >
+              Drop Taxi
+            </Button>
+
+            {sectionItems.map((item) => (
               <Button
                 key={item.id}
                 onClick={() => handleScrollTo(item.id)}
@@ -92,6 +150,7 @@ export default function Navbar() {
                 {item.label}
               </Button>
             ))}
+
             <Button
               variant="contained"
               onClick={() => handleScrollTo('home')}
@@ -108,7 +167,6 @@ export default function Navbar() {
             </Button>
           </Box>
 
-          {/* Mobile Menu Icon */}
           <IconButton
             sx={{ display: { xs: 'flex', md: 'none' }, color: iconColor, transition: 'color 0.3s' }}
             onClick={handleMenuClick}
@@ -118,11 +176,32 @@ export default function Navbar() {
         </Toolbar>
       </AppBar>
 
-      {/* Mobile Menu Dropdown */}
       <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
-        {menuItems.map((item) => (
+        <MenuItem onClick={() => handleScrollTo('home')}>Booking</MenuItem>
+        <MenuItem onClick={() => handleNavigate('/drop-taxi')}>Drop Taxi</MenuItem>
+        {topRouteLinks.map((route) => (
+          <MenuItem key={route.href} onClick={() => handleNavigate(route.href)}>
+            {route.label}
+          </MenuItem>
+        ))}
+        <Divider />
+        {sectionItems.map((item) => (
           <MenuItem key={item.id} onClick={() => handleScrollTo(item.id)}>
             {item.label}
+          </MenuItem>
+        ))}
+      </Menu>
+
+      <Menu
+        anchorEl={dropTaxiAnchorEl}
+        open={Boolean(dropTaxiAnchorEl)}
+        onClose={handleDropTaxiMenuClose}
+      >
+        <MenuItem onClick={() => handleNavigate('/drop-taxi')}>Drop Taxi Hub</MenuItem>
+        <Divider />
+        {topRouteLinks.map((route) => (
+          <MenuItem key={route.href} onClick={() => handleNavigate(route.href)}>
+            {route.label}
           </MenuItem>
         ))}
       </Menu>

@@ -339,7 +339,7 @@ export interface Booking {
   customerPhone: string;
   customer?: (string | null) | Customer;
   vehicle: string | Vehicle;
-  tripType: 'oneway' | 'roundtrip' | 'packages' | 'multilocation';
+  tripType: 'oneway' | 'droptaxi' | 'roundtrip' | 'packages' | 'multilocation';
   driver?: (string | null) | Driver;
   /**
    * @minItems 2
