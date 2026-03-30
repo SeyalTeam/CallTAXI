@@ -28,6 +28,11 @@ export const metadata = {
     description:
       'Affordable one way cabs from Thoothukudi and Tuticorin to all major Tamil Nadu cities.',
   },
+  icons: {
+    icon: '/icon.png',
+    shortcut: '/icon.png',
+    apple: '/icon.png',
+  },
 }
 
 export default async function RootLayout(props: { children: React.ReactNode }) {
