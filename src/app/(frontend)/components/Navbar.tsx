@@ -128,7 +128,13 @@ export default function Navbar() {
             {sectionItems.map((item) => (
               <Button
                 key={item.label}
-                onClick={() => (item.href ? handleNavigate(item.href) : handleScrollTo(item.id!))}
+                onClick={() => {
+                  if ('href' in item && item.href) {
+                    handleNavigate(item.href as string)
+                  } else {
+                    handleScrollTo(item.id!)
+                  }
+                }}
                 sx={{
                   color: navItemColor,
                   textTransform: 'none',
@@ -177,7 +183,13 @@ export default function Navbar() {
         {sectionItems.map((item) => (
           <MenuItem
             key={item.label}
-            onClick={() => (item.href ? handleNavigate(item.href) : handleScrollTo(item.id!))}
+            onClick={() => {
+              if ('href' in item && item.href) {
+                handleNavigate(item.href as string)
+              } else {
+                handleScrollTo(item.id!)
+              }
+            }}
           >
             {item.label}
           </MenuItem>

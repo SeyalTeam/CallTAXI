@@ -130,7 +130,7 @@ export default function RouteMapPage() {
         </Typography>
 
         <Grid container spacing={4}>
-          <Grid item xs={12} md={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
             <Paper
               elevation={0}
               sx={{
@@ -177,7 +177,7 @@ export default function RouteMapPage() {
             </Paper>
           </Grid>
 
-          <Grid item xs={12} md={8}>
+          <Grid size={{ xs: 12, md: 8 }}>
             <Paper
               elevation={0}
               sx={{
