@@ -62,21 +62,24 @@ export default function Navbar() {
     { label: 'Contact', id: 'contact-section' },
   ]
 
-  const iconColor = scrolled ? '#0f172a' : '#ffffff'
-  const navItemColor = scrolled ? '#475569' : '#e2e8f0'
+  const isHomePage = pathname === '/'
+  const effectiveScrolled = scrolled || !isHomePage
+
+  const iconColor = effectiveScrolled ? '#0f172a' : '#ffffff'
+  const navItemColor = effectiveScrolled ? '#1e293b' : '#e2e8f0'
 
   return (
     <>
       <AppBar
         position="fixed"
-        elevation={scrolled ? 4 : 0}
+        elevation={effectiveScrolled ? 4 : 0}
         sx={{
-          background: scrolled ? 'rgba(255, 255, 255, 0.95)' : 'transparent',
-          backdropFilter: scrolled ? 'blur(8px)' : 'none',
-          boxShadow: scrolled ? '0 4px 6px -1px rgba(0, 0, 0, 0.1)' : 'none',
+          background: effectiveScrolled ? 'rgba(255, 255, 255, 0.95)' : 'transparent',
+          backdropFilter: effectiveScrolled ? 'blur(8px)' : 'none',
+          boxShadow: effectiveScrolled ? '0 4px 6px -1px rgba(0, 0, 0, 0.1)' : 'none',
           borderBottom: 'none',
           transition: 'all 0.3s ease',
-          py: scrolled ? 0.5 : 0,
+          py: effectiveScrolled ? 0.5 : 0,
         }}
       >
         <Toolbar sx={{ justifyContent: 'space-between', py: { xs: 1.5, md: 2 } }}>
@@ -102,7 +105,7 @@ export default function Navbar() {
                 width: { xs: 150, sm: 170, md: 190 },
                 height: 'auto',
                 transition: 'transform 0.3s ease, filter 0.3s ease',
-                filter: scrolled ? 'none' : 'drop-shadow(0 10px 18px rgba(15, 23, 42, 0.28))',
+                filter: effectiveScrolled ? 'none' : 'drop-shadow(0 10px 18px rgba(15, 23, 42, 0.28))',
               }}
             />
           </Box>
@@ -121,24 +124,11 @@ export default function Navbar() {
               Booking
             </Button>
 
-            <Button
-              onClick={handleDropTaxiMenuOpen}
-              endIcon={<ArrowDropDownIcon />}
-              sx={{
-                color: navItemColor,
-                textTransform: 'none',
-                fontWeight: 600,
-                transition: 'color 0.3s',
-                '&:hover': { color: '#FFD700' },
-              }}
-            >
-              Drop Taxi
-            </Button>
 
             {sectionItems.map((item) => (
               <Button
-                key={item.id}
-                onClick={() => handleScrollTo(item.id)}
+                key={item.label}
+                onClick={() => (item.href ? handleNavigate(item.href) : handleScrollTo(item.id!))}
                 sx={{
                   color: navItemColor,
                   textTransform: 'none',
@@ -159,7 +149,7 @@ export default function Navbar() {
                 color: '#000',
                 fontWeight: 'bold',
                 ml: 2,
-                boxShadow: scrolled ? 'none' : '0 4px 14px 0 rgba(0,0,0,0.3)',
+                boxShadow: effectiveScrolled ? 'none' : '0 4px 14px 0 rgba(0,0,0,0.3)',
                 '&:hover': { bgcolor: '#FACC15' },
               }}
             >
@@ -178,7 +168,6 @@ export default function Navbar() {
 
       <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
         <MenuItem onClick={() => handleScrollTo('home')}>Booking</MenuItem>
-        <MenuItem onClick={() => handleNavigate('/drop-taxi')}>Drop Taxi</MenuItem>
         {topRouteLinks.map((route) => (
           <MenuItem key={route.href} onClick={() => handleNavigate(route.href)}>
             {route.label}
@@ -186,25 +175,15 @@ export default function Navbar() {
         ))}
         <Divider />
         {sectionItems.map((item) => (
-          <MenuItem key={item.id} onClick={() => handleScrollTo(item.id)}>
+          <MenuItem
+            key={item.label}
+            onClick={() => (item.href ? handleNavigate(item.href) : handleScrollTo(item.id!))}
+          >
             {item.label}
           </MenuItem>
         ))}
       </Menu>
 
-      <Menu
-        anchorEl={dropTaxiAnchorEl}
-        open={Boolean(dropTaxiAnchorEl)}
-        onClose={handleDropTaxiMenuClose}
-      >
-        <MenuItem onClick={() => handleNavigate('/drop-taxi')}>Drop Taxi Hub</MenuItem>
-        <Divider />
-        {topRouteLinks.map((route) => (
-          <MenuItem key={route.href} onClick={() => handleNavigate(route.href)}>
-            {route.label}
-          </MenuItem>
-        ))}
-      </Menu>
     </>
   )
 }

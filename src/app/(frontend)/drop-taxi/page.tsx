@@ -196,7 +196,7 @@ export default async function DropTaxiHubPage() {
                   </Typography>
                   <Typography color="#64748b" variant="body2" mt={1}>
                     Thoothukudi to Chennai starts around Rs.
-                    {formatInr(calculateEstimatedFare(610, vehicle.ratePerKm))}
+                    {formatInr(calculateEstimatedFare(610, vehicle.ratePerKm, vehicle.bata))}
                   </Typography>
                 </Paper>
               </Grid>
@@ -268,10 +268,37 @@ export default async function DropTaxiHubPage() {
                     <Typography color="#0f172a" fontWeight={700}>
                       {route.from} to {route.to}
                     </Typography>
-                    <Typography variant="body2" color="#64748b" mt={0.5}>
-                      {route.distanceKm} km | {route.durationHours} hrs | Sedan from Rs.
-                      {formatInr(calculateEstimatedFare(route.distanceKm, 14))}
-                    </Typography>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        mt: 0.5,
+                      }}
+                    >
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Typography variant="body2" color="#64748b">
+                          {route.distanceKm} km
+                        </Typography>
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            bgcolor: '#eff6ff',
+                            color: '#2563eb',
+                            px: 1,
+                            py: 0.25,
+                            borderRadius: 1,
+                            fontWeight: 700,
+                            fontSize: '0.65rem',
+                          }}
+                        >
+                          ONE WAY
+                        </Typography>
+                      </Box>
+                      <Typography fontWeight={800} color="#2563eb">
+                        ₹{formatInr(calculateEstimatedFare(route.distanceKm, 14, 300))}
+                      </Typography>
+                    </Box>
                   </Paper>
                 </Link>
               </Grid>
@@ -303,7 +330,12 @@ export default async function DropTaxiHubPage() {
         </Paper>
       </Container>
 
-      <HeroSection embedded sectionId="drop-taxi-booking" headingTag="h2" />
+      <HeroSection
+        embedded
+        sectionId="drop-taxi-booking"
+        headingTag="h2"
+        restrictToTripType="oneway"
+      />
       <Footer />
     </main>
   )

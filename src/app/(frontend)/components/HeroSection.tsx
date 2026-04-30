@@ -174,21 +174,29 @@ type HeroSectionProps = {
   embedded?: boolean
   sectionId?: string
   headingTag?: 'h1' | 'h2'
+  initialPickup?: string
+  initialDrop?: string
+  initialDistance?: number
+  restrictToTripType?: FormValues['tripType']
 }
 
 export default function HeroSection({
   embedded = false,
   sectionId = 'home',
   headingTag = 'h1',
+  initialPickup,
+  initialDrop,
+  initialDistance,
+  restrictToTripType,
 }: HeroSectionProps = {}) {
   const { handleSubmit, control, watch, setValue, reset } = useForm<FormValues>({
     defaultValues: {
       customerName: '',
       customerPhone: '',
-      tripType: 'oneway',
+      tripType: restrictToTripType || 'oneway',
       vehicle: '',
-      pickup: '',
-      drop: '',
+      pickup: initialPickup || '',
+      drop: initialDrop || '',
       pickupDateTime: null,
       dropDateTime: null,
     },
@@ -379,6 +387,49 @@ export default function HeroSection({
     }
   }, [embedded])
 
+  // Handle Initial Locations and Lowest Price Vehicle
+  useEffect(() => {
+    if (tnLocations.length > 0) {
+      if (initialPickup) {
+        const found = tnLocations.find((l) => l.name.toLowerCase() === initialPickup.toLowerCase())
+        if (found) {
+          setPickupCoords({ lat: found.lat, lon: found.lon })
+          setValue('pickup', getLocationDisplayValue(found))
+        }
+      }
+      if (initialDrop) {
+        const found = tnLocations.find((l) => l.name.toLowerCase() === initialDrop.toLowerCase())
+        if (found) {
+          setDropCoords({ lat: found.lat, lon: found.lon })
+          setValue('drop', getLocationDisplayValue(found))
+        }
+      }
+    }
+  }, [tnLocations, initialPickup, initialDrop, setValue])
+
+  useEffect(() => {
+    if (tariffs.length > 0 && vehicles.length > 0 && !selectedVehicleId) {
+      // Find lowest price vehicle for the current trip type
+      const currentTripType = watch('tripType')
+      const tariffField =
+        currentTripType === 'roundtrip' || currentTripType === 'multilocation'
+          ? 'roundtrip'
+          : 'oneway'
+
+      const sortedByPrice = [...tariffs]
+        .filter((t) => t[tariffField]?.perKmRate)
+        .sort((a, b) => (a[tariffField]?.perKmRate || 0) - (b[tariffField]?.perKmRate || 0))
+
+      if (sortedByPrice.length > 0) {
+        const bestVehicle = sortedByPrice[0].vehicle
+        const bestVehicleId = typeof bestVehicle === 'string' ? bestVehicle : bestVehicle?.id
+        if (bestVehicleId) {
+          setValue('vehicle', bestVehicleId)
+        }
+      }
+    }
+  }, [tariffs, vehicles, selectedVehicleId, setValue, watch])
+
   // Slider Interval
   useEffect(() => {
     if (sliderImages.length <= 1) return
@@ -504,12 +555,17 @@ export default function HeroSection({
 
       if (tripType !== 'packages' && tripType !== 'multilocation' && dropCoords) {
         // Standard Oneway/Roundtrip
-        const osrm = `https://router.project-osrm.org/route/v1/driving/${pickupCoords.lon},${pickupCoords.lat};${dropCoords.lon},${dropCoords.lat}?overview=false`
-        const res = await axios.get(osrm)
-        const route = res.data.routes?.[0]
-        if (route) {
-          distanceKm = route.distance / 1000
-          durationMin = route.duration / 60
+        if (initialDistance && (tripType === 'oneway' || tripType === 'droptaxi')) {
+          distanceKm = initialDistance
+          durationMin = (initialDistance / 50) * 60
+        } else {
+          const osrm = `https://router.project-osrm.org/route/v1/driving/${pickupCoords.lon},${pickupCoords.lat};${dropCoords.lon},${dropCoords.lat}?overview=false`
+          const res = await axios.get(osrm)
+          const route = res.data.routes?.[0]
+          if (route) {
+            distanceKm = route.distance / 1000
+            durationMin = route.duration / 60
+          }
         }
       } else if (tripType === 'multilocation' && tourLocations.length >= 2) {
         // Multi-Location Distance Calc: Sum of segments
@@ -1052,7 +1108,8 @@ export default function HeroSection({
               justifyContent: 'center',
               background: '#e0f2fe',
               color: '#000',
-              py: { xs: 5, md: 7 },
+              pt: { xs: 1, md: 1 },
+              pb: { xs: 5, md: 7 },
             }
           : {
               position: 'relative',
@@ -1142,22 +1199,7 @@ export default function HeroSection({
         <Grid container spacing={{ xs: 2, md: 3 }} alignItems="center" justifyContent="center">
           {/* Booking Form Card */}
           <Grid size={{ xs: 12, md: 10 }}>
-            {embedded ? (
-              <Typography
-                component={headingComponent}
-                variant="h3"
-                sx={{
-                  color: '#0f172a',
-                  textAlign: 'center',
-                  fontWeight: 900,
-                  mb: 3,
-                  px: { xs: 1.5, md: 0 },
-                  fontSize: { xs: '1.35rem', md: '2.2rem' },
-                }}
-              >
-                Tamil Nadu&apos;s Trusted Drop Taxi Service - One Way Cabs with No Return Charge
-              </Typography>
-            ) : null}
+            {embedded ? null : null}
             <Paper
               elevation={0}
               sx={{
@@ -1215,163 +1257,147 @@ export default function HeroSection({
                 </Box>
               ) : (
                 <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
-                  {/* Tab Bar Header */}
-                  <Controller
-                    name="tripType"
-                    control={control}
-                    render={({ field }) => (
-                      <Box
-                        sx={{
-                          px: { xs: 1, md: 0 }, // Removed md padding to align with left edge completely? Or keep standard? Usually md:2 or 3 is good. Let's keep md:0 to align with input edge if inputs have padding, OR md:0 if the parent container has padding. The parent container has padding. So px:0 might be best for left alignment.
-                          // The User's screenshot shows the cards centered. If I want left align, I should match the input field's start.
-                          // The input fields are inside a Box with p: {xs: 2, md: 3}.
-                          // The tab container is *above* that.
-                          // If I want visual alignment, I might need px: {xs: 1, md: 0} and justifyContent: 'flex-start'.
-                          py: 2,
-                          display: 'flex',
-                          width: '100%',
-                          gap: { xs: 1, md: 2 },
-                          overflowX: 'auto',
-                          bgcolor: 'transparent',
-                          scrollbarWidth: 'none',
-                          '&::-webkit-scrollbar': { display: 'none' },
-                          justifyContent: { xs: 'space-between', md: 'flex-start' }, // Left align on desktop
-                        }}
-                      >
-                        {[
-                          {
-                            id: 'oneway',
-                            label: 'One Way',
-                            img: '/assets/tabs/tab_icon_oneway_taxi_1768130636829.png',
-                          },
-                          {
-                            id: 'droptaxi',
-                            label: 'Drop Taxi',
-                            img: '/assets/tabs/tab_icon_oneway_taxi_1768130636829.png',
-                          },
-                          {
-                            id: 'roundtrip',
-                            label: 'Round Trip',
-                            img: '/assets/tabs/tab_icon_roundtrip_luggage_1768130650587.png',
-                          },
-                          {
-                            id: 'packages',
-                            label: 'Packages',
-                            img: '/assets/tabs/tab_icon_packages_clock_1768130665696.png',
-                          },
-                          {
-                            id: 'multilocation',
-                            label: 'Tour',
-                            img: '/assets/tabs/tab_icon_tour_map_1768130689319.png',
-                          },
-                        ].map((item) => {
-                          const isSelected = field.value === item.id
-                          return (
-                            <Box
-                              key={item.id}
-                              onClick={() => {
-                                // Reset state on tab switch to avoid confusion
-                                field.onChange(item.id)
-                                setValue('pickup', '')
-                                setValue('drop', '')
-                                setValue('vehicle', '')
-                                setPickupCoords(null)
-                                setDropCoords(null)
-                                setFare(null)
-                                setDistanceInfo('')
-                                // If switching away from Tour, clear tour locations?
-                                // Or if switching TO Tour, clear them?
-                                // User said: "choosed tour location its reflecting in othere tab"
-                                // This implies Tour locations might be affecting other tabs or vice versa.
-                                // Best to clear Tour locations when switching OUT of Tour.
-                                if (
-                                  field.value === 'multilocation' &&
-                                  item.id !== 'multilocation'
-                                ) {
-                                  setTourLocations([])
-                                }
-                                // Also clear if switching INTO Tour to start fresh?
-                                // User might want to keep if they accidentally switched?
-                                // Let's clear to be safe and avoid "reflection" issues.
-                                if (item.id === 'multilocation') {
-                                  setTourLocations([])
-                                }
-                              }}
-                              sx={{
-                                width: { xs: '19%', md: '84px' },
-                                minWidth: 0,
-                                height: { xs: 75, md: 80 },
-                                p: { xs: 0.5, md: 0.75 },
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                justifyContent: 'space-between',
-                                borderRadius: 3,
-                                cursor: 'pointer',
-                                bgcolor: isSelected ? '#fbc024' : '#fff',
-                                border: isSelected ? '2px solid #eab308' : '1px solid #cbd5e1',
-                                boxShadow: isSelected
-                                  ? '0 8px 20px rgba(251, 192, 36, 0.4)'
-                                  : '0 2px 4px rgba(0,0,0,0.1)',
-                                transform: isSelected ? 'scale(1.08) translateY(-2px)' : 'none',
-                                zIndex: isSelected ? 1 : 0,
-                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                flexShrink: 0,
-                                '&:hover': {
-                                  borderColor: '#fbc024',
-                                  transform: isSelected
-                                    ? 'scale(1.08) translateY(-4px)'
-                                    : 'translateY(-2px)',
-                                },
-                              }}
-                            >
+                  {/* Tab Bar Header - Only show if not restricted */}
+                  {!restrictToTripType && (
+                    <Controller
+                      name="tripType"
+                      control={control}
+                      render={({ field }) => (
+                        <Box
+                          sx={{
+                            px: { xs: 1, md: 0 },
+                            py: 2,
+                            display: 'flex',
+                            width: '100%',
+                            gap: { xs: 1, md: 2 },
+                            overflowX: 'auto',
+                            bgcolor: 'transparent',
+                            scrollbarWidth: 'none',
+                            '&::-webkit-scrollbar': { display: 'none' },
+                            justifyContent: { xs: 'space-between', md: 'flex-start' },
+                          }}
+                        >
+                          {[
+                            {
+                              id: 'oneway',
+                              label: 'One Way',
+                              img: '/assets/tabs/tab_icon_oneway_taxi_1768130636829.png',
+                            },
+                            {
+                              id: 'roundtrip',
+                              label: 'Round Trip',
+                              img: '/assets/tabs/tab_icon_roundtrip_luggage_1768130650587.png',
+                            },
+                            {
+                              id: 'packages',
+                              label: 'Packages',
+                              img: '/assets/tabs/tab_icon_packages_clock_1768130665696.png',
+                            },
+                            {
+                              id: 'multilocation',
+                              label: 'Tour',
+                              img: '/assets/tabs/tab_icon_tour_map_1768130689319.png',
+                            },
+                          ].map((item) => {
+                            const isSelected = field.value === item.id
+                            return (
                               <Box
+                                key={item.id}
+                                onClick={() => {
+                                  // Reset state on tab switch to avoid confusion
+                                  field.onChange(item.id)
+                                  setValue('pickup', '')
+                                  setValue('drop', '')
+                                  setValue('vehicle', '')
+                                  setPickupCoords(null)
+                                  setDropCoords(null)
+                                  setFare(null)
+                                  setDistanceInfo('')
+                                  if (
+                                    field.value === 'multilocation' &&
+                                    item.id !== 'multilocation'
+                                  ) {
+                                    setTourLocations([])
+                                  }
+                                  if (item.id === 'multilocation') {
+                                    setTourLocations([])
+                                  }
+                                }}
                                 sx={{
-                                  flex: 1,
+                                  width: { xs: '19%', md: '84px' },
+                                  minWidth: 0,
+                                  height: { xs: 75, md: 80 },
+                                  p: { xs: 0.5, md: 0.75 },
                                   display: 'flex',
+                                  flexDirection: 'column',
                                   alignItems: 'center',
-                                  justifyContent: 'center',
-                                  width: '100%',
-                                  overflow: 'hidden',
+                                  justifyContent: 'space-between',
+                                  borderRadius: 3,
+                                  cursor: 'pointer',
+                                  bgcolor: isSelected ? '#fbc024' : '#fff',
+                                  border: isSelected ? '2px solid #eab308' : '1px solid #cbd5e1',
+                                  boxShadow: isSelected
+                                    ? '0 8px 20px rgba(251, 192, 36, 0.4)'
+                                    : '0 2px 4px rgba(0,0,0,0.1)',
+                                  transform: isSelected ? 'scale(1.08) translateY(-2px)' : 'none',
+                                  zIndex: isSelected ? 1 : 0,
+                                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                  flexShrink: 0,
+                                  '&:hover': {
+                                    borderColor: '#fbc024',
+                                    transform: isSelected
+                                      ? 'scale(1.08) translateY(-4px)'
+                                      : 'translateY(-2px)',
+                                  },
                                 }}
                               >
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img
-                                  src={item.img}
-                                  alt={item.label}
-                                  style={{
-                                    maxWidth: '90%',
-                                    maxHeight: '90%',
-                                    objectFit: 'contain',
-                                    display: 'block',
-                                    mixBlendMode: 'multiply',
+                                <Box
+                                  sx={{
+                                    flex: 1,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    width: '100%',
+                                    overflow: 'hidden',
                                   }}
-                                />
+                                >
+                                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                                  <img
+                                    src={item.img}
+                                    alt={item.label}
+                                    style={{
+                                      maxWidth: '90%',
+                                      maxHeight: '90%',
+                                      objectFit: 'contain',
+                                      display: 'block',
+                                      mixBlendMode: 'multiply',
+                                    }}
+                                  />
+                                </Box>
+                                <Typography
+                                  variant="body2"
+                                  sx={{
+                                    color: isSelected ? '#000' : '#0f172a',
+                                    fontWeight: isSelected ? 900 : 600,
+                                    fontSize: { xs: '0.65rem', md: '0.78rem' },
+                                    letterSpacing: 0.1,
+                                    textAlign: 'center',
+                                    lineHeight: 1.1,
+                                    whiteSpace: 'nowrap',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    width: '100%',
+                                  }}
+                                >
+                                  {item.label}
+                                </Typography>
                               </Box>
-
-                              <Typography
-                                variant="body2"
-                                sx={{
-                                  color: isSelected ? '#000' : '#0f172a',
-                                  fontWeight: isSelected ? 900 : 600,
-                                  fontSize: { xs: '0.65rem', md: '0.78rem' }, // Slightly larger active font
-                                  letterSpacing: 0.1,
-                                  textAlign: 'center',
-                                  lineHeight: 1.1,
-                                  whiteSpace: 'nowrap',
-                                  overflow: 'hidden',
-                                  textOverflow: 'ellipsis',
-                                  width: '100%',
-                                }}
-                              >
-                                {item.label}
-                              </Typography>
-                            </Box>
-                          )
-                        })}
-                      </Box>
-                    )}
-                  />
+                            )
+                          })}
+                        </Box>
+                      )}
+                    />
+                  )}
 
                   {/* Main Form Content (White Box) */}
                   <Box

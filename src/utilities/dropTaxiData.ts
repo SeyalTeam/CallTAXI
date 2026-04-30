@@ -1,6 +1,7 @@
 export type VehicleRate = {
   label: string
   ratePerKm: number
+  bata: number
 }
 
 export type DropTaxiDistrict = {
@@ -20,11 +21,11 @@ export type DropTaxiRoute = {
 }
 
 export const VEHICLE_RATES: VehicleRate[] = [
-  { label: 'Sedan', ratePerKm: 14 },
-  { label: 'SUV', ratePerKm: 19 },
-  { label: 'Innova', ratePerKm: 20 },
-  { label: 'Innova Crysta', ratePerKm: 23 },
-  { label: 'Tempo Traveller', ratePerKm: 40 },
+  { label: 'Sedan', ratePerKm: 14, bata: 400 },
+  { label: 'SUV', ratePerKm: 19, bata: 300 },
+  { label: 'Innova', ratePerKm: 20, bata: 400 },
+  { label: 'Innova Crysta', ratePerKm: 23, bata: 400 },
+  { label: 'Tempo Traveller', ratePerKm: 40, bata: 600 },
 ]
 
 export const DROPTAXI_DISTRICTS: DropTaxiDistrict[] = [
@@ -38,6 +39,8 @@ export const DROPTAXI_DISTRICTS: DropTaxiDistrict[] = [
   { slug: 'coimbatore', name: 'Coimbatore' },
   { slug: 'chennai', name: 'Chennai' },
   { slug: 'trichy', name: 'Trichy' },
+  { slug: 'tiruchendur', name: 'Tiruchendur' },
+  { slug: 'rameswaram', name: 'Rameswaram' },
 ]
 
 export const DROPTAXI_ROUTES: DropTaxiRoute[] = [
@@ -47,7 +50,7 @@ export const DROPTAXI_ROUTES: DropTaxiRoute[] = [
     to: 'Chennai',
     fromSlug: 'thoothukudi',
     toSlug: 'chennai',
-    distanceKm: 610,
+    distanceKm: 606.58,
     durationHours: 10.5,
     landmarks: ['Tirunelveli', 'Madurai', 'Villupuram'],
   },
@@ -57,7 +60,7 @@ export const DROPTAXI_ROUTES: DropTaxiRoute[] = [
     to: 'Madurai',
     fromSlug: 'thoothukudi',
     toSlug: 'madurai',
-    distanceKm: 150,
+    distanceKm: 140,
     durationHours: 3,
     landmarks: ['Ettayapuram', 'Kovilpatti', 'Virudhunagar'],
   },
@@ -147,7 +150,7 @@ export const DROPTAXI_ROUTES: DropTaxiRoute[] = [
     to: 'Thoothukudi',
     fromSlug: 'chennai',
     toSlug: 'thoothukudi',
-    distanceKm: 610,
+    distanceKm: 606.58,
     durationHours: 10.5,
     landmarks: ['Villupuram', 'Trichy', 'Madurai'],
   },
@@ -157,7 +160,7 @@ export const DROPTAXI_ROUTES: DropTaxiRoute[] = [
     to: 'Thoothukudi',
     fromSlug: 'madurai',
     toSlug: 'thoothukudi',
-    distanceKm: 150,
+    distanceKm: 140,
     durationHours: 3,
     landmarks: ['Virudhunagar', 'Kovilpatti', 'Ettayapuram'],
   },
@@ -241,13 +244,200 @@ export const DROPTAXI_ROUTES: DropTaxiRoute[] = [
     durationHours: 12,
     landmarks: ['Nagercoil', 'Tirunelveli', 'Madurai'],
   },
+  {
+    slug: 'tiruchendur-to-rameswaram',
+    from: 'Tiruchendur',
+    to: 'Rameswaram',
+    fromSlug: 'tiruchendur',
+    toSlug: 'rameswaram',
+    distanceKm: 220,
+    durationHours: 4.5,
+    landmarks: ['Tuticorin', 'Sayalgudi', 'Kilakarai'],
+  },
+  {
+    slug: 'tiruchendur-to-kanyakumari',
+    from: 'Tiruchendur',
+    to: 'Kanyakumari',
+    fromSlug: 'tiruchendur',
+    toSlug: 'kanyakumari',
+    distanceKm: 90,
+    durationHours: 2,
+    landmarks: ['Uvari', 'Koodankulam', 'Vattakottai'],
+  },
+  {
+    slug: 'tiruchendur-to-nava-tirupathi',
+    from: 'Tiruchendur',
+    to: 'Nava Tirupathi',
+    fromSlug: 'tiruchendur',
+    toSlug: 'nava-tirupathi',
+    distanceKm: 35,
+    durationHours: 1,
+    landmarks: ['Alwarthirunagari', 'Srivaikuntam'],
+  },
+  {
+    slug: 'tiruchendur-to-nellaiappar-temple',
+    from: 'Tiruchendur',
+    to: 'Nellaiappar Temple',
+    fromSlug: 'tiruchendur',
+    toSlug: 'nellaiappar-temple',
+    distanceKm: 55,
+    durationHours: 1.5,
+    landmarks: ['Alwarthirunagari', 'Palayamkottai'],
+  },
+  {
+    slug: 'tiruchendur-to-tirunelveli',
+    from: 'Tiruchendur',
+    to: 'Tirunelveli',
+    fromSlug: 'tiruchendur',
+    toSlug: 'tirunelveli',
+    distanceKm: 55,
+    durationHours: 1.5,
+    landmarks: ['Srivaikuntam', 'Alwarthirunagari'],
+  },
+  {
+    slug: 'tiruchendur-to-madurai',
+    from: 'Tiruchendur',
+    to: 'Madurai',
+    fromSlug: 'tiruchendur',
+    toSlug: 'madurai',
+    distanceKm: 170,
+    durationHours: 3.5,
+    landmarks: ['Tuticorin', 'Ettayapuram', 'Aruppukottai'],
+  },
+  {
+    slug: 'thoothukudi-to-tiruchendur',
+    from: 'Thoothukudi',
+    to: 'Tiruchendur',
+    fromSlug: 'thoothukudi',
+    toSlug: 'tiruchendur',
+    distanceKm: 40,
+    durationHours: 1,
+    landmarks: ['Authoor', 'Arumuganeri'],
+  },
+  {
+    slug: 'thoothukudi-to-rameswaram',
+    from: 'Thoothukudi',
+    to: 'Rameswaram',
+    fromSlug: 'thoothukudi',
+    toSlug: 'rameswaram',
+    distanceKm: 180,
+    durationHours: 4,
+    landmarks: ['Sayalgudi', 'Kilakarai', 'Pamban Bridge'],
+  },
+  {
+    slug: 'thoothukudi-railway-station-to-tiruchendur',
+    from: 'Thoothukudi Railway Station',
+    to: 'Tiruchendur',
+    fromSlug: 'thoothukudi-railway-station',
+    toSlug: 'tiruchendur',
+    distanceKm: 40,
+    durationHours: 1,
+    landmarks: ['Authoor', 'Arumuganeri'],
+  },
+  {
+    slug: 'thoothukudi-railway-station-to-rameswaram',
+    from: 'Thoothukudi Railway Station',
+    to: 'Rameswaram',
+    fromSlug: 'thoothukudi-railway-station',
+    toSlug: 'rameswaram',
+    distanceKm: 185,
+    durationHours: 4.2,
+    landmarks: ['Tuticorin City', 'Sayalgudi', 'Pamban'],
+  },
+  {
+    slug: 'thoothukudi-railway-station-to-kanyakumari',
+    from: 'Thoothukudi Railway Station',
+    to: 'Kanyakumari',
+    fromSlug: 'thoothukudi-railway-station',
+    toSlug: 'kanyakumari',
+    distanceKm: 145,
+    durationHours: 3.2,
+    landmarks: ['Tirunelveli', 'Valliyoor', 'Nagercoil'],
+  },
+  {
+    slug: 'thoothukudi-railway-station-to-madurai',
+    from: 'Thoothukudi Railway Station',
+    to: 'Madurai',
+    fromSlug: 'thoothukudi-railway-station',
+    toSlug: 'madurai',
+    distanceKm: 145,
+    durationHours: 3.2,
+    landmarks: ['Kovilpatti', 'Virudhunagar', 'Thirumangalam'],
+  },
+  {
+    slug: 'thoothukudi-railway-station-to-tirunelveli',
+    from: 'Thoothukudi Railway Station',
+    to: 'Tirunelveli',
+    fromSlug: 'thoothukudi-railway-station',
+    toSlug: 'tirunelveli',
+    distanceKm: 55,
+    durationHours: 1.5,
+    landmarks: ['Srivaikuntam', 'Alwarthirunagari'],
+  },
+  {
+    slug: 'thoothukudi-airport-to-tiruchendur',
+    from: 'Thoothukudi Airport',
+    to: 'Tiruchendur',
+    fromSlug: 'thoothukudi-airport',
+    toSlug: 'tiruchendur',
+    distanceKm: 40,
+    durationHours: 1,
+    landmarks: ['Authoor', 'Arumuganeri'],
+  },
+  {
+    slug: 'thoothukudi-airport-to-rameswaram',
+    from: 'Thoothukudi Airport',
+    to: 'Rameswaram',
+    fromSlug: 'thoothukudi-airport',
+    toSlug: 'rameswaram',
+    distanceKm: 175,
+    durationHours: 4,
+    landmarks: ['Sayalgudi', 'Kilakarai', 'Pamban Bridge'],
+  },
+  {
+    slug: 'thoothukudi-airport-to-kanyakumari',
+    from: 'Thoothukudi Airport',
+    to: 'Kanyakumari',
+    fromSlug: 'thoothukudi-airport',
+    toSlug: 'kanyakumari',
+    distanceKm: 130,
+    durationHours: 2.8,
+    landmarks: ['Valliyoor', 'Nagercoil', 'Suchindram'],
+  },
+  {
+    slug: 'thoothukudi-airport-to-madurai',
+    from: 'Thoothukudi Airport',
+    to: 'Madurai',
+    fromSlug: 'thoothukudi-airport',
+    toSlug: 'madurai',
+    distanceKm: 155,
+    durationHours: 3,
+    landmarks: ['Ettayapuram', 'Kovilpatti', 'Virudhunagar'],
+  },
+  {
+    slug: 'thoothukudi-airport-to-tirunelveli',
+    from: 'Thoothukudi Airport',
+    to: 'Tirunelveli',
+    fromSlug: 'thoothukudi-airport',
+    toSlug: 'tirunelveli',
+    distanceKm: 35,
+    durationHours: 1,
+    landmarks: ['Vagaikulam', 'Srivaikuntam'],
+  },
 ]
 
 export const DROPTAXI_ROUTE_SLUGS = DROPTAXI_ROUTES.map((route) => route.slug)
 export const DROPTAXI_DISTRICT_SLUGS = DROPTAXI_DISTRICTS.map((district) => district.slug)
 
-export const calculateEstimatedFare = (distanceKm: number, ratePerKm: number): number =>
-  Math.round(distanceKm * ratePerKm)
+export const calculateEstimatedFare = (
+  distanceKm: number,
+  ratePerKm: number,
+  bata: number = 300,
+): number => {
+  const minDistance = 130
+  const billDist = Math.max(distanceKm, minDistance)
+  return Math.round(billDist * ratePerKm + bata)
+}
 
 export const formatInr = (amount: number): string =>
   amount.toLocaleString('en-IN', { maximumFractionDigits: 0 })

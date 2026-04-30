@@ -15,6 +15,9 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material'
+import RouteIcon from '@mui/icons-material/Route'
+import TimerIcon from '@mui/icons-material/Timer'
+import LocalTaxiIcon from '@mui/icons-material/LocalTaxi'
 import Navbar from '../../components/Navbar'
 import Footer from '../../components/Footer'
 import HeroSection from '../../components/HeroSection'
@@ -66,7 +69,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const district = getDropTaxiDistrictBySlug(slug)
 
   if (route) {
-    const sedanFare = calculateEstimatedFare(route.distanceKm, 14)
+    const sedanFare = calculateEstimatedFare(route.distanceKm, 14, 400)
     return {
       title: `${route.from} to ${route.to} Drop Taxi | One Way Cab Rs.${formatInr(sedanFare)} | Kani Taxi`,
       description: `Book ${route.from} to ${route.to} drop taxi with Kani Taxi. One way cab, no return charge. AC sedan from Rs.${formatInr(sedanFare)}. 24/7 available. Call +91 94881 04888`,
@@ -137,36 +140,96 @@ export default async function DropTaxiSlugPage({ params }: PageProps) {
       ) : null}
 
       <Navbar />
-
-      <Box sx={{ pt: { xs: 14, md: 18 }, pb: { xs: 5, md: 7 } }}>
-        <Container maxWidth="xl">
+      <Box
+        sx={{
+          pt: { xs: 14, md: 18 },
+          pb: { xs: 2, md: 3 },
+          background: 'linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 50%, #e0f2fe 100%)',
+          position: 'relative',
+          overflow: 'hidden',
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: '-10%',
+            right: '-10%',
+            width: '40%',
+            height: '40%',
+            background: 'radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%)',
+            zIndex: 0,
+          },
+        }}
+      >
+        <Container maxWidth="xl" sx={{ position: 'relative', zIndex: 1 }}>
           {route ? (
             <>
-              <Typography color="#64748b" sx={{ mb: 1.5, fontWeight: 600 }}>
-                <Link href="/" style={{ color: '#64748b', textDecoration: 'none' }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1,
+                  mb: 3,
+                  opacity: 0.8,
+                }}
+              >
+                <Link
+                  href="/"
+                  style={{
+                    color: '#1e40af',
+                    textDecoration: 'none',
+                    fontWeight: 600,
+                    fontSize: '0.9rem',
+                  }}
+                >
                   Home
-                </Link>{' '}
-                /{' '}
-                <Link href="/drop-taxi" style={{ color: '#64748b', textDecoration: 'none' }}>
+                </Link>
+                <Typography sx={{ color: '#94a3b8', fontWeight: 600 }}>/</Typography>
+                <Link
+                  href="/drop-taxi"
+                  style={{
+                    color: '#1e40af',
+                    textDecoration: 'none',
+                    fontWeight: 600,
+                    fontSize: '0.9rem',
+                  }}
+                >
                   Drop Taxi
-                </Link>{' '}
-                / {route.from} to {route.to}
-              </Typography>
+                </Link>
+                <Typography sx={{ color: '#94a3b8', fontWeight: 600 }}>/</Typography>
+                <Typography sx={{ color: '#64748b', fontWeight: 600, fontSize: '0.9rem' }}>
+                  {route.from} to {route.to}
+                </Typography>
+              </Box>
+
               <Typography
                 component="h1"
                 variant="h2"
                 sx={{
                   fontWeight: 900,
                   color: '#0f172a',
-                  fontSize: { xs: '1.8rem', md: '2.8rem' },
-                  mb: 1.5,
+                  fontSize: { xs: '1.4rem', sm: '1.8rem', md: '2.5rem', lg: '3.2rem' },
+                  mb: 2.5,
+                  letterSpacing: '-0.02em',
+                  lineHeight: 1.1,
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  maxWidth: '100%',
                 }}
               >
-                {route.from} to {route.to} Drop Taxi
+                {route.from} to {route.to} <span style={{ color: '#2563eb' }}>Drop Taxi</span>
               </Typography>
-              <Typography color="#334155" sx={{ maxWidth: '900px', lineHeight: 1.7 }}>
-                Book one way cabs from {route.from} to {route.to} with no return charge. Kani Taxi
-                offers reliable 24/7 service with professional drivers and transparent pricing.
+              <Typography
+                variant="h6"
+                sx={{
+                  color: '#475569',
+                  maxWidth: '800px',
+                  lineHeight: 1.6,
+                  fontWeight: 500,
+                  fontSize: { xs: '1rem', md: '1.25rem' },
+                }}
+              >
+                Experience premium one-way travel from {route.from} to {route.to} with Kani Taxi.
+                Affordable luxury, zero return charges, and professional service.
               </Typography>
             </>
           ) : (
@@ -177,165 +240,360 @@ export default async function DropTaxiSlugPage({ params }: PageProps) {
                 sx={{
                   fontWeight: 900,
                   color: '#0f172a',
-                  fontSize: { xs: '1.8rem', md: '2.8rem' },
-                  mb: 1.5,
+                  fontSize: { xs: '1.4rem', sm: '1.8rem', md: '2.5rem', lg: '3.2rem' },
+                  mb: 2,
+                  lineHeight: 1.2,
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  maxWidth: '100%',
                 }}
               >
-                Drop Taxi in {district?.name}
+                Drop Taxi in <span style={{ color: '#2563eb' }}>{district?.name}</span>
               </Typography>
-              <Typography color="#334155" sx={{ maxWidth: '900px', lineHeight: 1.7 }}>
-                Need a one way cab from {district?.name}? Kani Taxi provides drop taxi service to
-                major destinations across Tamil Nadu with flexible pickup timings and no return
-                charge.
+              <Typography
+                variant="h6"
+                sx={{
+                  color: '#475569',
+                  maxWidth: '800px',
+                  lineHeight: 1.6,
+                  fontWeight: 500,
+                }}
+              >
+                Book top-rated one way cabs from {district?.name} to anywhere in Tamil Nadu.
+                Reliable 24/7 service with transparent pricing.
               </Typography>
             </>
           )}
         </Container>
       </Box>
 
-      <Container maxWidth="xl" sx={{ pb: { xs: 3, md: 6 } }}>
+      <HeroSection
+        embedded
+        sectionId="drop-taxi-booking"
+        headingTag="h2"
+        initialPickup={route?.from}
+        initialDrop={route?.to}
+        initialDistance={route?.distanceKm}
+        restrictToTripType="oneway"
+      />
+
+      <Container maxWidth="xl" sx={{ pb: { xs: 8, md: 12 }, mt: -4 }}>
         {route ? (
-          <>
-            <Paper sx={{ p: { xs: 2.5, md: 4 }, borderRadius: 4, mb: 4 }}>
-              <Typography component="h2" variant="h4" fontWeight={800} color="#0f172a" mb={2}>
-                Trip Info
-              </Typography>
-              <Grid container spacing={2}>
-                <Grid size={{ xs: 12, md: 4 }}>
-                  <Paper variant="outlined" sx={{ p: 2, borderRadius: 2.5, borderColor: '#cbd5e1' }}>
-                    <Typography variant="body2" color="#64748b">
-                      Distance
-                    </Typography>
-                    <Typography fontWeight={800} color="#0f172a">
-                      {route.distanceKm} km (approx)
+          <Grid container spacing={4}>
+            {/* Left Column: Trip Info & Details */}
+            <Grid size={{ xs: 12, lg: 8 }}>
+              {/* Trip Highlights Cards */}
+              <Grid container spacing={2} sx={{ mb: 4 }}>
+                <Grid size={{ xs: 12, sm: 4 }}>
+                  <Paper
+                    elevation={0}
+                    sx={{
+                      p: 3,
+                      borderRadius: 5,
+                      bgcolor: 'rgba(255, 255, 255, 0.9)',
+                      backdropFilter: 'blur(10px)',
+                      border: '1px solid #e2e8f0',
+                      boxShadow: '0 15px 35px -12px rgba(0,0,0,0.05)',
+                      height: '100%',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      position: 'relative',
+                      overflow: 'hidden',
+                      transition: 'all 0.3s ease',
+                      '&:hover': {
+                        transform: 'translateY(-5px)',
+                        boxShadow: '0 20px 40px -15px rgba(0,0,0,0.08)',
+                        borderColor: '#2563eb',
+                      },
+                    }}
+                  >
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                      <Typography variant="overline" color="#64748b" fontWeight={800} letterSpacing="0.1em">
+                        Total Distance
+                      </Typography>
+                      <RouteIcon sx={{ color: '#2563eb', opacity: 0.2, fontSize: 32 }} />
+                    </Box>
+                    <Typography variant="h3" fontWeight={900} color="#2563eb" sx={{ display: 'flex', alignItems: 'baseline' }}>
+                      {route.distanceKm} <Box component="span" sx={{ fontSize: '1.25rem', ml: 1, color: '#64748b', fontWeight: 600 }}>km</Box>
                     </Typography>
                   </Paper>
                 </Grid>
-                <Grid size={{ xs: 12, md: 4 }}>
-                  <Paper variant="outlined" sx={{ p: 2, borderRadius: 2.5, borderColor: '#cbd5e1' }}>
-                    <Typography variant="body2" color="#64748b">
-                      Duration
-                    </Typography>
-                    <Typography fontWeight={800} color="#0f172a">
-                      {route.durationHours} hours
+                <Grid size={{ xs: 12, sm: 4 }}>
+                  <Paper
+                    elevation={0}
+                    sx={{
+                      p: 3,
+                      borderRadius: 5,
+                      bgcolor: 'rgba(255, 255, 255, 0.9)',
+                      backdropFilter: 'blur(10px)',
+                      border: '1px solid #e2e8f0',
+                      boxShadow: '0 15px 35px -12px rgba(0,0,0,0.05)',
+                      height: '100%',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      position: 'relative',
+                      overflow: 'hidden',
+                      transition: 'all 0.3s ease',
+                      '&:hover': {
+                        transform: 'translateY(-5px)',
+                        boxShadow: '0 20px 40px -15px rgba(0,0,0,0.08)',
+                        borderColor: '#2563eb',
+                      },
+                    }}
+                  >
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                      <Typography variant="overline" color="#64748b" fontWeight={800} letterSpacing="0.1em">
+                        Est. Duration
+                      </Typography>
+                      <TimerIcon sx={{ color: '#2563eb', opacity: 0.2, fontSize: 32 }} />
+                    </Box>
+                    <Typography variant="h3" fontWeight={900} color="#2563eb" sx={{ display: 'flex', alignItems: 'baseline' }}>
+                      {route.durationHours} <Box component="span" sx={{ fontSize: '1.25rem', ml: 1, color: '#64748b', fontWeight: 600 }}>hrs</Box>
                     </Typography>
                   </Paper>
                 </Grid>
-                <Grid size={{ xs: 12, md: 4 }}>
-                  <Paper variant="outlined" sx={{ p: 2, borderRadius: 2.5, borderColor: '#cbd5e1' }}>
-                    <Typography variant="body2" color="#64748b">
-                      Starting Fare
+                <Grid size={{ xs: 12, sm: 4 }}>
+                  <Paper
+                    elevation={0}
+                    sx={{
+                      p: 3,
+                      borderRadius: 5,
+                      bgcolor: '#2563eb',
+                      backgroundImage: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+                      color: '#fff',
+                      boxShadow: '0 15px 35px -12px rgba(37, 99, 235, 0.4)',
+                      height: '100%',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      position: 'relative',
+                      overflow: 'hidden',
+                      transition: 'all 0.3s ease',
+                      '&:hover': {
+                        transform: 'translateY(-5px)',
+                        boxShadow: '0 20px 40px -15px rgba(37, 99, 235, 0.5)',
+                      },
+                    }}
+                  >
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                      <Typography variant="overline" color="rgba(255,255,255,0.8)" fontWeight={800} letterSpacing="0.1em">
+                        Starts From
+                      </Typography>
+                      <LocalTaxiIcon sx={{ color: '#fff', opacity: 0.3, fontSize: 32 }} />
+                    </Box>
+                    <Typography variant="h3" fontWeight={900}>
+                      ₹{formatInr(calculateEstimatedFare(route.distanceKm, 14, 400))}
                     </Typography>
-                    <Typography fontWeight={800} color="#0f172a">
-                      Rs.{formatInr(calculateEstimatedFare(route.distanceKm, 14))} (Sedan)
+                    <Typography variant="caption" sx={{ mt: 1, opacity: 0.8, fontWeight: 600 }}>
+                      *All inclusive estimate
                     </Typography>
                   </Paper>
                 </Grid>
               </Grid>
-            </Paper>
 
-            <Paper sx={{ p: { xs: 2.5, md: 4 }, borderRadius: 4, mb: 4 }}>
-              <Typography component="h2" variant="h4" fontWeight={800} color="#0f172a" mb={2}>
-                Fare Table
-              </Typography>
-              <TableContainer component={Paper} variant="outlined" sx={{ borderColor: '#cbd5e1' }}>
-                <Table>
-                  <TableHead sx={{ bgcolor: '#f8fafc' }}>
-                    <TableRow>
-                      <TableCell sx={{ fontWeight: 800 }}>Vehicle</TableCell>
-                      <TableCell sx={{ fontWeight: 800 }}>Per KM</TableCell>
-                      <TableCell sx={{ fontWeight: 800 }}>Estimated Fare</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {VEHICLE_RATES.slice(0, 4).map((vehicle) => (
-                      <TableRow key={vehicle.label}>
-                        <TableCell>{vehicle.label}</TableCell>
-                        <TableCell>Rs.{vehicle.ratePerKm}/km</TableCell>
-                        <TableCell>
-                          Rs.{formatInr(calculateEstimatedFare(route.distanceKm, vehicle.ratePerKm))}
-                        </TableCell>
+              {/* Fare Table Card */}
+              <Paper
+                elevation={0}
+                sx={{
+                  p: { xs: 3, md: 5 },
+                  borderRadius: 6,
+                  mb: 4,
+                  border: '1px solid #e2e8f0',
+                  bgcolor: '#fff',
+                }}
+              >
+                <Typography component="h2" variant="h4" fontWeight={900} color="#0f172a" mb={3}>
+                  Transparent Pricing
+                </Typography>
+                <TableContainer sx={{ borderRadius: 3, overflow: 'hidden', border: '1px solid #f1f5f9' }}>
+                  <Table>
+                    <TableHead sx={{ bgcolor: '#f8fafc' }}>
+                      <TableRow>
+                        <TableCell sx={{ fontWeight: 800, py: 2.5, color: '#475569' }}>Vehicle Type</TableCell>
+                        <TableCell sx={{ fontWeight: 800, py: 2.5, color: '#475569' }}>Rate / KM</TableCell>
+                        <TableCell sx={{ fontWeight: 800, py: 2.5, color: '#2563eb', textAlign: 'right' }}>Estimated Fare</TableCell>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </Paper>
+                    </TableHead>
+                    <TableBody>
+                      {VEHICLE_RATES.slice(0, 4).map((vehicle, idx) => (
+                        <TableRow
+                          key={vehicle.label}
+                          sx={{
+                            '&:hover': { bgcolor: '#f1f5f9/30' },
+                            bgcolor: idx === 0 ? '#eff6ff' : 'inherit',
+                          }}
+                        >
+                          <TableCell sx={{ fontWeight: 700, color: '#1e293b' }}>
+                            {vehicle.label}
+                            {idx === 0 && (
+                              <Box component="span" sx={{ ml: 1, px: 1, py: 0.25, bgcolor: '#2563eb', color: '#fff', borderRadius: 1, fontSize: '0.65rem', verticalAlign: 'middle' }}>
+                                POPULAR
+                              </Box>
+                            )}
+                          </TableCell>
+                          <TableCell color="#475569">₹{vehicle.ratePerKm}/km</TableCell>
+                          <TableCell sx={{ fontWeight: 800, color: '#0f172a', textAlign: 'right' }}>
+                            ₹{formatInr(calculateEstimatedFare(route.distanceKm, vehicle.ratePerKm, vehicle.bata))}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Paper>
 
-            <Paper sx={{ p: { xs: 2.5, md: 4 }, borderRadius: 4, mb: 4 }}>
-              <Typography component="h2" variant="h4" fontWeight={800} color="#0f172a" mb={1.5}>
-                About This Route
-              </Typography>
-              <Typography color="#334155" lineHeight={1.8} mb={1.5}>
-                Traveling from {route.from} to {route.to} by drop taxi is one of the most
-                convenient and affordable options for families, business travelers, and airport
-                transfers.
-              </Typography>
-              <Typography color="#334155" lineHeight={1.8} mb={1.5}>
-                Kani Taxi provides 24/7 drop taxi service on this route with professional drivers,
-                clean AC cabs, and transparent pricing with no hidden charges.
-              </Typography>
-              <Typography color="#334155" lineHeight={1.8}>
-                Popular stops en route include {route.landmarks.join(', ')}.
-              </Typography>
-            </Paper>
+              {/* About Route Card */}
+              <Paper
+                elevation={0}
+                sx={{
+                  p: { xs: 3, md: 5 },
+                  borderRadius: 6,
+                  border: '1px solid #e2e8f0',
+                  bgcolor: '#fff',
+                }}
+              >
+                <Typography component="h2" variant="h4" fontWeight={900} color="#0f172a" mb={2.5}>
+                  Why Choose Kani Taxi for this Route?
+                </Typography>
+                <Box sx={{ color: '#475569', lineHeight: 1.8 }}>
+                  <Typography mb={2} variant="body1">
+                    Traveling from <strong>{route.from} to {route.to}</strong> by drop taxi is the ultimate choice for comfort and economy. Unlike regular outstation cabs, we don&apos;t charge you for the return journey, saving you up to 40% on your travel costs.
+                  </Typography>
+                  <Typography mb={2} variant="body1">
+                    Our fleet on this route is meticulously maintained and equipped with high-performance AC units to tackle the Tamil Nadu heat. Our drivers are well-versed with the highway patterns and popular rest stops.
+                  </Typography>
+                  <Box sx={{ mt: 3, p: 2.5, bgcolor: '#f8fafc', borderRadius: 3, borderLeft: '4px solid #2563eb' }}>
+                    <Typography variant="subtitle1" fontWeight={700} color="#1e293b" mb={0.5}>
+                      Key Stops & Landmarks:
+                    </Typography>
+                    <Typography variant="body2" color="#64748b">
+                      {route.landmarks.join(' • ')}
+                    </Typography>
+                  </Box>
+                </Box>
+              </Paper>
+            </Grid>
 
-            <Paper sx={{ p: { xs: 2.5, md: 4 }, borderRadius: 4, mb: 4 }}>
-              <Typography component="h2" variant="h4" fontWeight={800} color="#0f172a" mb={2}>
-                Related Routes
-              </Typography>
-              <Grid container spacing={1.5}>
-                {relatedRoutes.map((related) => (
-                  <Grid key={related.slug} size={{ xs: 12, sm: 6, md: 3 }}>
-                    <Link href={'/drop-taxi/' + related.slug} style={{ textDecoration: 'none' }}>
-                      <Paper
-                        variant="outlined"
-                        sx={{
-                          p: 2,
-                          borderRadius: 2.5,
-                          borderColor: '#cbd5e1',
-                          '&:hover': { borderColor: '#2563eb' },
-                        }}
-                      >
-                        <Typography color="#0f172a" fontWeight={700}>
-                          {related.from} to {related.to}
-                        </Typography>
-                        <Typography variant="body2" color="#64748b" mt={0.5}>
-                          Sedan from Rs.
-                          {formatInr(calculateEstimatedFare(related.distanceKm, 14))}
-                        </Typography>
-                      </Paper>
-                    </Link>
-                  </Grid>
-                ))}
-              </Grid>
-            </Paper>
-          </>
+            {/* Right Column: Sidebar / Related */}
+            <Grid size={{ xs: 12, lg: 4 }}>
+              <Box sx={{ position: 'sticky', top: 100 }}>
+                <Typography variant="h5" fontWeight={900} color="#0f172a" mb={3}>
+                  Other Popular Routes
+                </Typography>
+                <Grid container spacing={2}>
+                  {relatedRoutes.map((related) => (
+                    <Grid key={related.slug} size={{ xs: 12 }}>
+                      <Link href={'/drop-taxi/' + related.slug} style={{ textDecoration: 'none' }}>
+                        <Paper
+                          elevation={0}
+                          sx={{
+                            p: 2.5,
+                            borderRadius: 4,
+                            border: '1px solid #e2e8f0',
+                            transition: 'all 0.3s',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            '&:hover': {
+                              borderColor: '#2563eb',
+                              bgcolor: '#eff6ff',
+                              transform: 'translateX(8px)',
+                            },
+                          }}
+                        >
+                          <Box>
+                            <Typography fontWeight={700} color="#1e293b" variant="body1">
+                              {related.from} to {related.to}
+                            </Typography>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                              <Typography variant="body2" color="#64748b">
+                                {related.distanceKm} km
+                              </Typography>
+                              <Typography
+                                variant="caption"
+                                sx={{
+                                  bgcolor: '#eff6ff',
+                                  color: '#2563eb',
+                                  px: 1,
+                                  py: 0.25,
+                                  borderRadius: 1,
+                                  fontWeight: 700,
+                                  fontSize: '0.65rem',
+                                }}
+                              >
+                                ONE WAY
+                              </Typography>
+                            </Box>
+                          </Box>
+                          <Typography fontWeight={800} color="#2563eb">
+                            ₹{formatInr(calculateEstimatedFare(related.distanceKm, 14, 400))}
+                          </Typography>
+                        </Paper>
+                      </Link>
+                    </Grid>
+                  ))}
+                </Grid>
+              </Box>
+            </Grid>
+          </Grid>
         ) : (
-          <Paper sx={{ p: { xs: 2.5, md: 4 }, borderRadius: 4, mb: 4 }}>
-            <Typography component="h2" variant="h4" fontWeight={800} color="#0f172a" mb={2}>
+          <Paper
+            elevation={0}
+            sx={{
+              p: { xs: 3, md: 6 },
+              borderRadius: 6,
+              border: '1px solid #e2e8f0',
+              bgcolor: '#fff',
+            }}
+          >
+            <Typography component="h2" variant="h4" fontWeight={900} color="#0f172a" mb={4}>
               Available Routes From {district?.name}
             </Typography>
-            <Grid container spacing={1.5}>
+            <Grid container spacing={2.5}>
               {(districtRoutes.length > 0 ? districtRoutes : DROPTAXI_ROUTES.slice(0, 12)).map((item) => (
                 <Grid key={item.slug} size={{ xs: 12, sm: 6, md: 4 }}>
                   <Link href={'/drop-taxi/' + item.slug} style={{ textDecoration: 'none' }}>
                     <Paper
-                      variant="outlined"
+                      elevation={0}
                       sx={{
-                        p: 2,
-                        borderRadius: 2.5,
-                        borderColor: '#cbd5e1',
-                        '&:hover': { borderColor: '#2563eb' },
+                        p: 3,
+                        borderRadius: 4,
+                        border: '1px solid #e2e8f0',
+                        transition: 'all 0.3s',
+                        '&:hover': {
+                          borderColor: '#2563eb',
+                          bgcolor: '#eff6ff',
+                          boxShadow: '0 10px 20px -5px rgba(37,99,235,0.1)',
+                        },
                       }}
                     >
-                      <Typography color="#0f172a" fontWeight={700}>
+                      <Typography color="#0f172a" fontWeight={800} fontSize="1.1rem">
                         {item.from} to {item.to}
                       </Typography>
-                      <Typography variant="body2" color="#64748b" mt={0.5}>
-                        {item.distanceKm} km | Sedan from Rs.
-                        {formatInr(calculateEstimatedFare(item.distanceKm, 14))}
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Typography variant="body2" color="#64748b">
+                          {item.distanceKm} km
+                        </Typography>
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            bgcolor: '#eff6ff',
+                            color: '#2563eb',
+                            px: 1,
+                            py: 0.25,
+                            borderRadius: 1,
+                            fontWeight: 700,
+                            fontSize: '0.65rem',
+                          }}
+                        >
+                          ONE WAY
+                        </Typography>
+                      </Box>
+                      <Typography fontWeight={800} color="#2563eb">
+                        ₹{formatInr(calculateEstimatedFare(item.distanceKm, 14, 400))}
                       </Typography>
+                    </Box>
                     </Paper>
                   </Link>
                 </Grid>
@@ -345,7 +603,7 @@ export default async function DropTaxiSlugPage({ params }: PageProps) {
         )}
       </Container>
 
-      <HeroSection embedded sectionId="drop-taxi-booking" headingTag="h2" />
+
       <Footer />
     </main>
   )
